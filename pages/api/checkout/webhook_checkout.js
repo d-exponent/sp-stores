@@ -4,7 +4,7 @@ import { dbConnect } from '../../../lib/db-utils'
 import Order from '../../../models/order-model'
 import User from '../../../models/user-model'
 
-const handler = async (req, res) => {
+async function handler(req, res) {
 	if (req.method !== 'POST') {
 		res.status(404).send('Only post request allowed')
 		return
@@ -20,7 +20,6 @@ const handler = async (req, res) => {
 		res.send(200)
 
 		const EVENT = req.body
-		let IS_USER = false
 		console.log('👍 Received Paystack EVENT at: =>' + new Date(Date.now()).toISOString())
 
 		const eventData = EVENT.data
@@ -28,53 +27,49 @@ const handler = async (req, res) => {
 		const bagitems = eventMetadata['bag_items']
 		const { email, firstName, lastName } = eventMetadata['customer_details']
 
-		try {
-			await dbConnect()
+		console.log(email)
+		console.log(bagitems)
 
+		await dbConnect()
+
+		let IS_USER = false
+		console.log(typeof email)
+		console.log(typeof bagitems)
+		IS_USER = await User.findOne({ email })
+		console.log(IS_USER)
+
+		if (IS_USER === false) {
 			try {
-				console.log(email)
-				IS_USER = await User.findOne({ email })
-				console.log(IS_USER)
-			} catch (error) {
-				IS_USER = false
-			}
-			console.log('🧰After Query', IS_USER)
-
-			if (IS_USER === false) {
-				try {
-					// Create a new user document
-					await User.create({
-						firstName: firstName,
-						lastName: lastName,
-						email,
-						phoneNumber: '1234_dummy_numberfor_now',
-						confirmPassword: process.env.ON_PAY_PAYSTACK_WEBHOOK_USER,
-						password: process.env.ON_PAY_PAYSTACK_WEBHOOK_USER,
-					})
-				} catch (error) {
-					console.log('⚠ Error creating user', error.message)
-				}
-			}
-
-			try {
-				//Create order document
-				const newOrder = await Order.create({
-					currency: eventData.currency,
-					items: bagitems,
-					paystack_ref: eventData.reference,
-					payment_method: eventData.channel,
-					paystack_fees: +eventData.fees / 100,
-					paid_at: Date.now(),
-					payment_status: eventData.status,
-					totalAmount: +eventData.amount / 100,
-					userEmail: email,
+				// Create a new user document
+				await User.create({
+					firstName: firstName,
+					lastName: lastName,
+					email,
+					phoneNumber: '1234_dummy_numberfor_now',
+					confirmPassword: process.env.ON_PAY_PAYSTACK_WEBHOOK_USER,
+					password: process.env.ON_PAY_PAYSTACK_WEBHOOK_USER,
 				})
-				console.log('🧰 New Order', newOrder)
 			} catch (error) {
-				console.log('🧰Error creating order document', error.message)
+				console.log('⚠ Error creating user', error.message)
 			}
-		} catch (e) {
-			console.log(error.message || 'Error connecting to db')
+		}
+
+		try {
+			//Create order document
+			const newOrder = await Order.create({
+				currency: eventData.currency,
+				items: bagitems,
+				paystack_ref: eventData.reference,
+				payment_method: eventData.channel,
+				paystack_fees: +eventData.fees / 100,
+				paid_at: Date.now(),
+				payment_status: eventData.status,
+				totalAmount: +eventData.amount / 100,
+				userEmail: email,
+			})
+			console.log('🧰 New Order', newOrder)
+		} catch (error) {
+			console.log('🧰Error creating order document', error.message)
 		}
 	}
 }
