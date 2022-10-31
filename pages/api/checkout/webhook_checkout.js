@@ -28,18 +28,17 @@ const handler = async (req, res) => {
 		const bagitems = eventMetadata['bag_items']
 		const { email, firstName, lastName } = eventMetadata['customer_details']
 
-		console.log('🧰🧰 EVENT DATA', eventData)
-		console.log('🧰🧰 EVENT eventMetadata', eventMetadata)
-		console.log('🧰🧰 EVENT eventMetadata bagItems', bagitems)
-
 		try {
 			await dbConnect()
 
 			try {
+				console.log(email)
 				IS_USER = await User.findOne({ email })
+				console.log(IS_USER)
 			} catch (error) {
 				IS_USER = false
 			}
+			console.log('🧰After Query', IS_USER)
 
 			if (IS_USER === false) {
 				try {
