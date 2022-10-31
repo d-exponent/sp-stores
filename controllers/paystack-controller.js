@@ -23,6 +23,7 @@ export const createSession = catchAsync(async (req, res) => {
 			customer_details: {
 				firstName: client.firstName,
 				lastName: client.lastName,
+				email: client.email,
 				// TODO: add users phone number after 2fa implementation
 			},
 		},

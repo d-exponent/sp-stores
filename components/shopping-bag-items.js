@@ -8,8 +8,6 @@ import ShoppingItemCard from './cards/shopping-bag-item'
 import Notification from '../lib/notification-client'
 import classes from './css-modules/shopping-bag-items.module.css'
 
-
-
 const ShoppingBagItems = () => {
 	const [isBagItems, setIsBagItems] = useState(false)
 	const { items, removeFromBag } = useContext(ShoppingItemsContext)
