@@ -3,8 +3,8 @@ import mongoose from 'mongoose'
 const orderSchema = new mongoose.Schema(
 	{
 		userEmail: {
-			type: 'string',
-			required: [true, 'A must have a user email'],
+			type: String,
+			required: [true, "An order must belong to a user's Email"],
 		},
 		items: {
 			type: [{ type: mongoose.Schema.ObjectId, ref: 'Product' }],
@@ -19,7 +19,7 @@ const orderSchema = new mongoose.Schema(
 			type: Number,
 			required: [true, 'An order must have a total amount of purchase'],
 		},
-		paid_at: String,
+		paid_at: Date,
 		paystack_ref: String,
 		paystack_fees: {
 			type: Number,

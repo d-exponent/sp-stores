@@ -48,7 +48,7 @@ async function handler(req, res) {
 
 			console.log(`👍 Order for ${email} created successfully at ${now}`)
 		} catch (error) {
-			console.log(error.message || '💳💳Error creating order document')
+			console.log('🧰' + error.message || '💳💳Error creating order document')
 		}
 
 		//Handle new user if user doesn't exist
