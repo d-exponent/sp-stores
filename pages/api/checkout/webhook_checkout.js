@@ -1,10 +1,12 @@
 import crypto from 'crypto'
+import { TbChevronsDownLeft } from 'react-icons/tb'
 import { dbConnect } from '../../../lib/db-utils'
 i
 import Order from '../../../models/order-model'
 import User from '../../../models/user-model'
 
 const handler = async (req, res) => {
+	console.log('🧰 Webhook checkout hit')
 	if (req.method !== 'POST' || !req.body) {
 		return
 	}
@@ -12,6 +14,8 @@ const handler = async (req, res) => {
 	const EVENT = req.body
 	const AUTO_USER_PASSWORD = process.env.ON_PAY_PAYSTACK_WEBHOOK_USER
 	let IS_USER = false
+	console.log('🧰 EVENT: ', EVENT)
+	console.log(typeof EVENT)
 
 	const hash = crypto
 		.createHmac('sha512', process.env.PAYSTACK_SECRET_KEY)
@@ -23,16 +27,12 @@ const handler = async (req, res) => {
 		const formatedDateNow = new Date(Date.now()).toUTCString()
 		console.log('👍 Received Paystack EVENT at: =>' + formatedDateNow)
 
-		try {
-			await dbConnect()
-		} catch (error) {
-			console.log(`⚠⚠Error => Time: ${formatedDateNow}, message: ${error.message}`)
-			return
-		}
+		await dbConnect()
 
 		const clientEmail = EVENT.customer.email
 		const clientMetadata = EVENT.data.metadata['customer_details']
 		console.log(clientEmail)
+		console.log(clientMetadata)
 
 		try {
 			IS_USER = await User.findOne({ email: clientEmail })
