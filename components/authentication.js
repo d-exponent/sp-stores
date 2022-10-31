@@ -5,13 +5,11 @@ import { signIn } from 'next-auth/react'
 import Register from './forms/register'
 import CredentialsSignIn from './credentials-signin'
 import NotificationContext from '../context/notification'
-import { handleSignIn, submitUserToApi, getNotification } from '../lib/auth-page-utils'
+import { handleSignIn, submitUserToApi } from '../lib/auth-page-utils'
+import Notification from '../lib/notification-client'
 import classes from './authentication.module.css'
 
 const Authentication = () => {
-	const router = useRouter()
-	const { showNotification } = useContext(NotificationContext)
-
 	const [disableLoginBtn, setDisableLoginBtn] = useState(false)
 	const [disableRegisterBtn, setDisableRegisterBtn] = useState(false)
 
@@ -25,6 +23,9 @@ const Authentication = () => {
 		password: '',
 		confirmPassword: '',
 	})
+
+	const router = useRouter()
+	const { showNotification } = useContext(NotificationContext)
 
 	const ctaText = isLogin ? 'Not' : 'Already'
 	const ctaSpan = isLogin ? ' Register' : ' Login'
@@ -48,24 +49,23 @@ const Authentication = () => {
 		// Login form
 		if (isLogin) {
 			setDisableLoginBtn(true)
-			
-			const pendingNotification = getNotification('pending', 'Logging in')
+
+			const pendingNotification = new Notification('Logging you in... 🐱‍🏍').pending()
 			showNotification(pendingNotification)
 
 			try {
 				const fallbackMsg = 'ERROR! Please check your internet connection and try again!'
 
 				await handleSignIn(signIn, loginForm, fallbackMsg)
-				const successNotification = getNotification('success', 'Login successful')
+				const successNotification = new Notification('Login successfull 👌').success()
 				showNotification(successNotification)
 
 				router.replace(router.query.callback || '/')
 			} catch (error) {
 				setDisableLoginBtn(false)
-				const errorNotification = getNotification(
-					'error',
+				const errorNotification = new Notification(
 					error.message || "It's not you, it's us. Please try again! 😭"
-				)
+				).error()
 				showNotification(errorNotification)
 			}
 		}
@@ -73,7 +73,7 @@ const Authentication = () => {
 		//Register form
 		if (!isLogin) {
 			setDisableRegisterBtn(true)
-			const pendingNotification = getNotification('pending', 'Creating your account ...')
+			const pendingNotification = new Notification('Creating your account...').pending()
 			showNotification(pendingNotification)
 
 			try {
@@ -81,17 +81,19 @@ const Authentication = () => {
 
 				//Automatically Login user
 				await handleSignIn(signIn, registerForm, 'Something went wrong!')
-				showNotification({
-					status: 'success',
-					message: 'Welcome to the sp-collections family 🥳',
-				})
+				const successNotification = new Notification(
+					'Account created successfully 👍'
+				).success()
+				showNotification(successNotification)
 
 				router.replace(router.query.callback || '/')
 			} catch (error) {
 				setDisableRegisterBtn(false)
-				const errorMessage =
+				const errorNotification = new Notification(
 					error.message || "It's not you, it's us. Please try again! 😭"
-				showNotification({ status: 'error', message: errorMessage })
+				).error()
+
+				showNotification(errorNotification)
 			}
 		}
 	}
@@ -134,5 +136,3 @@ const Authentication = () => {
 }
 
 export default Authentication
-
-

@@ -9,20 +9,20 @@ import { HiOutlineShoppingBag } from 'react-icons/hi'
 import classes from './nav.module.css'
 
 const Nav = () => {
+	const [isLoggedin, setIsLoggedin] = useState(false)
+	const [itemsCount, setItemsCount] = useState('')
+
 	const router = useRouter()
 	const session = useSession()
 
 	const { items } = useContext(ShoppingItemsContext)
 
-	const [itemsCount, setItemsCount] = useState('')
-	const [isLoggedin, setIsLoggedin] = useState(false)
-
 	useEffect(() => {
-		if (session.status === 'unauthenticated') {
-			return setIsLoggedin(false)
+		if (session.status === 'authenticated') {
+			return setIsLoggedin(true)
 		}
-
-		setIsLoggedin(true)
+		//Else
+		setIsLoggedin(false)
 	}, [session.status])
 
 	useEffect(() => {
@@ -35,7 +35,7 @@ const Nav = () => {
 		bagLogoClasses = `${classes.navLogo} ${classes.bagIcon}`
 	}
 
-	function pushToAuthPageHandler() {
+	function handlePushToAuthPage() {
 		let callbackPath = router.asPath
 
 		if (router.query.callback) {
@@ -48,20 +48,20 @@ const Nav = () => {
 
 	return (
 		<nav className={classes.nav}>
-			{isLoggedin && (
+			{isLoggedin ? (
 				<div className={classes.navLink}>
 					<LogoutButton />
 				</div>
-			)}
+			) : null}
 
-			{!isLoggedin && (
-				<div onClick={pushToAuthPageHandler} className={classes.navLink}>
+			{!isLoggedin ? (
+				<div onClick={handlePushToAuthPage} className={classes.navLink}>
 					<a>
 						<span>Login</span>
 						<span>\Register</span>
 					</a>
 				</div>
-			)}
+			) : null}
 
 			<Link href={'/shopping-bag'}>
 				<a className={classes.navLink}>

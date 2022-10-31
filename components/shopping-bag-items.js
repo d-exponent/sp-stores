@@ -5,7 +5,10 @@ import { getCheckoutPrice, getItemsIds } from '../lib/checkout-utils'
 import NotificationContext from '../context/notification'
 import ShoppingItemsContext from '../context/shopping-bag'
 import ShoppingItemCard from './cards/shopping-bag-item'
+import Notification from '../lib/notification-client'
 import classes from './css-modules/shopping-bag-items.module.css'
+
+
 
 const ShoppingBagItems = () => {
 	const [isBagItems, setIsBagItems] = useState(false)
@@ -35,10 +38,8 @@ const ShoppingBagItems = () => {
 
 	async function paystackCheckoutHandler() {
 		if (!session.data || session.status !== 'authenticated') {
-			return showNotification({
-				status: 'error',
-				message: 'Please login to make this payment',
-			})
+			const errorNotifcation = new Notification('Please login to make payment').error()
+			return showNotification(errorNotifcation)
 		}
 
 		const user = session.data.user
@@ -63,15 +64,15 @@ const ShoppingBagItems = () => {
 				'Content-Type': 'application/json',
 			},
 		}
-		
+
 		const res = await fetch(`/api/checkout/payment-session`, fetchConfig)
 		const data = await res.json()
 
 		if (!res.ok) {
-			return showNotification({
-				status: 'error',
-				message: data.message || 'Error processing payment request! Please try again',
-			})
+			const errorNotification = new Notification(
+				data.message || 'Error processing payment request! Please try again'
+			).error()
+			return showNotification(errorNotification)
 		}
 		localStorage.clear()
 		window.location.href = data.auth_url
