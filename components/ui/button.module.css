@@ -1,0 +1,33 @@
+.btn {
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: teal;
+    padding-block: .8em;
+    outline: none;
+    transform: scale(1);
+    color: rgb(238, 237, 237);
+    font-size: 1rem;
+    text-transform: capitalize;
+    transition: transform 200ms ease-in-out;
+}
+
+.btn:active {
+    box-shadow: 9px -9px 22px -4px rgba(0, 0, 0, 0.75) inset;
+    -webkit-box-shadow: 9px -9px 22px -4px rgba(0, 0, 0, 0.75) inset;
+    -moz-box-shadow: 9px -9px 22px -4px rgba(0, 0, 0, 0.75) inset;
+}
+
+.btn:focus,
+.btn:hover {
+    background-color: rgb(11, 109, 109);
+}
+
+.position{
+    /* grid-area: 1; */
+    position: absolute;     
+    bottom: 6%;
+    right: 1em;
+    left: 1em;
+    padding-inline: 20px;
+}

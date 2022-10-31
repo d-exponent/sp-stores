@@ -1,0 +1,67 @@
+/* /////////////////// */
+.form {
+    display: grid;
+    gap: 1em;
+}
+
+
+.form input[type='file']::file-selector-button {
+    border: none;
+    border-bottom: 2px solid teal;
+    padding: .5em .7em;
+    border-radius: .6em;
+    transition: 1s;
+    background: transparent;
+    color: teal;
+    font-weight: 700;
+}
+
+.coverImageInputWrapper {
+    display: flex;
+    gap: .5em;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.coverImageInputWrapper input[type='file']::file-selector-button {
+    border-bottom: 2px solid teal;
+}
+
+.imageInputWrapper {
+    display: grid;
+    gap: 1em;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    margin-bottom: 1.3em;
+}
+
+
+.coverImageLabel {
+    color: rgb(102, 101, 101);
+    cursor: pointer;
+    border-left: 1px solid teal;
+    width: 50%;
+    padding-left: 1.5em;
+    font-size: small;
+    font-weight: 500;
+}
+
+.form>select {
+    border: none;
+    outline: none;
+    border-bottom: teal 2px solid;
+    padding: 0.675rem 1rem;
+    background-color: transparent;
+    font-size: small;
+    font-weight: 600;
+    border: 1px solid #707070;
+    border-left: 2px solid #aaaaaa;
+    color: rgb(173, 173, 173);
+    transition: all .2s
+}
+
+.form>select:focus {
+    border: none;
+    outline: 2px solid teal;
+    background-color: #fefefe;
+}

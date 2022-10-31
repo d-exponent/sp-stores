@@ -1,0 +1,127 @@
+.container {
+    padding-block: 2em;
+    display: grid;
+    place-content: center;
+}
+
+.container>h2,
+.cardsGrid h3 {
+    color: var(--color-dark-gray2);
+}
+
+.container>h2 {
+    text-align: center;
+    font-weight: 200;
+    font-size: 2rem;
+    font-family: var(--font-roboto);
+    text-transform: capitalize;
+    letter-spacing: 2px;
+}
+
+.cardsGrid {
+    overflow-x: scroll;
+    margin: 0 2em;
+    display: grid;
+    grid-template-columns: repeat(3, 70vw);
+    gap: 1.2em;
+    padding-block: 0 2em;
+}
+
+
+.cardsGrid::-webkit-scrollbar {
+    height: 2px;
+    background: #fff;
+}
+
+
+.cardsGrid::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+}
+
+
+.cardsGrid>div {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.cardsGrid>div * {
+    margin: 0;
+}
+
+.cardsGrid>div img {
+    object-position:center;
+    z-index: -1 !important;
+}
+
+.cardsGrid>div>div,
+.cardsGrid h3,
+.cardsGrid p {
+    margin-bottom: 1em;
+}
+
+
+.cardsGrid h3 {
+    font-family: var(--font-lato);
+    text-transform: capitalize;
+    font-weight: 500;
+}
+
+.cardsGrid p {
+    font-size: .6rem;
+    font-family: var(--font-open-sans);
+    font-weight: 300;
+    color: var(--color-dark-gray-3);
+    letter-spacing: .5px;
+    line-height: 1.4;
+}
+
+
+.cardsGrid button {
+    border: none;
+    font-family: var(--font-roboto);
+    font-weight: 100;
+    font-size: .6rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #fff;
+    padding: 10px;
+
+}
+
+/* .cardsGrid::-webkit-scrollbar-thumb, */
+.cardsGrid button {
+    background-color: var(--color-dark-gray-2);
+}
+
+
+.cardsGrid button:hover,
+.cardsGrid button:focus {
+    background-color: var(--color-dark-gray-3);
+}
+
+
+@media screen and (min-width: 550px) {
+
+    .container>h2 {
+        font-size: 3rem;
+    }
+
+    .cardsGrid {
+        margin-bottom: 2em;
+        grid-template-columns: repeat(3, minmax(200px, 320px));
+        gap: 1.5em;
+        /* width: fit-content;
+        margin-inline: auto; */
+    }
+
+    .cardsGrid p {
+        margin-bottom: 2em;
+    }
+
+    .cardsGrid button {
+        align-self: start;
+        text-transform: capitalize;
+    }
+
+}

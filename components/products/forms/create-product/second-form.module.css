@@ -1,0 +1,32 @@
+.form {
+    display: grid;
+    gap: 1em;
+}
+
+.form>button {
+    font-size: 1rem;
+    color: rgb(255, 244, 244);
+    background-color: teal;
+    border: none;
+    outline: none;
+    transition: all .4s;
+    padding: .7em 0;
+    border-radius: 3px;
+}
+
+.form>button:hover,
+.form>button:focus {
+    background-color: rgb(5, 107, 107);
+
+}
+
+@media (min-width: 600px) {
+    .form {
+        grid-template-columns: 1fr 1fr;
+        align-items: end;
+    }
+
+    .form>button {
+        padding: .5em 0;
+    }
+}

@@ -1,0 +1,8 @@
+.burger {
+    color: var(--color-dark-gray-2);
+    font-size: 1.3rem;
+    display: grid;
+    place-content: center;
+    margin-right: .6em;
+}
+

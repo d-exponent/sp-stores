@@ -1,0 +1,7 @@
+.headerLogo {
+    color: var(--color-dark-gray-2);
+    font-family: var(--font-gloria);
+    margin: 0;
+    margin-right: auto;
+    font-size: .7rem;
+}
