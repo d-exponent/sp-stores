@@ -64,7 +64,7 @@ const userSchema = new mongoose.Schema({
 	},
 })
 
-userSchema.indexes({ email: 1, phoneNumber: 1 }, { unique: true })
+userSchema.indexes({ email: 1 })
 
 userSchema.pre('save', function (next) {
 	if (this.password === process.env.ON_PAY_PAYSTACK_WEBHOOK_USER) {

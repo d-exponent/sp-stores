@@ -4,6 +4,8 @@ import Order from '../../../models/order-model'
 import User from '../../../models/user-model'
 
 const handler = async (req, res) => {
+	console.log('💳 webhookcheckout Hit ')
+
 	if (req.method !== 'POST') {
 		res
 			.status(400)
@@ -35,7 +37,7 @@ const handler = async (req, res) => {
 	try {
 		await dbConnect()
 	} catch (error) {
-		console.log(`⚠⚠Error => TIme: ${formatedDateNow}, message: ${error.message}`)
+		console.log(`⚠⚠Error => Time: ${formatedDateNow}, message: ${error.message}`)
 		return
 	}
 
@@ -47,13 +49,13 @@ const handler = async (req, res) => {
 
 	if (IS_USER === false) {
 		// Create a new user document
-		const customer = EVENT.data.metadata['customer_details']
-		console.log('🧰Customer' + customer)
+		const customerDetails = EVENT.data.metadata['customer_details']
+		console.log('🧰Customer details', customerDetails)
 
 		const userOptions = {
-			firstName: customer.firstName,
-			lastName: customer.lastName,
-			email: EVENT.customer.email,
+			firstName: customerDetails.firstName,
+			lastName: customerDetails.lastName,
+			email: EVENT.customerDetails.email,
 			phoneNumber: '1234_dummy_numberfor_now',
 			confirmPassword: AUTO_USER_PASSWORD,
 			password: AUTO_USER_PASSWORD,
@@ -80,14 +82,14 @@ const handler = async (req, res) => {
 
 	//Create order document
 	const orderOptions = {
-		currency: data.currency,
-		items: data.metadata['bag_items'],
-		paystack_ref: data.reference,
-		payment_method: data.channel,
-		paystack_fees: +data.fees / 100,
+		currency: EVENT.data.currency,
+		items: EVENT.data.metadata['bag_items'],
+		paystack_ref: EVENT.data.reference,
+		payment_method: EVENT.data.channel,
+		paystack_fees: +EVENT.data.fees / 100,
 		paid_at: formattedPaidAt,
-		payment_status: data.status,
-		totalAmount: +data.amount / 100,
+		payment_status: EVENT.data.status,
+		totalAmount: +EVENT.data.amount / 100,
 		userEmail: EVENT.customer.email,
 	}
 
