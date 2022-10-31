@@ -23,7 +23,6 @@ function handleMongooseValidationError(err) {
 	return new AppError(message, 400)
 }
 
-
 function sendProdError(res, err) {
 	//Expose error message for operational errors
 	if (err.isOperational) {
@@ -56,7 +55,7 @@ function handleError(err, req, res, next) {
 
 	//Development mode
 	if (process.env.NODE_ENV !== 'production') {
-		return responseSender(res, 500, {
+		return responseSender(res, error.status || 500, {
 			success: false,
 			message: error.message,
 			err,

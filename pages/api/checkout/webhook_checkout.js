@@ -1,6 +1,6 @@
 import { dbConnect } from '../../../lib/db-utils'
 import Order from '../../../models/order-model'
-import User from '../../../models/user'
+import User from '../../../models/user-model'
 
 const handler = async (req, res) => {
 	if (req.method !== 'POST') {

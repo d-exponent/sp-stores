@@ -1,10 +1,10 @@
 import axios from 'axios'
 import crypto from 'crypto'
 
-import Order from '../../../models/order-model'
-import User from '../../../models/user-model'
+import Order from '../models/order-model'
+import User from '../models/user-model'
 import catchAsync from '../middlewares/catch-async'
-import { dbConnect } from '../../../lib/db-utils'
+import { dbConnect } from '../lib/db-utils'
 import { responseSender } from '../lib/controller-utils'
 
 const PAYSTACK_SECRET = process.env.PAYSTACK_SECRET_KEY
