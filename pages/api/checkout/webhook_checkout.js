@@ -21,9 +21,12 @@ const handler = async (req, res) => {
 			'👍 Confirmed paystack webhook at: =>' + new Date(Date.now()).toUTCString()
 		)
 		res.send(200)
+		console.log("Task confirm")
 	} else {
 		return res.status(403).json({ success: false, message: null })
 	}
+
+	console.log('🧰🧰Paystack EVENT', req.body)
 
 	const event = req.body
 	const { data } = event
@@ -34,17 +37,24 @@ const handler = async (req, res) => {
 		// Check if the user already exists in the database
 		const isUser = await User.findOne({ email: event.customer.email })
 
+		console.log('🧰isUser', isUser)
+
 		if (!isUser) {
 			// Create a new user document
+
 			const customer = data.metadata['customer_details']
-			await User.create({
+
+			console.log('🧰🧰 Customer ', customer)
+			const userOptions = {
 				firstName: customer.firstName,
 				lastName: customer.lastName,
 				email: event.customer.email,
 				phoneNumber: '1234_dummy_numberfor_now',
 				confirmPassword: autoNewUserPassword,
 				password: autoNewUserPassword,
-			})
+			}
+			console.log("🧰🧰 UserOptions", userOptions)
+			await User.create(userOptions)
 		}
 
 		let formattedPaidAt
@@ -57,9 +67,8 @@ const handler = async (req, res) => {
 
 			formattedPaidAt = new Date(event.paidAt).toLocaleDateString('en-US', fmtDateConfig)
 		}
-
 		//Create order document
-		await Order.create({
+		const orderOptions = {
 			currency: data.currency,
 			items: data.metadata['bag_items'],
 			paystack_ref: data.reference,
@@ -69,7 +78,11 @@ const handler = async (req, res) => {
 			payment_status: data.status,
 			totalAmount: +data.amount / 100,
 			userEmail: event.customer.email,
-		})
+		}
+
+		console.log("🧰 OrderOptions", orderOptions)
+		const newOrder = await Order.create(orderOptions)
+		console.log("🧰 New Order", newOrder)
 	} catch (error) {
 		console.log('🧰🧰Paystack Webhook Error', error.message)
 	}
