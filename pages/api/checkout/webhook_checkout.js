@@ -1,11 +1,10 @@
 import crypto from 'crypto'
 import { dbConnect } from '../../../lib/db-utils'
+i
 import Order from '../../../models/order-model'
 import User from '../../../models/user-model'
 
 const handler = async (req, res) => {
-	console.log('💳 webhookcheckout Hit ')
-
 	if (req.method !== 'POST') {
 		res
 			.status(400)
@@ -41,8 +40,11 @@ const handler = async (req, res) => {
 		return
 	}
 
+	const clientEmail = EVENT.customer.email
+	console.log(clientEmail)
+
 	try {
-		IS_USER = await User.findOne({ email: EVENT.customer.email })
+		IS_USER = await User.findOne({ email: clientEmail })
 	} catch (error) {
 		IS_USER = false
 	}
@@ -55,7 +57,7 @@ const handler = async (req, res) => {
 		const userOptions = {
 			firstName: customerDetails.firstName,
 			lastName: customerDetails.lastName,
-			email: EVENT.customerDetails.email,
+			email: clientEmail,
 			phoneNumber: '1234_dummy_numberfor_now',
 			confirmPassword: AUTO_USER_PASSWORD,
 			password: AUTO_USER_PASSWORD,
@@ -90,7 +92,7 @@ const handler = async (req, res) => {
 		paid_at: formattedPaidAt,
 		payment_status: EVENT.data.status,
 		totalAmount: +EVENT.data.amount / 100,
-		userEmail: EVENT.customer.email,
+		userEmail: clientEmail,
 	}
 
 	try {
