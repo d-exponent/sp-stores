@@ -7,7 +7,6 @@ const userSchema = new mongoose.Schema({
 	firstName: {
 		type: String,
 		required: [true, 'Please enter your first name'],
-		capitalize: true,
 		trim: true,
 	},
 	lastName: {
@@ -27,7 +26,6 @@ const userSchema = new mongoose.Schema({
 	phoneNumber: {
 		type: String,
 		trim: true,
-		required: [true, 'Please enter your phone number'],
 	},
 	password: {
 		type: String,
@@ -64,17 +62,6 @@ const userSchema = new mongoose.Schema({
 	},
 })
 
-userSchema.indexes({ email: 1 })
-
-userSchema.pre('save', function (next) {
-	if (this.password === process.env.ON_PAY_PAYSTACK_WEBHOOK_USER) {
-		this.regMethod = 'auto_on_paystack_payment'
-		return next()
-	}
-
-	this.regMethod = 'credentials'
-	next()
-})
 
 //let's hash the password
 userSchema.pre('save', async function (next) {

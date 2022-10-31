@@ -30,13 +30,7 @@ async function handler(req, res) {
 		const bagitems = eventMetadata['bag_items']
 		const { email, firstName, lastName } = eventMetadata['customer_details']
 
-		console.log(email)
-		console.log(bagitems)
-
 		await dbConnect()
-
-		console.log(email)
-		console.log(bagitems)
 
 		//Create order document
 		try {
@@ -52,32 +46,29 @@ async function handler(req, res) {
 				userEmail: email,
 			})
 
-			console.log(`👍 Order for ${email} created successfully @ ${now}`)
+			console.log(`👍 Order for ${email} created successfully at ${now}`)
 		} catch (error) {
 			console.log(error.message || '💳💳Error creating order document')
 		}
 
-		// if (IS_USER === false) {
-		// 	try {
-		// 		// Create a new user document
-		// 		await User.create({
-		// 			firstName: firstName,
-		// 			lastName: lastName,
-		// 			email,
-		// 			phoneNumber: '1234_dummy_numberfor_now',
-		// 			confirmPassword: process.env.ON_PAY_PAYSTACK_WEBHOOK_USER,
-		// 			password: process.env.ON_PAY_PAYSTACK_WEBHOOK_USER,
-		// 		})
-		// 	} catch (error) {
-		// 		console.log('⚠ Error creating user', error.message)
-		// 	}
-		// }
+		//Handle new user if user doesn't exist
+		try {
+			const isUser = await User.findOne({ email })
 
-		// try {
-		// 	console.log('🧰 New Order', newOrder)
-		// } catch (error) {
-		// 	console.log('🧰Error creating order document', error.message)
-		// }
+			if (!isUser) {
+				const newUser = await User.create({
+					firstName,
+					lastName,
+					email,
+					password: process.env.ON_PAY_PAYSTACK_WEBHOOK_USER,
+					confirmPassword: process.env.ON_PAY_PAYSTACK_WEBHOOK_USER,
+					regMethod: 'auto_on_paystack_payment',
+				})
+				console.log(`👍 New user with email address ${newUser.email} created at ${now}`)
+			}
+		} catch (error) {
+			console.log(`🧰${error.message || 'Error creating user'}`)
+		}
 	}
 }
 

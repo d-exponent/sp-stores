@@ -78,7 +78,6 @@ const productSchema = new mongoose.Schema(
 	}
 )
 
-// productSchema.indexes({ slug: 1 }, { unique: true })
 
 productSchema.virtual('priceAsCurrency').get(function () {
 	return formatToCurrency(this.price)
