@@ -68,6 +68,8 @@ async function handler(req, res) {
 			console.log('Error creating user document')
 		}
 	}
+
+	res.status(401).send(null)
 }
 
 export default handler
