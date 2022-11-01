@@ -47,65 +47,61 @@ export const createSession = catchAsync(async (req, res) => {
 
 export const webhookCheckout = catchAsync(async (req, res) => {
 	const hash = crypto
-		.createHmac('sha512', PAYSTACK_SECRET)
+		.createHmac('sha512', process.env.PAYSTACK_SECRET_KEY)
 		.update(JSON.stringify(req.body))
 		.digest('hex')
 
-	// Validate request payload from paystack
+	//Validate request payload from paystack
 	if (hash == req.headers['x-paystack-signature']) {
-		console.log('👍 Confirmed paystack request at: =>' + now)
 		res.send(200)
-	} else {
-		return responseSender(res, 403, { success: false, message: null })
-	}
 
-	const event = req.body
-	const { data } = event
+		const EVENT = purify(req.body)
+		const eventData = EVENT.data
+		const bagitems = eventData.metadata['bag_items']
+		const { email, firstName, lastName } = eventData.metadata['customer_details']
 
-	const autoUserPassword = ON_PAY_PAYSTACK_WEBHOOK_USER
+		const orderConfig = {
+			currency: eventData.currency,
+			items: bagitems,
+			paystack_ref: eventData.reference,
+			payment_method: eventData.channel,
+			paystack_fees: +eventData.fees / 100,
+			paid_at: Date.now() + '',
+			payment_status: eventData.status,
+			totalAmount: +eventData.amount / 100,
+			userEmail: email,
+		}
 
-	try {
+		const userConfig = {
+			firstName,
+			lastName,
+			email,
+			password: process.env.ON_PAY_PAYSTACK_WEBHOOK_USER,
+			confirmPassword: process.env.ON_PAY_PAYSTACK_WEBHOOK_USER,
+			regMethod: 'auto_on_paystack_payment',
+		}
+
 		await dbConnect()
-		// Check if the user already exists in the database
-		const isUser = await User.findOne({ email: event.customer.email })
-
-		if (!isUser) {
-			// Create a new user document
-			const customer = data.metadata['customer_details']
-			await User.create({
-				firstName: customer.firstName,
-				lastName: customer.lastName,
-				email: event.customer.email,
-				phoneNumber: '1234_dummy_numberfor_now',
-				confirmPassword: autoUserPassword,
-				password: autoUserPassword,
-			})
+		// Create Order document
+		try {
+			await Order.create(orderConfig)
+		} catch (error) {
+			console.log(
+				'🧰🧰 Auto create order error at webhook_checkout Controller',
+				error.message
+			)
 		}
 
-		let formattedPaidAt
-		if (event.paidAt) {
-			const fmtDateConfig = {
-				day: 'numeric',
-				month: 'long',
-				year: 'numeric',
-			}
-
-			formattedPaidAt = new Date(event.paidAt).toLocaleDateString('en-US', fmtDateConfig)
+		try {
+			await User.create(userConfig)
+		} catch (error) {
+			console.log(
+				'🧰🧰 Auto create User error at webhook_checkout controller',
+				error.message
+			)
 		}
-
-		//Create order document
-		await Order.create({
-			currency: data.currency,
-			items: data.metadata['bag_items'],
-			paystack_ref: data.reference,
-			payment_method: data.channel,
-			paystack_fees: +data.fees / 100,
-			paid_at: formattedPaidAt,
-			payment_status: data.status,
-			totalAmount: +data.amount / 100,
-			userEmail: event.customer.email,
-		})
-	} catch (error) {
-		console.log('🧰🧰Paystack Webhook Error', error.message)
 	}
+
+	res.status(403).send(null)
+
 })

@@ -24,9 +24,10 @@ function handleMongooseValidationError(err) {
 }
 
 function sendProdError(res, err) {
-	//Expose error message for operational errors
+	const jsonRes = { success: false, message: err.message }
+
 	if (err.isOperational) {
-		const jsonRes = { success: false, message: err.message }
+		//Expose error message for operational errors
 		return responseSender(res, err.status, jsonRes)
 	}
 
@@ -61,6 +62,8 @@ function handleError(err, req, res, next) {
 			err,
 		})
 	}
+
+
 
 	//Production Mode
 	sendProdError(res, error)
