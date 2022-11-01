@@ -21,11 +21,11 @@ async function handler(req, res) {
 		res.send(200)
 
 		const EVENT = purify(req.body)
-		
+
 		const eventData = EVENT.data
 		const bagitems = eventData.metadata['bag_items']
 		const { email, firstName, lastName } = eventData.metadata['customer_details']
-		
+
 		const orderConfig = {
 			currency: eventData.currency,
 			items: bagitems,
@@ -37,7 +37,7 @@ async function handler(req, res) {
 			totalAmount: +eventData.amount / 100,
 			userEmail: email,
 		}
-		
+
 		const userConfig = {
 			firstName,
 			lastName,
@@ -46,18 +46,27 @@ async function handler(req, res) {
 			confirmPassword: process.env.ON_PAY_PAYSTACK_WEBHOOK_USER,
 			regMethod: 'auto_on_paystack_payment',
 		}
-		
+
 		console.log('👍 Received Paystack EVENT at: =>', new Date(Date.now()).toISOString())
-		console.log(userConfig)
+		console.log('🧰 User Config', userConfig)
+		console.log('🧰 Order config', orderConfig)
 
 		await dbConnect()
 
-		//Create order document
-		await Order.create(orderConfig)
+		try {
+			//Create order document
+			await Order.create(orderConfig)
+		} catch (err) {
+			console.log('Error creating order document')
+		}
 
-		// Will throw a duplicate error if user already exists
-		// Or will create a new user Otherwise
-		await User.create(userConfig)
+		try {
+			// Will throw a duplicate error if user already exists
+			// Or will create a new user Otherwise
+			await User.create(userConfig)
+		} catch (err) {
+			console.log('Error creating user document')
+		}
 	}
 }
 
