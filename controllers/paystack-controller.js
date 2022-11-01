@@ -53,8 +53,6 @@ export const webhookCheckout = catchAsync(async (req, res) => {
 
 	//Validate request payload from paystack
 	if (hash == req.headers['x-paystack-signature']) {
-		res.send(200)
-
 		const EVENT = purify(req.body)
 		const eventData = EVENT.data
 		const bagitems = eventData.metadata['bag_items']
@@ -84,7 +82,7 @@ export const webhookCheckout = catchAsync(async (req, res) => {
 		console.log('🧰Order confiq', orderConfig)
 		console.log('🧰User confiq', userConfig)
 
-		// Create Order document
+		// Create documents
 		try {
 			await dbConnect()
 			await Order.create(orderConfig)
@@ -92,6 +90,8 @@ export const webhookCheckout = catchAsync(async (req, res) => {
 		} catch (error) {
 			console.log('🧰🧰 Error at webhook_checkout Controller', error.message)
 		}
+
+		return res.send(200)
 	}
 
 	res.status(403).send(null)
