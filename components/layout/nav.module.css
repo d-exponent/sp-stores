@@ -7,8 +7,9 @@
 
 .navLink,
 .navLogo {
-    display: grid;
+    display: flex;
     place-content: center;
+    align-items: flex-end;
 }
 
 .navLogo {

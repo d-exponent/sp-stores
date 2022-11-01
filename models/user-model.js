@@ -62,7 +62,6 @@ const userSchema = new mongoose.Schema({
 	},
 })
 
-
 //let's hash the password
 userSchema.pre('save', async function (next) {
 	//Exit if this isn't a new document

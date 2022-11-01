@@ -9,21 +9,11 @@ import { HiOutlineShoppingBag } from 'react-icons/hi'
 import classes from './nav.module.css'
 
 const Nav = () => {
-	const [isLoggedin, setIsLoggedin] = useState(false)
 	const [itemsCount, setItemsCount] = useState('')
-
-	const router = useRouter()
-	const session = useSession()
-
 	const { items } = useContext(ShoppingItemsContext)
 
-	useEffect(() => {
-		if (session.status === 'authenticated') {
-			return setIsLoggedin(true)
-		}
-		//Else
-		setIsLoggedin(false)
-	}, [session.status])
+	const router = useRouter()
+	const { status: authStatus } = useSession()
 
 	useEffect(() => {
 		setItemsCount(`${items.length}`)
@@ -48,26 +38,25 @@ const Nav = () => {
 
 	return (
 		<nav className={classes.nav}>
-			{isLoggedin ? (
+			{authStatus === 'authenticated' ? (
 				<div className={classes.navLink}>
 					<LogoutButton />
 				</div>
 			) : null}
-
-			{!isLoggedin ? (
+				
+			{authStatus !== 'authenticated' && authStatus !== 'loading' ? (
 				<div onClick={handlePushToAuthPage} className={classes.navLink}>
-					<a>
-						<span>Login</span>
-						<span>\Register</span>
-					</a>
+					<p>
+						Login<span>\Register</span>
+					</p>
 				</div>
 			) : null}
 
 			<Link href={'/shopping-bag'}>
 				<a className={classes.navLink}>
-					<span className={bagLogoClasses} data-items-count={itemsCount}>
+					<div className={bagLogoClasses} data-items-count={itemsCount}>
 						<HiOutlineShoppingBag />
-					</span>
+					</div>
 				</a>
 			</Link>
 		</nav>

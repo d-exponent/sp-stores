@@ -9,6 +9,10 @@ import { handleSignIn, submitUserToApi } from '../lib/auth-page-utils'
 import Notification from '../lib/notification-client'
 import classes from './authentication.module.css'
 
+const getErrorMessage = (error) =>
+	error.message || "It's not you, it's us. Please try again! 😭"
+
+
 const Authentication = () => {
 	const [disableLoginBtn, setDisableLoginBtn] = useState(false)
 	const [disableRegisterBtn, setDisableRegisterBtn] = useState(false)
@@ -63,38 +67,34 @@ const Authentication = () => {
 				router.replace(router.query.callback || '/')
 			} catch (error) {
 				setDisableLoginBtn(false)
-				const errorNotification = new Notification(
-					error.message || "It's not you, it's us. Please try again! 😭"
-				).error()
+
+				const errorNotification = new Notification(getErrorMessage(error)).error()
 				showNotification(errorNotification)
 			}
+
+			return
 		}
 
 		//Register form
-		if (!isLogin) {
-			setDisableRegisterBtn(true)
-			const pendingNotification = new Notification('Creating your account...').pending()
-			showNotification(pendingNotification)
+		setDisableRegisterBtn(true)
+		const pendingNotification = new Notification('Creating your account...').pending()
+		showNotification(pendingNotification)
 
-			try {
-				await submitUserToApi(registerForm)
+		try {
+			await submitUserToApi(registerForm)
 
-				//Automatically Login user
-				await handleSignIn(signIn, registerForm, 'Something went wrong!')
-				const successNotification = new Notification(
-					'Account created successfully 👍'
-				).success()
-				showNotification(successNotification)
+			await handleSignIn(signIn, registerForm, 'Something went wrong!')
 
-				router.replace(router.query.callback || '/')
-			} catch (error) {
-				setDisableRegisterBtn(false)
-				const errorNotification = new Notification(
-					error.message || "It's not you, it's us. Please try again! 😭"
-				).error()
+			const successMessage = 'Your account is created successfully 👍'
+			const successNotification = new Notification(successMessage).success()
+			showNotification(successNotification)
 
-				showNotification(errorNotification)
-			}
+			router.replace(router.query.callback || '/')
+		} catch (error) {
+			setDisableRegisterBtn(false)
+
+			const errorNotification = new Notification(getErrorMessage(error)).error()
+			showNotification(errorNotification)
 		}
 	}
 

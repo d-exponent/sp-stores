@@ -5,8 +5,11 @@ import { dbConnect } from '../lib/db-utils'
 import { responseSender } from '../lib/controller-utils'
 
 export const createUser = catchAsync(async (req, res) => {
+
 	await dbConnect()
-	await User.create(req.body)
+	const userOptions = { ...req.body, regMethod: 'credentials' }
+
+	await User.create(userOptions)
 
 	responseSender(res, 201, { success: true })
 })
