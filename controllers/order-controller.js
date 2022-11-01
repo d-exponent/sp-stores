@@ -5,6 +5,8 @@ import AppError from '../lib/app-error'
 import { dbConnect } from '../lib/db-utils'
 import { responseSender } from '../lib/controller-utils'
 
+
+
 export const getAllOrders = catchAsync(async (req, res) => {
 	await dbConnect()
 	const orders = await Order.find({})
@@ -13,10 +15,10 @@ export const getAllOrders = catchAsync(async (req, res) => {
 })
 
 export const createOrder = catchAsync(async (req, res) => {
+
+	console.log("creating order...")
 	await dbConnect()
-
 	const order = await Order.create(req.body)
-
 	responseSender(res, 201, { success: true, data: order })
 })
 

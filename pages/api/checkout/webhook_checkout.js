@@ -1,14 +1,12 @@
 import crypto from 'crypto'
+import axios from 'axios'
 
-import { dbConnect } from '../../../lib/db-utils'
 import { purify } from '../../../lib/utils'
-import Order from '../../../models/order-model'
-import User from '../../../models/user-model'
+import { getHost } from '../../../lib/controller-utils'
 
 async function handler(req, res) {
 	if (req.method !== 'POST') {
-		res.status(404).send('Only post request allowed')
-		return
+		return res.status(404).send('Only post request allowed')
 	}
 
 	const hash = crypto
@@ -16,12 +14,18 @@ async function handler(req, res) {
 		.update(JSON.stringify(req.body))
 		.digest('hex')
 
-	// Validate request payload from paystack
+	//Validate request payload from paystack
 	if (hash == req.headers['x-paystack-signature']) {
 		res.send(200)
 
-		const EVENT = purify(req.body)
+		const host = getHost(req)
+		const protocol = 'https'
+		const createOrderUrl = `${protocol}://${host}/api/orders`
+		const createUserUrl = `${protocol}://${host}/api/auth/users/register`
 
+		console.log('🧰 Host ', host)
+
+		const EVENT = purify(req.body)
 		const eventData = EVENT.data
 		const bagitems = eventData.metadata['bag_items']
 		const { email, firstName, lastName } = eventData.metadata['customer_details']
@@ -47,28 +51,25 @@ async function handler(req, res) {
 			regMethod: 'auto_on_paystack_payment',
 		}
 
-		console.log('👍 Received Paystack EVENT at: =>', new Date(Date.now()).toISOString())
-		console.log('🧰 User Config', userConfig)
-		console.log('🧰 Order config', orderConfig)
-
-		await dbConnect()
-
+		// Create Order document
 		try {
-			//Create order document
-			await Order.create(orderConfig)
-		} catch (err) {
-			console.log('Error creating order document')
+			await axios.post(createOrderUrl, orderConfig)
+		} catch (error) {
+			console.log(error.message)
 		}
 
+		// Create User document
 		try {
-			// Will throw a duplicate error if user already exists
-			// Or will create a new user Otherwise
-			await User.create(userConfig)
-		} catch (err) {
-			console.log('Error creating user document')
+			/**
+			 * A duplicate error exception will be thrown if the user..
+			 * exists .. We dont care about that.
+			 * Else=> A new user will be created. This is what we care about
+			 */
+			await axios.post(createUserUrl, userConfig)
+		} catch (error) {
+			console.log(error.message)
 		}
 	}
-
 	res.status(401).send(null)
 }
 
