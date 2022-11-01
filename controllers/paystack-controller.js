@@ -81,27 +81,18 @@ export const webhookCheckout = catchAsync(async (req, res) => {
 			regMethod: 'auto_on_paystack_payment',
 		}
 
-		await dbConnect()
+		console.log('🧰Order confiq', orderConfig)
+		console.log('🧰User confiq', userConfig)
+
 		// Create Order document
 		try {
+			await dbConnect()
 			await Order.create(orderConfig)
-		} catch (error) {
-			console.log(
-				'🧰🧰 Auto create order error at webhook_checkout Controller',
-				error.message
-			)
-		}
-
-		try {
 			await User.create(userConfig)
 		} catch (error) {
-			console.log(
-				'🧰🧰 Auto create User error at webhook_checkout controller',
-				error.message
-			)
+			console.log('🧰🧰 Error at webhook_checkout Controller', error.message)
 		}
 	}
 
 	res.status(403).send(null)
-
 })
