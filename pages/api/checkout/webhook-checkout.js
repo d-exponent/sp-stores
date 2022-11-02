@@ -1,22 +1,26 @@
 import crypto from 'crypto'
-import { MongoClient } from 'mongodb'
 
 import { dbConnect } from '../../../lib/db-utils'
 import Order from '../../../models/order-model'
 import User from '../../../models/user-model'
 
-// async function getMongoClient() {
-// 	try {
-// 		const client = await MongoClient.connect(
-// 			`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.ntzames.mongodb.net/${process.env.DB}?retryWrites=true&w=majority`
-// 		)
-// 		return client
-// 	} catch (err) {
-// 		console.log(err.message || 'Error getting mongoDb clinet')
-// 	}
-// }
+/**
+ * We kept running into an error where await operations were not run
+ * by the handler function.
+ * So we are connecting to the database as soon as this file is run with an IEFE
+ * and using callback operations to insert documents to our MongoDB collections
+ */
 
-async function handler(req, res) {
+//Connect to database
+;(async () => {
+	try {
+		await dbConnect()
+	} catch (error) {
+		console.log(error.message)
+	}
+})()
+
+const handler = async (req, res) => {
 	if (req.method !== 'POST') {
 		return
 	}
@@ -34,11 +38,7 @@ async function handler(req, res) {
 		const { metadata } = eventData
 		const { firstName, lastName } = metadata['customer_names']
 
-		if (req.body.event === 'charge.success') {
-			res.status(200).send(200)
-		}
-
-		const orderConfig = {
+		const newOrder = new Order({
 			currency: eventData.currency,
 			items: metadata['bag_items_ids'],
 			paystack_ref: eventData.reference,
@@ -49,30 +49,25 @@ async function handler(req, res) {
 			totalAmount: +eventData.amount / 100,
 			userEmail: eventData.customer.email,
 			customerCode: eventData.customer.customer_code,
-		}
+		})
 
-		console.log('💳Order Confiq', orderConfig)
-
-		const userConfig = {
+		const newUser = new User({
 			firstName,
 			lastName,
 			email: eventData.customer.email,
 			password: process.env.ON_PAY_PAYSTACK_WEBHOOK_USER,
 			confirmPassword: process.env.ON_PAY_PAYSTACK_WEBHOOK_USER,
 			regMethod: 'auto_on_paystack_payment',
-		}
+		})
 
-		console.log('💳User Confiq', userConfig)
+		console.log(newUser)
+		console.log(newOrder)
 
-		try {
-			await dbConnect()
-			console.log('💳Creating Order document ...')
-			await Order.create(orderConfig)
-			// await User.create(userConfig)
+		newOrder.save((err) => console.log(err.message))
+		newUser.save((err) => console.log(err.message))
 
-			console.log('💳Documents created successfully ...')
-		} catch (err) {
-			console.log('🧰' + err.message)
+		if (req.body.event === 'charge.success') {
+			res.status(200).send(200)
 		}
 		return
 	}

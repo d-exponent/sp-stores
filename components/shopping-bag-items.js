@@ -44,11 +44,7 @@ const ShoppingBagItems = () => {
 		const [firstName, lastName] = user.name.split(' ')
 
 		const checkoutData = {
-			client: {
-				firstName,
-				lastName,
-				email: user.email,
-			},
+			client: { firstName, lastName, email: user.email },
 			items: {
 				totalPrice: getCheckoutPrice(items) * 100,
 				ids: getItemsIds(items),
@@ -72,7 +68,6 @@ const ShoppingBagItems = () => {
 			).error()
 			return showNotification(errorNotification)
 		}
-		localStorage.clear()
 		window.location.href = data.auth_url
 	}
 
