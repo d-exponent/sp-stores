@@ -46,6 +46,7 @@ export const createSession = catchAsync(async (req, res) => {
 })
 
 export const webhookCheckout = catchAsync(async (req, res) => {
+	console.log('🧰WEBHOOK CHECKOUT HIT AT : ', new Date(Date.now()).toTimeString())
 	const hash = crypto
 		.createHmac('sha512', process.env.PAYSTACK_SECRET_KEY)
 		.update(JSON.stringify(req.body))
@@ -53,6 +54,8 @@ export const webhookCheckout = catchAsync(async (req, res) => {
 
 	//Validate request payload from paystack
 	if (hash == req.headers['x-paystack-signature']) {
+		console.log('Paystack signature verified🧰')
+		res.send(200)
 		const EVENT = purify(req.body)
 		const eventData = EVENT.data
 		const bagitems = eventData.metadata['bag_items']
@@ -64,7 +67,7 @@ export const webhookCheckout = catchAsync(async (req, res) => {
 			paystack_ref: eventData.reference,
 			payment_method: eventData.channel,
 			paystack_fees: +eventData.fees / 100,
-			paid_at: Date.now() + '',
+			paid_at: new Date(Date.now()).toISOString(),
 			payment_status: eventData.status,
 			totalAmount: +eventData.amount / 100,
 			userEmail: email,
@@ -82,16 +85,26 @@ export const webhookCheckout = catchAsync(async (req, res) => {
 		console.log('🧰Order confiq', orderConfig)
 		console.log('🧰User confiq', userConfig)
 
-		// Create documents
 		try {
 			await dbConnect()
-			await Order.create(orderConfig)
-			await User.create(userConfig)
 		} catch (error) {
-			console.log('🧰🧰 Error at webhook_checkout Controller', error.message)
+			console.log(error.message || '🧰connecting to database failed')
 		}
 
-		return res.send(200)
+		// Create documents
+		try {
+			await Order.create(orderConfig)
+		} catch (error) {
+			console.log(error.message || '🧰Error creating order document')
+		}
+
+		try {
+			await User.create(userConfig)
+		} catch (error) {
+			console.log(error.message || '🧰Error creating user document')
+		}
+
+		return
 	}
 
 	res.status(403).send(null)
