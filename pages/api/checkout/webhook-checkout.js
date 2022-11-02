@@ -23,10 +23,6 @@ async function handler(req, res) {
 
 	//Validate request payload from paystack
 	if (hash == req.headers['x-paystack-signature']) {
-		console.log('💳Incoming Paystack event at=>', new Date(Date.now()).toISOString())
-
-		res.status(200).send(200)
-
 		const event = purify(req.body)
 		const eventData = event.data
 		const { metadata } = eventData
@@ -68,6 +64,8 @@ async function handler(req, res) {
 				newUser.save((err) => console.log(err ? err.message : successMsg('User')))
 			})
 			.catch(() => console.log('Could not connect to mongodb'))
+
+		res.status(200).send(200)
 	}
 }
 
