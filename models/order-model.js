@@ -15,6 +15,7 @@ const orderSchema = new mongoose.Schema(
 			type: Date,
 			default: Date.now(),
 		},
+		customerCode: String,
 		totalAmount: {
 			type: Number,
 			required: [true, 'An order must have a total amount of purchase'],

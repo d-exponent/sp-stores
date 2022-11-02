@@ -15,11 +15,10 @@ export const createSession = catchAsync(async (req, res) => {
 		amount: items.totalPrice,
 		currency: 'NGN',
 		metadata: {
-			bag_items: items.ids,
-			customer_details: {
+			bag_items_ids: items.ids,
+			customer_names: {
 				firstName: client.firstName,
 				lastName: client.lastName,
-				email: client.email,
 				// TODO: add users phone number after 2fa implementation
 			},
 		},
@@ -40,5 +39,3 @@ export const createSession = catchAsync(async (req, res) => {
 
 	responseSender(res, 200, { success: true, auth_url: authorization_url })
 })
-
-
