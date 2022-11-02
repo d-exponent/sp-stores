@@ -1,4 +1,5 @@
 import Home from '../components/home'
+import removePaystackRef from '../middlewares/remove-pasystack-ref'
 import { getAllCollectionDirectoryData } from '../lib/collection-utils'
 import { getProductsByCategory } from '../lib/db-utils'
 
@@ -6,7 +7,7 @@ export default function HomePage(props) {
 	return <Home {...props} />
 }
 
-export async function getStaticProps() {
+export const getServerSideProps = removePaystackRef(async () => {
 	//Get markdown data for  collections
 	const markdownDataObj = getAllCollectionDirectoryData()
 	const collectionMetaData = markdownDataObj.map((result) => result.data)
@@ -34,4 +35,4 @@ export async function getStaticProps() {
 	} catch (e) {
 		return { notFound: true }
 	}
-}
+})

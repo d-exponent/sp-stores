@@ -11,7 +11,7 @@ import { purify } from '../../../lib/utils'
  * So we are using callback operations to insert documents to our MongoDB collections
  */
 
-async function handler(req, res) {
+function handler(req, res) {
 	if (req.method !== 'POST') {
 		return
 	}
@@ -50,18 +50,18 @@ async function handler(req, res) {
 			regMethod: 'auto_on_paystack_payment',
 		})
 
+		const mongoDbConnectionString = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.ntzames.mongodb.net/${process.env.DB}?retryWrites=true&w=majority`
+
+		const mongooseConnectConfig = {
+			useNewUrlParser: true,
+			useUnifiedTopology: true,
+		}
+
 		mongoose
-			.connect(
-				`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.ntzames.mongodb.net/${process.env.DB}?retryWrites=true&w=majority`,
-				{
-					useNewUrlParser: true,
-					useUnifiedTopology: true,
-				}
-			)
+			.connect(mongoDbConnectionString, mongooseConnectConfig)
 			.then(() => {
-				const successMsg = (model) => `New ${model} doc was created successfully 👍`
-				newOrder.save((err) => console.log(err ? err.message : successMsg('Order')))
-				newUser.save((err) => console.log(err ? err.message : successMsg('User')))
+				newOrder.save((err) => (err ? console.log(err.message) : ''))
+				newUser.save((err) => (err ? console.log(err.message) : ''))
 			})
 			.catch(() => console.log('Could not connect to mongodb'))
 
