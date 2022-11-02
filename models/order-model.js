@@ -20,7 +20,7 @@ const orderSchema = new mongoose.Schema(
 			type: Number,
 			required: [true, 'An order must have a total amount of purchase'],
 		},
-		paid_at: String,
+		paid_at: Date,
 		paystack_ref: String,
 		paystack_fees: {
 			type: Number,
