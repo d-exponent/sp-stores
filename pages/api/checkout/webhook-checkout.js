@@ -1,8 +1,20 @@
 import crypto from 'crypto'
+import { MongoClient } from 'mongodb'
 
 import { dbConnect } from '../../../lib/db-utils'
 import Order from '../../../models/order-model'
 import User from '../../../models/user-model'
+
+// async function getMongoClient() {
+// 	try {
+// 		const client = await MongoClient.connect(
+// 			`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.ntzames.mongodb.net/${process.env.DB}?retryWrites=true&w=majority`
+// 		)
+// 		return client
+// 	} catch (err) {
+// 		console.log(err.message || 'Error getting mongoDb clinet')
+// 	}
+// }
 
 async function handler(req, res) {
 	if (req.method !== 'POST') {
@@ -32,12 +44,14 @@ async function handler(req, res) {
 			paystack_ref: eventData.reference,
 			payment_method: eventData.channel,
 			paystack_fees: +eventData.fees / 100,
-			paid_at: eventData.paidAt,
+			paid_at: new Date(eventData.paidAt).toUTCString(),
 			payment_status: eventData.status,
 			totalAmount: +eventData.amount / 100,
 			userEmail: eventData.customer.email,
 			customerCode: eventData.customer.customer_code,
 		}
+
+		console.log('💳Order Confiq', orderConfig)
 
 		const userConfig = {
 			firstName,
@@ -48,26 +62,18 @@ async function handler(req, res) {
 			regMethod: 'auto_on_paystack_payment',
 		}
 
+		console.log('💳User Confiq', userConfig)
+
 		try {
 			await dbConnect()
-		} catch (err) {
-			console.log(err.message || 'Error connection to database')
-		}
-
-		// Create documents
-		try {
+			console.log('💳Creating Order document ...')
 			await Order.create(orderConfig)
+			// await User.create(userConfig)
+
+			console.log('💳Documents created successfully ...')
 		} catch (err) {
-			console.log(err.message || '🧰Error creating order document')
+			console.log('🧰' + err.message)
 		}
-
-		// Create new User if he/she doesnt exist
-		// try {
-		// 	await User.create(userConfig)
-		// } catch (err) {
-		// 	console.log(err.message || '🧰Error creating user document')
-		// }
-
 		return
 	}
 

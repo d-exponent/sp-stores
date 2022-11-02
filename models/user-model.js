@@ -23,13 +23,9 @@ const userSchema = new mongoose.Schema({
 		validate: [isValidEmail, 'Please enter a valid email address'],
 		unique: true,
 	},
-	phoneNumber: {
-		type: String,
-		trim: true,
-	},
+	phoneNumber: String,
 	password: {
 		type: String,
-		trim: true,
 		min: [8, 'Password must be at least 8 characters long'],
 		required: true,
 		select: false,
@@ -48,6 +44,7 @@ const userSchema = new mongoose.Schema({
 	regMethod: {
 		type: String,
 		enum: ['credentials', 'auto_on_paystack_payment'],
+		default: 'credentials'
 	},
 	role: {
 		type: String,
