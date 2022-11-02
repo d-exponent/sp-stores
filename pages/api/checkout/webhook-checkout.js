@@ -72,8 +72,8 @@ async function handler(req, res) {
 				}
 			)
 			.then(() => {
-				newOrder.save((err) => console.log(err.message))
-				newUser.save((err) => console.log(err.message))
+				newOrder.save((err) => console.log(err))
+				newUser.save((err) => console.log(err))
 			})
 			.catch(() => console.log('Could not connect to mongodb'))
 	}
