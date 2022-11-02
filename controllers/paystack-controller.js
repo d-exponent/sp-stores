@@ -55,7 +55,7 @@ export const webhookCheckout = catchAsync(async (req, res) => {
 	//Validate request payload from paystack
 	if (hash == req.headers['x-paystack-signature']) {
 		console.log('Paystack signature verified🧰')
-		res.send(200)
+
 		const EVENT = purify(req.body)
 		const eventData = EVENT.data
 		const bagitems = eventData.metadata['bag_items']
@@ -104,8 +104,6 @@ export const webhookCheckout = catchAsync(async (req, res) => {
 			console.log(error.message || '🧰Error creating user document')
 		}
 
-		return
+		return res.send(200)
 	}
-
-	res.status(403).send(null)
 })
