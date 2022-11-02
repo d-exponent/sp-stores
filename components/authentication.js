@@ -6,12 +6,10 @@ import Register from './forms/register'
 import CredentialsSignIn from './credentials-signin'
 import NotificationContext from '../context/notification'
 import { handleSignIn, submitUserToApi } from '../lib/auth-page-utils'
-import Notification from '../lib/notification-client'
 import classes from './authentication.module.css'
 
 const getErrorMessage = (error) =>
 	error.message || "It's not you, it's us. Please try again! 😭"
-
 
 const Authentication = () => {
 	const [disableLoginBtn, setDisableLoginBtn] = useState(false)
@@ -54,22 +52,18 @@ const Authentication = () => {
 		if (isLogin) {
 			setDisableLoginBtn(true)
 
-			const pendingNotification = new Notification('Logging you in... 🐱‍🏍').pending()
-			showNotification(pendingNotification)
+			showNotification('Logging you in... 🐱‍🏍').pending()
 
 			try {
 				const fallbackMsg = 'ERROR! Please check your internet connection and try again!'
 
 				await handleSignIn(signIn, loginForm, fallbackMsg)
-				const successNotification = new Notification('Login successfull 👌').success()
-				showNotification(successNotification)
+				showNotification('Login successfull 👌').success()
 
 				router.replace(router.query.callback || '/')
 			} catch (error) {
 				setDisableLoginBtn(false)
-
-				const errorNotification = new Notification(getErrorMessage(error)).error()
-				showNotification(errorNotification)
+				showNotification(getErrorMessage(error)).error()
 			}
 
 			return
@@ -77,24 +71,19 @@ const Authentication = () => {
 
 		//Register form
 		setDisableRegisterBtn(true)
-		const pendingNotification = new Notification('Creating your account...').pending()
-		showNotification(pendingNotification)
+		showNotification('Creating your account...').pending()
 
 		try {
 			await submitUserToApi(registerForm)
-
 			await handleSignIn(signIn, registerForm, 'Something went wrong!')
 
 			const successMessage = 'Your account is created successfully 👍'
-			const successNotification = new Notification(successMessage).success()
-			showNotification(successNotification)
+			showNotification(successMessage).success()
 
 			router.replace(router.query.callback || '/')
 		} catch (error) {
 			setDisableRegisterBtn(false)
-
-			const errorNotification = new Notification(getErrorMessage(error)).error()
-			showNotification(errorNotification)
+			showNotification(getErrorMessage(error)).error()
 		}
 	}
 

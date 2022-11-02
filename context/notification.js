@@ -1,7 +1,8 @@
 import { createContext, useState, useEffect } from 'react'
+import Notification from '../lib/notification-client'
 
 const NotificationContext = createContext({
-	notificationContent: {},
+	notificationContent: Object,
 	showNotification: function (content) {},
 })
 
@@ -11,14 +12,18 @@ export const NotificationContextProvider = (props) => {
 	useEffect(() => {
 		const timer = setTimeout(() => {
 			setContent(null)
-		}, 3700)
+		}, 5000)
 
 		return () => clearTimeout(timer)
 	}, [content])
 
+	function showNotifcationHandler(message) {
+		return new Notification(message, setContent)
+	}
+
 	const context = {
 		notificationContent: content,
-		showNotification: (content) => setContent(content),
+		showNotification: showNotifcationHandler,
 	}
 
 	return (

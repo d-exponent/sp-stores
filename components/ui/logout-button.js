@@ -3,29 +3,23 @@ import { useRouter } from 'next/router'
 import { useContext } from 'react'
 
 import NotificationContext from '../../context/notification'
-import Notification from '../../lib/notification-client'
 
 const LogoutButton = (props) => {
 	const router = useRouter()
-	const notficationCtx = useContext(NotificationContext)
+	const { showNotification } = useContext(NotificationContext)
 
 	async function handleSignOut() {
-		const pendingNotification = new Notification('Logging out...').pending()
-		notficationCtx.showNotification(pendingNotification)
 
+		showNotification('Logging out...').pending()
 		const callbackPath = router.asPath === '/auth/users' ? '/' : router.asPath
 
 		try {
 			const result = await signOut({ redirect: false, callbackUrl: callbackPath })
-			const successNotification = new Notification('Logged out successfully').success()
-			notficationCtx.showNotification(successNotification)
+			showNotification('Logged out successfully').success()
 
 			router.replace(result.url)
 		} catch (error) {
-			const errorNotification = new Notification(
-				'Error logging out! Please try again'
-			).error()
-			notficationCtx.showNotification(errorNotification)
+			showNotification('Error logging out! Please try again').error()
 		}
 	}
 

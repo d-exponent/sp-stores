@@ -10,9 +10,7 @@ import User from '../../../models/user-model'
  * So we are using callback operations to insert documents to our MongoDB collections
  */
 
-//Connect to database
-
-const handler = async (req, res) => {
+async function handler(req, res) {
 	if (req.method !== 'POST') {
 		return
 	}
@@ -68,11 +66,6 @@ const handler = async (req, res) => {
 				newUser.save((err) => console.log(err.message))
 			})
 			.catch(() => console.log('Could not connect to mongodb'))
-
-		if (req.body.event === 'charge.success') {
-			res.status(200).send(200)
-		}
-		return
 	}
 }
 

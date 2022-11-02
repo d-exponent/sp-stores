@@ -5,7 +5,6 @@ import { getCheckoutPrice, getItemsIds } from '../lib/checkout-utils'
 import NotificationContext from '../context/notification'
 import ShoppingItemsContext from '../context/shopping-bag'
 import ShoppingItemCard from './cards/shopping-bag-item'
-import Notification from '../lib/notification-client'
 import classes from './css-modules/shopping-bag-items.module.css'
 
 const ShoppingBagItems = () => {
@@ -36,8 +35,7 @@ const ShoppingBagItems = () => {
 
 	async function paystackCheckoutHandler() {
 		if (!session.data || session.status !== 'authenticated') {
-			const errorNotifcation = new Notification('Please login to make payment').error()
-			return showNotification(errorNotifcation)
+			return showNotification('Please login to make payment').error()
 		}
 
 		const user = session.data.user

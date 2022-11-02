@@ -1,8 +1,23 @@
-.burger {
+.burger,
+.cross {
     color: var(--color-dark-gray-2);
-    font-size: 1.3rem;
     display: grid;
     place-content: center;
-    margin-right: .6em;
 }
 
+.burger {
+    font-size: 1.3rem;
+    margin-right: .4em;
+
+}
+
+.cross {
+    font-size: 1.5rem;
+    margin-right: .03em;
+}
+
+@media screen and (min-width: 768px) {
+    .container {
+        display: none;
+    }
+}

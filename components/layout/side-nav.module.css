@@ -1,6 +1,6 @@
 .container {
     position: fixed;
-    top: 0;
+    top: var(--header-height);
     bottom: 0;
     right: 0;
     left: 0;
@@ -37,6 +37,10 @@
 
 
 @media screen and (min-width: 768px) {
+    .container {
+        display: none;
+    }
+
     .closeNavBtn {
         font-size: 2rem;
         padding: .7rem;

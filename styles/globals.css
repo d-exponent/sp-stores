@@ -8,9 +8,9 @@
   --color-dark-gray-3: #36454F;
   --color-off-white: #FAF9F6;
 
-  
-    /* FONTS */
-    --font-lato: 'Lato',
+
+  /* FONTS */
+  --font-lato: 'Lato',
     sans-serif;
   --font-inter: 'Inter Tight',
     sans-serif;
@@ -45,7 +45,6 @@ a {
 * {
   box-sizing: border-box;
 }
-
 
 section {
   padding-top: var(--header-height);
