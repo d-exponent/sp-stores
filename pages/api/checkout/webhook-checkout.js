@@ -25,12 +25,14 @@ async function handler(req, res) {
 	if (hash == req.headers['x-paystack-signature']) {
 		console.log('💳Incoming Paystack event at=>', new Date(Date.now()).toISOString())
 
+		res.status(200).send(200)
+
 		const event = purify(req.body)
 		const eventData = event.data
 		const { metadata } = eventData
 		const { firstName, lastName } = metadata['customer_names']
 
-		const orderOptions = {
+		const newOrder = new Order({
 			currency: eventData.currency,
 			items: metadata['bag_items_ids'],
 			paystack_ref: eventData.reference,
@@ -41,27 +43,16 @@ async function handler(req, res) {
 			totalAmount: +eventData.amount / 100,
 			userEmail: eventData.customer.email,
 			customerCode: eventData.customer.customer_code,
-		}
+		})
 
-		const userOptions = {
+		const newUser = new User({
 			firstName,
 			lastName,
 			email: eventData.customer.email,
 			password: process.env.ON_PAY_PAYSTACK_WEBHOOK_USER,
 			confirmPassword: process.env.ON_PAY_PAYSTACK_WEBHOOK_USER,
 			regMethod: 'auto_on_paystack_payment',
-		}
-
-		//Lets just confirm that nothin is undefined
-		console.log(orderOptions)
-		console.log(userOptions)
-
-		const newOrder = new Order(orderOptions)
-		const newUser = new User(userOptions)
-
-		//Lets confirm our models are working properly
-		console.log(newUser)
-		console.log(newOrder)
+		})
 
 		mongoose
 			.connect(
@@ -72,8 +63,9 @@ async function handler(req, res) {
 				}
 			)
 			.then(() => {
-				newOrder.save((err) => console.log(err))
-				newUser.save((err) => console.log(err))
+				const successMsg = (model) => `New ${model} doc was created successfully 👍`
+				newOrder.save((err) => console.log(err ? err.message : successMsg('Order')))
+				newUser.save((err) => console.log(err ? err.message : successMsg('User')))
 			})
 			.catch(() => console.log('Could not connect to mongodb'))
 	}
