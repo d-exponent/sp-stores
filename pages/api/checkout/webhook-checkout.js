@@ -1,5 +1,6 @@
 import crypto from 'crypto'
 
+import { purify } from '../../../lib/utils'
 import { dbConnect } from '../../../lib/db-utils'
 import Order from '../../../models/order-model'
 import User from '../../../models/user-model'
@@ -19,10 +20,14 @@ async function handler(req, res) {
 	if (hash == req.headers['x-paystack-signature']) {
 		console.log('Paystack signature verified🧰')
 
+		console.log('🧰Reg dot body', req.body)
+
 		const EVENT = purify(req.body)
 		const eventData = EVENT.data
 		const bagitems = eventData.metadata['bag_items']
 		const { email, firstName, lastName } = eventData.metadata['customer_details']
+
+		console.log('🧰EVENT', EVENT)
 
 		const orderConfig = {
 			currency: eventData.currency,
