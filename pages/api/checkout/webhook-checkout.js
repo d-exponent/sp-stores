@@ -1,24 +1,16 @@
 import crypto from 'crypto'
+import mongoose from 'mongoose'
 
-import { dbConnect } from '../../../lib/db-utils'
 import Order from '../../../models/order-model'
 import User from '../../../models/user-model'
 
 /**
  * We kept running into an error where await operations were not run
  * by the handler function.
- * So we are connecting to the database as soon as this file is run with an IEFE
- * and using callback operations to insert documents to our MongoDB collections
+ * So we are using callback operations to insert documents to our MongoDB collections
  */
 
 //Connect to database
-;(async () => {
-	try {
-		await dbConnect()
-	} catch (error) {
-		console.log(error.message)
-	}
-})()
 
 const handler = async (req, res) => {
 	if (req.method !== 'POST') {
@@ -63,16 +55,25 @@ const handler = async (req, res) => {
 		console.log(newUser)
 		console.log(newOrder)
 
-		newOrder.save((err) => console.log(err.message))
-		newUser.save((err) => console.log(err.message))
+		mongoose
+			.connect(
+				`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.ntzames.mongodb.net/${process.env.DB}?retryWrites=true&w=majority`,
+				{
+					useNewUrlParser: true,
+					useUnifiedTopology: true,
+				}
+			)
+			.then(() => {
+				newOrder.save((err) => console.log(err.message))
+				newUser.save((err) => console.log(err.message))
+			})
+			.catch(() => console.log('Could not connect to mongodb'))
 
 		if (req.body.event === 'charge.success') {
 			res.status(200).send(200)
 		}
 		return
 	}
-
-	res.status(500).send(null)
 }
 
 export default handler
