@@ -28,6 +28,3 @@ const Hamburger = () => {
 }
 
 export default Hamburger
-{
-	/* <span className={classes.cross}>&#215;</span> */
-}

@@ -30,7 +30,6 @@ export const getServerSideProps = async (context) => {
 	try {
 		//Get the documents in each Products collection category
 		const groupedDocs = await getProductsByCategory()
-
 		if (!groupedDocs) return { notFound: true }
 
 		//Lets get one random item from each category

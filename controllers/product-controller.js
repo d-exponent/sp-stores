@@ -2,11 +2,56 @@ import Product from '../models/product-model'
 import catchAsync from '../middlewares/catch-async'
 import AppError from '../lib/app-error'
 
-import { dbConnect, setProductToSchema } from '../lib/db-utils'
+import { dbConnect } from '../lib/db-utils'
 import { responseSender } from '../lib/controller-utils'
 
+function setProductToSchema(obj) {
+	const configArr = [
+		'name',
+		'description',
+		'brand',
+		'category',
+		'productType',
+		'price',
+		'color',
+		'quantity',
+		'discountPrice',
+		'sizes',
+	]
+
+	const config = {}
+
+	//Set the data type of the product's value to match the Schema
+	configArr.forEach((element) => {
+		if (element === 'quantity') {
+			// Convert value to Number data type
+			return (config[element] = +obj[element])
+		}
+
+		if (element === 'sizes') {
+			// Lets make sure of no duplicates
+			const sizesArray = obj[element].split(',') //Split to an array
+			const unique = [...new Set(sizesArray)] // Remove duplicates
+
+			return (config[element] = unique)
+		}
+
+		if (element === 'price' || element === 'discountPrice') {
+			const initialValue = obj[element]
+
+			const valueFormatted = initialValue.replace(/,/g, '') //lets remove commas
+			const finalValue = valueFormatted ? +valueFormatted : +initialValue //convert to Number
+
+			return (config[element] = finalValue)
+		}
+
+		config[element] = obj[element]
+	})
+
+	return config
+}
+
 export const getAllProducts = catchAsync(async (req, res) => {
-	
 	await dbConnect()
 	const allProducts = await Product.find({}).sort({ uploadedAt: -1 })
 
@@ -41,8 +86,7 @@ export const createProduct = catchAsync(async (req, res) => {
 		throw new AppError('Please provide product information', 400)
 	}
 
-	const productObj = { ...req.body }
-	const filtered = setProductToSchema(productObj)
+	const filtered = setProductToSchema(req.body)
 
 	if (req.files.imageCover) {
 		filtered.imageCover = req.files.imageCover

@@ -1,15 +1,11 @@
 import crypto from 'crypto'
 import mongoose from 'mongoose'
 
+import { getMongooseConnectArgs } from '../../../lib/db-utils'
 import Order from '../../../models/order-model'
 import User from '../../../models/user-model'
 import { purify } from '../../../lib/utils'
 
-/**
- * We kept running into an error where await operations were not run
- * by the handler function.
- * So we are using callback operations to insert documents to our MongoDB collections
- */
 
 function handler(req, res) {
 	if (req.method !== 'POST') {
@@ -50,15 +46,10 @@ function handler(req, res) {
 			regMethod: 'auto_on_paystack_payment',
 		})
 
-		const mongoDbConnectionString = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.ntzames.mongodb.net/${process.env.DB}?retryWrites=true&w=majority`
-
-		const mongooseConnectConfig = {
-			useNewUrlParser: true,
-			useUnifiedTopology: true,
-		}
+		const { connectionString, connectionConfiq } = getMongooseConnectArgs()
 
 		mongoose
-			.connect(mongoDbConnectionString, mongooseConnectConfig)
+			.connect(connectionString, connectionConfiq)
 			.then(() => {
 				newOrder.save((err) => (err ? console.log(err.message) : ''))
 				newUser.save((err) => (err ? console.log(err.message) : ''))
