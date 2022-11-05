@@ -43,7 +43,15 @@ const Nav = () => {
 					<LogoutButton />
 				</div>
 			) : null}
-				
+
+			{authStatus === 'authenticated' ? (
+				<Link href={'/account'} className={classes.navLink}>
+					<a>
+						<span>Account</span>
+					</a>
+				</Link>
+			) : null}
+
 			{authStatus !== 'authenticated' && authStatus !== 'loading' ? (
 				<div onClick={handlePushToAuthPage} className={classes.navLink}>
 					<p>

@@ -6,7 +6,7 @@ import Register from './forms/register'
 import CredentialsSignIn from './credentials-signin'
 import NotificationContext from '../context/notification'
 import { handleSignIn, submitUserToApi } from '../lib/auth-page-utils'
-import classes from './authentication.module.css'
+import classes from './css-modules/authentication.module.css'
 
 const getErrorMessage = (error) =>
 	error.message || "It's not you, it's us. Please try again! 😭"

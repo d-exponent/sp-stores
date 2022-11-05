@@ -1,4 +1,4 @@
-import Input from '../../uploads/input'
+import Input from '../../../ui/input'
 import classes from './second-form.module.css'
 
 const SecondForm = (props) => {

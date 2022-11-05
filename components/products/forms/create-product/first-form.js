@@ -1,6 +1,6 @@
 import { Fragment } from 'react'
 
-import Input from '../../uploads/input'
+import Input from '../../../ui/input'
 import Button from '../../../ui/button'
 import classes from './first-form.module.css'
 

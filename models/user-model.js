@@ -44,7 +44,7 @@ const userSchema = new mongoose.Schema({
 	regMethod: {
 		type: String,
 		enum: ['credentials', 'auto_on_paystack_payment'],
-		default: 'credentials'
+		default: 'credentials',
 	},
 	role: {
 		type: String,
@@ -66,7 +66,7 @@ userSchema.pre('save', async function (next) {
 		return next()
 	}
 
-	this.password = await bcryptHashed(this.password, 12)
+	this.password = await bcryptHashed(this.password)
 	this.confirmPassword = undefined
 	next()
 })
