@@ -42,9 +42,11 @@ const ShoppingBagItems = () => {
 
 		showNotification('Processing your payment').pending()
 
-		const {user} = session.data
+		const { user } = session.data
 		const { name, email } = user
-	
+
+		
+
 		const checkoutData = {
 			client: { name, email },
 			items: {
@@ -52,6 +54,8 @@ const ShoppingBagItems = () => {
 				ids: getItemsIds(items),
 			},
 		}
+
+		checkoutData
 
 		try {
 			const { response, serverRes } = await withFetch({
@@ -68,7 +72,6 @@ const ShoppingBagItems = () => {
 			}
 
 			window.location.href = serverRes.auth_url
-
 		} catch (error) {
 			showNotification(error.message).error()
 		}
