@@ -5,15 +5,14 @@ import NotificationContext from '../context/notification'
 import Input from './ui/input'
 
 const UserProfile = () => {
+
 	const { showNotification } = useContext(NotificationContext)
-
-	const { data, status } = useSession()
-
-	const isAuthneticated = status === 'authenticated'
+	const { data } = useSession()
 
 	const currentPasswordRef = useRef(null)
 	const newPasswordRef = useRef(null)
-
+	
+	// const isAuthneticated = status === 'authenticated'
 	async function formSubmitHandler(event) {
 		event.preventDefault()
 		showNotification('Updating your password').pending()
@@ -43,14 +42,15 @@ const UserProfile = () => {
 		}
 
 		showNotification('Password updated successfully').success()
-		enteredCurrentPassword = ''
-		enteredNewPassword = ''
+
+		currentPasswordRef.current.value = ''
+		newPasswordRef.current.value = ''
 	}
 
 	return (
 		<section>
-			{isAuthneticated ? <div>{data.user.name}</div> : null}
-			{isAuthneticated ? <div>{data.user.email}</div> : null}
+			<div>{data.user.name}</div>
+			<div>{data.user.email}</div>
 			<div>
 				<form onSubmit={formSubmitHandler}>
 					<>

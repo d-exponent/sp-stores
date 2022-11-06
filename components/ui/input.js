@@ -31,8 +31,6 @@ const Input = (props) => {
 	}
 
 
-
-
 	return (
 		<div className={classes.formGroup}>
 			<label className={classes.formLabel} htmlFor={name}>

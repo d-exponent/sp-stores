@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router'
 import { useState, useContext } from 'react'
 import { signIn } from 'next-auth/react'
+import Link from 'next/link'
 
 import Register from './forms/register'
 import CredentialsSignIn from './credentials-signin'
@@ -100,16 +101,18 @@ const Authentication = () => {
 				</div>
 
 				<div>
-					<div>
-						{isLogin ? (
+					{isLogin ? (
+						<div>
 							<CredentialsSignIn
 								handleChange={handleChange}
 								formData={loginForm}
 								handleSubmit={handleSubmit}
 								disableBtn={disableLoginBtn}
 							/>
-						) : null}
-					</div>
+
+						
+						</div>
+					) : null}
 					{!isLogin ? (
 						<Register
 							handleChange={handleChange}

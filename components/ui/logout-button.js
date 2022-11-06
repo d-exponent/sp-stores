@@ -11,6 +11,7 @@ const LogoutButton = (props) => {
 	async function handleSignOut() {
 
 		showNotification('Logging out...').pending()
+		
 		const callbackPath = router.asPath === '/auth/users' ? '/' : router.asPath
 
 		try {
