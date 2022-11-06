@@ -1,7 +1,7 @@
 import { useState, useRef, Fragment } from 'react'
 import axios from 'axios'
 
-import Input from './input'
+import Input from '../../ui/input'
 import FirstForm from '../forms/create-product/first-form'
 import SecondForm from '../forms/create-product/second-form'
 import ThirdForm from '../forms/create-product/third-form'

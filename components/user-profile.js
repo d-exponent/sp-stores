@@ -3,7 +3,7 @@ import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 
 import NotificationContext from '../context/notification'
-import { sendDataToAPi } from '../lib/auth-utils'
+import { withFetch } from '../lib/auth-utils'
 import Input from './ui/input'
 
 const UserProfile = () => {
@@ -22,7 +22,7 @@ const UserProfile = () => {
 		const enteredNewPassword = newPasswordRef.current.value
 
 		try {
-			const { response, serverRes } = await sendDataToAPi({
+			const { response, serverRes } = await withFetch({
 				url: `/api/auth/users/${data.user.email}`,
 				data: {
 					currentPassword: enteredCurrentPassword,
