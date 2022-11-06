@@ -1,8 +1,9 @@
-import { useState, useRef, useContext } from 'react'
+import { useRef, useContext } from 'react'
 import { useRouter } from 'next/router'
 
 import Input from '../ui/input'
 import NotificationContext from '../../context/notification'
+import { withFetch } from '../../lib/auth-utils'
 
 const ResetPassword = () => {
 	const router = useRouter()
@@ -17,7 +18,7 @@ const ResetPassword = () => {
 
 		if (!router.query.token) {
 			return showNotification(
-				'Please check your email and click the link to reset your password'
+				'MISSING AUTHENTICATION. Please check your email and click the link to reset your password'
 			).error()
 		}
 
@@ -32,29 +33,32 @@ const ResetPassword = () => {
 			resetToken: router.query.token,
 		}
 
-		const response = await fetch('/api/auth/users/reset-password', {
-			method: 'PATCH',
-			body: JSON.stringify(resetData),
-			headers: { 'Content-Type': 'application/json ' },
-		})
+		try {
+			const { response, serverRes } = await withFetch({
+				url: '/api/auth/users/reset-password',
+				method: 'PATCH',
+				data: resetData,
+			})
 
-		const serverRes = await response.json()
+			if (!response.ok) {
+				const errorMessage = serverRes.message || 'error updating your password.'
+				throw new Error(errorMessage)
+			}
 
-		if (!response.ok) {
-			const errorMessage = serverRes.message || 'error updating your password.'
-			return showNotification(errorMessage).error()
+			setTimeout(() => {
+				showNotification('Login into your account').success()
+				router.replace('/auth/users')
+			}, 4000)
+
+			const successMessage = serverRes.message || 'Password reset successfully'
+			showNotification(successMessage).success()
+
+			newPasswordRef.current.value = ''
+			passwordConfirmRef.current.value = ''
+			
+		} catch (error) {
+			showNotification(error.message).error()
 		}
-
-		setTimeout(() => {
-			showNotification('Login into your account').success()
-			router.replace('/auth/users')
-		}, 4000)
-
-		const successMessage = serverRes.message || 'Password reset successfully'
-		showNotification(successMessage).success()
-
-		newPasswordRef.current.value = ''
-		passwordConfirmRef.current.value = ''
 	}
 
 	return (

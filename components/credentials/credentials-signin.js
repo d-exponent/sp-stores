@@ -1,7 +1,7 @@
 import { signIn } from 'next-auth/react'
 import Link from 'next/link'
 
-import Login from './forms/login'
+import Login from '../forms/login'
 
 const AuthenticationPage = (props) => {
 	return (

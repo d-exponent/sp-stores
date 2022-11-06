@@ -1,4 +1,4 @@
-import Authentication from '../../components/authentication'
+import Authentication from '../../components/credentials/authentication'
 import { unstable_getServerSession } from 'next-auth/next'
 import { nextAuthConfig } from '../api/auth/[...nextauth]'
 

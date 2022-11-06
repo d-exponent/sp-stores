@@ -8,6 +8,8 @@ const PAYSTACK_SECRET = process.env.PAYSTACK_SECRET_KEY
 export const createSession = catchAsync(async (req, res) => {
 	const { client, items } = req.body
 
+
+
 	const paystackInitUrl = 'https://api.paystack.co/transaction/initialize'
 
 	const data = {
@@ -16,11 +18,7 @@ export const createSession = catchAsync(async (req, res) => {
 		currency: 'NGN',
 		metadata: {
 			bag_items_ids: items.ids,
-			customer_names: {
-				firstName: client.firstName,
-				lastName: client.lastName,
-				// TODO: add users phone number after 2fa implementation
-			},
+			customer_names: client.name,
 		},
 	}
 

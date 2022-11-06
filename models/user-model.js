@@ -27,20 +27,9 @@ const userSchema = new mongoose.Schema(
 		phoneNumber: String,
 		password: {
 			type: String,
-			min: [8, 'Password must be at least 8 characters long'],
+			minlength: 8,
 			required: true,
 			select: false,
-		},
-		confirmPassword: {
-			type: String,
-			trim: true,
-			required: true,
-			validate: {
-				validator: function (value) {
-					return value === this.password
-				},
-				message: 'Password must match the confirm password',
-			},
 		},
 		passwordModifiedAt: Date,
 		passwordResetToken: String,
@@ -64,7 +53,7 @@ const userSchema = new mongoose.Schema(
 	},
 	{
 		methods: {
-			createResetToken() {
+			 createResetToken() {
 				const resetToken = cryptoToken(30)
 
 				this.passwordResetToken = cryptoHash(resetToken)
@@ -76,17 +65,10 @@ const userSchema = new mongoose.Schema(
 	}
 )
 
-
-//let's hash the password
 userSchema.pre('save', async function (next) {
-	this.password = await bcryptHash(this.password)
-	this.confirmPassword = undefined
-	next()
-})
-
-// Query Middlewares
-userSchema.pre(/^find/, function (next) {
-	this.select('-__v')
+	if (this.isNew === true) {
+		this.password = await bcryptHash(this.password)
+	}
 	next()
 })
 

@@ -5,10 +5,12 @@ import { getCheckoutPrice, getItemsIds } from '../lib/checkout-utils'
 import NotificationContext from '../context/notification'
 import ShoppingItemsContext from '../context/shopping-bag'
 import ShoppingItemCard from './cards/shopping-bag-item'
+import { withFetch } from '../lib/auth-utils'
 import classes from './css-modules/shopping-bag-items.module.css'
 
 const ShoppingBagItems = () => {
 	const [isBagItems, setIsBagItems] = useState(false)
+
 	const { items, removeFromBag } = useContext(ShoppingItemsContext)
 	const { showNotification } = useContext(NotificationContext)
 
@@ -38,35 +40,38 @@ const ShoppingBagItems = () => {
 			return showNotification('Please login to make payment').error()
 		}
 
-		const user = session.data.user
-		const [firstName, lastName] = user.name.split(' ')
+		showNotification('Processing your payment').pending()
 
+		const {user} = session.data
+		const { name, email } = user
+	
 		const checkoutData = {
-			client: { firstName, lastName, email: user.email },
+			client: { name, email },
 			items: {
 				totalPrice: getCheckoutPrice(items) * 100,
 				ids: getItemsIds(items),
 			},
 		}
 
-		const fetchConfig = {
-			method: 'POST',
-			body: JSON.stringify(checkoutData),
-			headers: {
-				'Content-Type': 'application/json',
-			},
-		}
+		try {
+			const { response, serverRes } = await withFetch({
+				url: `/api/checkout/payment-session`,
+				method: 'POST',
+				data: checkoutData,
+			})
 
-		const res = await fetch(`/api/checkout/payment-session`, fetchConfig)
-		const data = await res.json()
+			if (!response.ok) {
+				const errorMessage =
+					serverRes.message || 'Error processing payment request! Please try again'
 
-		if (!res.ok) {
-			const errorNotification = new Notification(
-				data.message || 'Error processing payment request! Please try again'
-			).error()
-			return showNotification(errorNotification)
+				throw new Error(errorMessage)
+			}
+
+			window.location.href = serverRes.auth_url
+
+		} catch (error) {
+			showNotification(error.message).error()
 		}
-		window.location.href = data.auth_url
 	}
 
 	return (

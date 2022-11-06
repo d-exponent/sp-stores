@@ -13,6 +13,11 @@ import {
 } from '../lib/controller-utils'
 
 export const createUser = catchAsync(async (req, res) => {
+	const { password, confirmPassword } = req.body
+
+	if (password !== confirmPassword) {
+		throw new AppError('Passwords are not the same.', 400)
+	}
 	await dbConnect()
 	const newUser = await User.create(req.body)
 
@@ -20,12 +25,12 @@ export const createUser = catchAsync(async (req, res) => {
 	const host = getHost(req)
 
 	const url = `${protocol}://${host}`
-	await Email(newUser, url).sendWelcome()
+	await new Email(newUser, url).sendWelcome()
 
-	responseSender(res, 201, { success: true })
+	responseSender(res, 201, { success: true, message: 'Account created successfully' })
 })
 
-export const updatePassword = catchAsync(async (req, res) => {
+export const updatePassword = async (req, res) => {
 	const email = req.query.uemail
 	const { currentPassword, newPassword } = req.body
 
@@ -36,7 +41,7 @@ export const updatePassword = catchAsync(async (req, res) => {
 	}
 
 	if (!currentPassword || !newPassword) {
-		errorMessage = 'Please provide the current password and the new password'
+		errorMessage = 'Please provide your current password and the new password'
 		throw new AppError(errorMessage, 422)
 	}
 
@@ -45,11 +50,15 @@ export const updatePassword = catchAsync(async (req, res) => {
 		throw new AppError(errorMessage, 400)
 	}
 
+	if(newPassword.length < 8){
+		throw new AppError('Password must be at least 8 characters', 400)
+	}
+
 	await dbConnect()
 	const user = await User.findOne({ email }).select('+password')
 
 	if (!user) {
-		errorMessage = 'User is not found in our recoreds'
+		errorMessage = 'This account is in our records'
 		throw new AppError(errorMessage, 404)
 	}
 
@@ -58,17 +67,13 @@ export const updatePassword = catchAsync(async (req, res) => {
 		throw new AppError('Invalid password', 401)
 	}
 
-	const body = {
-		password: newPassword,
-		confirmPassword: newPassword,
-		passwordModifiedAt: Date.now(),
-	}
-	const updateConfig = { new: true, runValidators: true }
+	user.password = await bcryptHash(newPassword)
+	user.passwordModifiedAt = Date.now()
 
-	await User.findOneAndUpdate({ email }, body, updateConfig)
+	await user.save()
 
-	responseSender(res, 200, { success: true })
-})
+	responseSender(res, 200, { success: true, message: 'Password is updated sucessfully' })
+}
 
 export const forgotPassword = catchAsync(async (req, res) => {
 	const email = req.body.email
@@ -81,35 +86,32 @@ export const forgotPassword = catchAsync(async (req, res) => {
 
 	if (!user) {
 		throw new AppError(
-			'This account does not exist in our records. Confrim your email adress and try again',
+			'This account does not exist in our records. Confrim your email address and try again',
 			404
 		)
 	}
 
-	const resetToken = await user.createResetToken()
+	const resetToken = user.createResetToken()
 
 	const protocol = getProtocol()
 	const host = getHost(req)
-
 	const resetUrl = `${protocol}://${host}/auth/reset-password?token=${resetToken}`
 
 	try {
-		await user.save({ validateBeforeSave: false })
 		await new Email(user, resetUrl).sendPasswordResetLink()
+		await user.save({ validateBeforeSave: false })
 
 		responseSender(res, 200, {
 			success: true,
-			message: 'Check your email for the reset link',
+			message:
+				"Check your email for the reset link. Check your Junk folder if it's not in your primary inbox ",
 		})
 	} catch (error) {
 		user.passwordResetToken = undefined
 		user.passwordResetTokenExpiresAt = undefined
+		user.save((err) => console.log(err.message))
 
-		user.save({ validateBeforeSave: false }).catch((e) => {
-			console.log(e)
-		})
-
-		responseSender(res, 500, {
+		return responseSender(res, 500, {
 			success: false,
 			message: error.message || 'Something went wrong!',
 		})
@@ -127,6 +129,10 @@ export const resetPassword = async (req, res) => {
 		throw new AppError('New password and confrim password mush match', 400)
 	}
 
+	if(newPassword.length < 8) {
+		throw new AppError('Password must be at least 8 characters', 400)
+	}
+
 	const hashedToken = cryptoHash(resetToken)
 
 	await dbConnect()
@@ -142,13 +148,15 @@ export const resetPassword = async (req, res) => {
 		throw new AppError('Your reset timer has expired', 400)
 	}
 
+
+	
 	user.password = await bcryptHash(newPassword)
 	user.passwordResetToken = undefined
 	user.passwordResetTokenExpiresAt = undefined
 	user.passwordModifiedAt = Date.now()
 
-	await user.save({ validateBeforeSave: false })
-
+	await user.save()
+	
 	responseSender(res, 200, {
 		success: true,
 		message: 'Password has been reset successfully',

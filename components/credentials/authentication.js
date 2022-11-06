@@ -1,13 +1,12 @@
 import { useRouter } from 'next/router'
 import { useState, useContext } from 'react'
 import { signIn } from 'next-auth/react'
-import Link from 'next/link'
 
-import Register from './forms/register'
+import Register from '../forms/register'
 import CredentialsSignIn from './credentials-signin'
-import NotificationContext from '../context/notification'
-import { handleSignIn, submitUserToApi } from '../lib/auth-page-utils'
-import classes from './css-modules/authentication.module.css'
+import NotificationContext from '../../context/notification'
+import { handleSignIn, withFetch } from '../../lib/auth-utils'
+import classes from '../css-modules/authentication.module.css'
 
 const getErrorMessage = (error) =>
 	error.message || "It's not you, it's us. Please try again! 😭"
@@ -74,18 +73,41 @@ const Authentication = () => {
 		setDisableRegisterBtn(true)
 		showNotification('Creating your account...').pending()
 
+		const fetchConfig = {
+			method: 'POST',
+			url: '/api/auth/users/register',
+			data: registerForm,
+		}
+
 		try {
-			await submitUserToApi(registerForm)
-			await handleSignIn(signIn, registerForm, 'Something went wrong!')
+			const { response, serverRes } = await withFetch(fetchConfig)
+			if (!response.ok) {
+				throw new Error(serverRes.message)
+			}
 
-			const successMessage = 'Your account is created successfully 👍'
+			const successMessage =
+				serverRes.message || 'Your account is created successfully 👍'
 			showNotification(successMessage).success()
-
-			router.replace(router.query.callback || '/')
 		} catch (error) {
 			setDisableRegisterBtn(false)
-			showNotification(getErrorMessage(error)).error()
+
+			const errorMessage = error.message || 'Something went wrong!'
+			return showNotification(errorMessage).error()
 		}
+
+		setTimeout(async () => {
+			showNotification('Logging you in').pending()
+
+			try {
+				await handleSignIn(signIn, registerForm, 'Something went wrong!')
+				router.replace(router.query.callback || '/')
+			} catch (error) {
+				setDisableRegisterBtn(false)
+				showNotification(getErrorMessage(error)).error()
+			}
+
+			showNotification('Logged in successfully').success()
+		}, 1500)
 	}
 
 	return (
@@ -109,17 +131,17 @@ const Authentication = () => {
 								handleSubmit={handleSubmit}
 								disableBtn={disableLoginBtn}
 							/>
-
-						
 						</div>
 					) : null}
 					{!isLogin ? (
-						<Register
-							handleChange={handleChange}
-							formData={registerForm}
-							handleSubmit={handleSubmit}
-							disableBtn={disableRegisterBtn}
-						/>
+						<div>
+							<Register
+								handleChange={handleChange}
+								formData={registerForm}
+								handleSubmit={handleSubmit}
+								disableBtn={disableRegisterBtn}
+							/>
+						</div>
 					) : null}
 				</div>
 			</div>

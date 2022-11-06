@@ -3,7 +3,6 @@ import mongoose from 'mongoose'
 
 import { getMongooseConnectArgs } from '../../../lib/db-utils'
 import Order from '../../../models/order-model'
-import User from '../../../models/user-model'
 import { purify } from '../../../lib/utils'
 
 
@@ -22,8 +21,7 @@ function handler(req, res) {
 		const event = purify(req.body)
 		const eventData = event.data
 		const { metadata } = eventData
-		const { firstName, lastName } = metadata['customer_names']
-
+		
 		const newOrder = new Order({
 			currency: eventData.currency,
 			items: metadata['bag_items_ids'],
@@ -33,17 +31,9 @@ function handler(req, res) {
 			paid_at: new Date(eventData.paidAt).toUTCString(),
 			payment_status: eventData.status,
 			totalAmount: +eventData.amount / 100,
-			userEmail: eventData.customer.email,
+			customerEmail: eventData.customer.email,
+			customerName: metadata['customer_names'],
 			customerCode: eventData.customer.customer_code,
-		})
-
-		const newUser = new User({
-			firstName,
-			lastName,
-			email: eventData.customer.email,
-			password: process.env.ON_PAY_PAYSTACK_WEBHOOK_USER,
-			confirmPassword: process.env.ON_PAY_PAYSTACK_WEBHOOK_USER,
-			regMethod: 'auto_on_paystack_payment',
 		})
 
 		const { connectionString, connectionConfiq } = getMongooseConnectArgs()
@@ -52,7 +42,6 @@ function handler(req, res) {
 			.connect(connectionString, connectionConfiq)
 			.then(() => {
 				newOrder.save((err) => (err ? console.log(err.message) : ''))
-				newUser.save((err) => (err ? console.log(err.message) : ''))
 			})
 			.catch(() => console.log('Could not connect to mongodb'))
 
