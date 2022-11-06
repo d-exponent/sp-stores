@@ -9,8 +9,11 @@ const ForgotPassword = () => {
 
 	const { showNotification } = useContext(NotificationContext)
 
-	async function handleClick() {
+	async function submitHandler(event) {
+		event.preventDefault()
+
 		showNotification('Processing..').pending()
+
 		const enteredEmail = emailInputRef.current.value
 
 		try {
@@ -30,13 +33,13 @@ const ForgotPassword = () => {
 
 			emailInputRef.current.value = ''
 		} catch (error) {
-			showNotification(error.message || 'Something went wrong').error()
+			showNotification('Something went wrong').error()
 		}
 	}
 
 	return (
 		<section>
-			<div>
+			<form onSubmit={submitHandler}>
 				<Input
 					type='email'
 					required={true}
@@ -44,8 +47,8 @@ const ForgotPassword = () => {
 					name='email'
 					reference={emailInputRef}
 				/>
-				<button onClick={handleClick}>Submit</button>
-			</div>
+				<button>Submit</button>
+			</form>
 		</section>
 	)
 }

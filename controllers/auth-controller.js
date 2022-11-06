@@ -50,7 +50,7 @@ export const updatePassword = async (req, res) => {
 		throw new AppError(errorMessage, 400)
 	}
 
-	if(newPassword.length < 8){
+	if (newPassword.length < 8) {
 		throw new AppError('Password must be at least 8 characters', 400)
 	}
 
@@ -76,7 +76,8 @@ export const updatePassword = async (req, res) => {
 }
 
 export const forgotPassword = catchAsync(async (req, res) => {
-	const email = req.body.email
+	const { email } = req.body
+
 	if (!email) {
 		throw new AppError('Please provide the email address of your account', 422)
 	}
@@ -129,7 +130,7 @@ export const resetPassword = async (req, res) => {
 		throw new AppError('New password and confrim password mush match', 400)
 	}
 
-	if(newPassword.length < 8) {
+	if (newPassword.length < 8) {
 		throw new AppError('Password must be at least 8 characters', 400)
 	}
 
@@ -148,15 +149,13 @@ export const resetPassword = async (req, res) => {
 		throw new AppError('Your reset timer has expired', 400)
 	}
 
-
-	
 	user.password = await bcryptHash(newPassword)
 	user.passwordResetToken = undefined
 	user.passwordResetTokenExpiresAt = undefined
 	user.passwordModifiedAt = Date.now()
 
 	await user.save()
-	
+
 	responseSender(res, 200, {
 		success: true,
 		message: 'Password has been reset successfully',
