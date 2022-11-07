@@ -51,6 +51,7 @@
     text-rendering: optimizeLegibility;
     text-transform: uppercase;
     letter-spacing: 1px;
+    justify-self: center;
 }
 
 .signInContainer>div>div:last-child>button {
@@ -59,7 +60,7 @@
 
 .signInContainer form>button,
 .signUpContainer form>button {
-    background-color: #6a51a4;
+    background-color: var(--color-accent-blue);
     color: #fff;
 }
 
@@ -77,7 +78,6 @@
     .signInContainer>div>div>last-child>button,
     .signInContainer form>button,
     .signUpContainer form>button {
-        justify-self: center;
         font-size: 14px;
     }
 }

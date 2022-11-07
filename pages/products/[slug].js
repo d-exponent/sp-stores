@@ -7,19 +7,45 @@ const ProductPage = (props) => {
 	return <SingleProduct {...props} />
 }
 
-export async function getServerSideProps(context) {
+export async function getStaticProps(context) {
 	const { slug } = context.params
 	try {
 		await dbConnect()
 		const results = await ProductModel.findOne({ slug })
 
-		if (!results) return { notFound: true }
+		if (!results)
+			return {
+				redirect: {
+					destination: '/',
+				},
+			}
 
 		return {
 			props: { product: purify(results) },
 		}
 	} catch (error) {
-		return { notFound: true }
+		return {
+			redirect: {
+				destination: '/',
+			},
+		}
+	}
+}
+
+export async function getStaticPaths() {
+	await dbConnect()
+
+	const allProducts = await ProductModel.find({})
+
+	const pathsWithSlug = purify(allProducts).map((product) => ({
+		params: {
+			slug: product.slug,
+		},
+	}))
+
+	return {
+		paths: pathsWithSlug,
+		fallback: 'blocking',
 	}
 }
 
