@@ -21,6 +21,9 @@ function handler(req, res) {
 		const event = purify(req.body)
 		const eventData = event.data
 		const { metadata } = eventData
+
+		//Checkhing paystack event shape on popUp payments
+		console.log('event🧰', event)
 		
 		const newOrder = new Order({
 			currency: eventData.currency,

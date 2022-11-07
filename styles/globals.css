@@ -9,6 +9,8 @@
 
   --color-off-white: #FAF9F6;
   --color-accent-blue: #6a51a4;
+  --color-dark-blue: #011a31;
+  --color-medium-blue: #09a0d4;
 
   /* FONTS */
   --font-lato: 'Lato',
@@ -70,4 +72,8 @@ button {
 .flex {
   display: flex;
   align-items: center;
+}
+
+.grid{
+  display: grid;
 }

@@ -1,0 +1,27 @@
+.cta{
+    display:grid;
+    gap: 1em;
+    margin-top: 2.3em;
+}
+
+
+.cta button{
+    padding: 1.2em 0;
+    
+}
+
+.cta button:first-child{
+    border: 2px solid var(--color-medium-blue);
+    color: var(--color-dark-blue);
+    background-color: white;
+    font-family: var(--font-roboto);
+    font-weight: 400;
+}
+
+.cta button:last-child{
+    color: var(--color-medium-blue);
+    background-color: var(--color-dark-blue);
+    text-transform: capitalize;
+    letter-spacing: 1px;
+}
+

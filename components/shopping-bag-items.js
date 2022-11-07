@@ -55,7 +55,6 @@ const ShoppingBagItems = () => {
 			},
 		}
 
-		checkoutData
 
 		try {
 			const { response, serverRes } = await withFetch({

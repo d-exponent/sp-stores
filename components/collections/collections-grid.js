@@ -3,8 +3,7 @@ import classes from './collection-grid.module.css'
 
 const CollectionGrid = (props) => {
 	const collectionCardsEl = props.collections.map((collection, i) => {
-		console.log(collection)
-		return <CollectionCard key={i} {...collection} />
+		return <CollectionCard key={collection.slug} {...collection} />
 	})
 	return (
 		<section className={classes.container}>

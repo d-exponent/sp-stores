@@ -26,7 +26,8 @@ const Product = ({ product }) => {
 			<figcaption>
 				<h2>{product.name}</h2>
 				{isDiscount ? (
-					<span>
+					<span className='flex'>
+						<TbCurrencyNaira />
 						{product.discountPriceAsCurrency || formatToCurrency(product.discountPrice)}
 					</span>
 				) : null}
