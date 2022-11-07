@@ -2,8 +2,10 @@ import { useRef, useContext } from 'react'
 import { useRouter } from 'next/router'
 
 import Input from '../ui/input'
+import Button from '../ui/button'
 import NotificationContext from '../../context/notification'
 import { withFetch } from '../../lib/auth-utils'
+import classes from './reset-password.module.css'
 
 const ResetPassword = () => {
 	const router = useRouter()
@@ -62,23 +64,25 @@ const ResetPassword = () => {
 	}
 
 	return (
-		<section>
+		<section className={classes.container}>
 			<form onSubmit={handleFormSubmit}>
 				<Input
 					type='password'
-					label='new password'
+					label='Password'
 					required={true}
 					name='new-password'
 					reference={newPasswordRef}
+					placeholder='New password'
 				/>
 				<Input
 					type='password'
-					label='Confirm password'
+					label='Verify Password'
 					required={true}
 					name='confirm-password'
 					reference={passwordConfirmRef}
+					placeholder='Confirm password'
 				/>
-				<button>Submit</button>
+				<Button text='Reset'/>
 			</form>
 		</section>
 	)

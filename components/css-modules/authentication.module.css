@@ -1,4 +1,95 @@
-.cta{
+.container {
+    text-align: center;
+}
+
+.container form {
+    display: grid;
+    gap: .8em;
+}
+
+.container input {
+    padding: 10px 12px;
+    font-size: .9rem;
+    background-color: #f4f4f4;
+    border: none;
+    border: 1px solid rgb(240, 231, 231);
+    font-weight: 400;
+    font-style: normal;
+    color: #666;
+    line-height: 1.6;
+    font-family: var(--font-roboto);
+}
+
+.formsWrapper {
+    max-width: 400px;
+    margin: 0 auto;
+
+}
+
+.cta {
     color: blue;
     cursor: pointer;
+}
+
+.signInContainer a {
+    color: blue;
+    font-size: 13px;
+    position: relative;
+}
+
+
+
+.signInContainer>div>div:last-child>button,
+.signInContainer form>button,
+.signUpContainer form>button {
+    font-size: 13px;
+    padding: 10px 30px;
+    border-radius: 2px;
+    font-family: var(--font-roboto);
+    font-weight: 500;
+    font-style: normal;
+    text-rendering: optimizeLegibility;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.signInContainer>div>div:last-child>button {
+    margin-top: 2em;
+}
+
+.signInContainer form>button,
+.signUpContainer form>button {
+    background-color: #6a51a4;
+    color: #fff;
+}
+
+@media (min-width: 450px) {
+
+    .container input {
+        font-size: .82rem;
+    }
+
+    .signInContainer>div>div:last-child>button {
+        padding: 15px 20px;
+        font-size: 15px;
+    }
+
+    .signInContainer>div>div>last-child>button,
+    .signInContainer form>button,
+    .signUpContainer form>button {
+        justify-self: center;
+        font-size: 14px;
+    }
+}
+
+@media (min-width: 588px) {
+
+    .container {
+        padding-top: 30px;
+    }
+
+    .signInContainer>div>div:last-child>button {
+        padding: 16px 24px;
+        font-size: 16px;
+    }
 }

@@ -1,0 +1,17 @@
+.contianer * {
+    margin: 0;
+}
+
+.title {
+    margin-block: 1.5em;
+    text-align: center;
+}
+
+.summary {
+    margin-top: 3em;
+    background-color: beige;
+    padding: 3em;
+    color: rgb(85, 85, 85);
+    font-size: 1.1rem;
+    line-height: 1.4;
+}

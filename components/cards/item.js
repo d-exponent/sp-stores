@@ -1,11 +1,17 @@
+import { useState } from 'react'
 import Image from 'next/image'
 import { useContext } from 'react'
 import { TbCurrencyNaira } from 'react-icons/tb'
 
+import Button from '../ui/button'
 import ShoppingItemsContext from '../../context/shopping-bag'
+import { formatToCurrency } from '../../lib/utils'
 
-const Product = ({ product, favorite, purchase, showPrice }) => {
+const Product = ({ product }) => {
+	const [isDiscount, setIsDiscount] = useState(product.dicscountPrice)
 	const { addToBag } = useContext(ShoppingItemsContext)
+
+	const addToshoppingBagHandler = () => addToBag(product)
 
 	return (
 		<figure>
@@ -21,17 +27,19 @@ const Product = ({ product, favorite, purchase, showPrice }) => {
 			</div>
 			<figcaption>
 				<h2>{product.name}</h2>
-				{showPrice && (
+				{isDiscount ? (
+					<span>
+						{product.discountPriceAsCurrency || formatToCurrency(product.discountPrice)}
+					</span>
+				) : null}
+				{!isDiscount ? (
 					<span className='flex'>
 						<TbCurrencyNaira />
-						{product.priceAsCurrency}
+						{product.priceAsCurrency || formatToCurrency(product.price)}
 					</span>
-				)}
+				) : null}
+				<Button onClick={addToshoppingBagHandler} text='Add to cart' />
 			</figcaption>
-			<div>
-				{favorite && <button>Buy now</button>}
-				{purchase && <button onClick={() => addToBag(product)}>Add to bag</button>}
-			</div>
 		</figure>
 	)
 }

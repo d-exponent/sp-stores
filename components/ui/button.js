@@ -1,15 +1,14 @@
 import classes from './button.module.css'
 
 const Button = (props) => {
-
-	let positionClass = ''
-	
-	if(props.btnClass === 'allow-positioning'){
-		positionClass = classes.position
+	if (props.onClick) {
+		return (
+			<button className={classes.btn} onClick={props.onClick}>
+				{props.text}
+			</button>
+		)
 	}
-	
-	const btnClasses = `${classes.btn} ${positionClass}`
-	return <button className={btnClasses}>{props.value}</button>
+	return <button className={classes.btn}>{props.text}</button>
 }
 
 export default Button

@@ -2,8 +2,8 @@ import { useRouter } from 'next/router'
 import { useState, useContext } from 'react'
 import { signIn } from 'next-auth/react'
 
-import Register from '../forms/register'
-import CredentialsSignIn from './credentials-signin'
+import SignUP from '../forms/register'
+import SignIn from './signin'
 import NotificationContext from '../../context/notification'
 import { handleSignIn, withFetch } from '../../lib/auth-utils'
 import classes from '../css-modules/authentication.module.css'
@@ -30,7 +30,7 @@ const Authentication = () => {
 	const { showNotification } = useContext(NotificationContext)
 
 	const ctaText = isLogin ? 'Not' : 'Already'
-	const ctaSpan = isLogin ? ' Register' : ' Login'
+	const ctaSpan = isLogin ? ' Sign Up' : ' Login'
 
 	const toggleLogin = () => setIsLogin((prevLogin) => !prevLogin)
 
@@ -47,6 +47,7 @@ const Authentication = () => {
 	}
 
 	async function handleSubmit(event) {
+
 		event.preventDefault()
 		// Login form
 		if (isLogin) {
@@ -69,7 +70,7 @@ const Authentication = () => {
 			return
 		}
 
-		//Register form
+		//SignUP form
 		setDisableRegisterBtn(true)
 		showNotification('Creating your account...').pending()
 
@@ -112,20 +113,20 @@ const Authentication = () => {
 
 	return (
 		<section>
-			<div>
+			<div className={classes.container}>
 				<div>
 					<p>
 						{ctaText} a member?
 						<span className={classes.cta} onClick={toggleLogin}>
-							click to {ctaSpan}
+							 {ctaSpan}
 						</span>
 					</p>
 				</div>
 
-				<div>
+				<div className={classes.formsWrapper}>
 					{isLogin ? (
-						<div>
-							<CredentialsSignIn
+						<div className={classes.signInContainer}>
+							<SignIn
 								handleChange={handleChange}
 								formData={loginForm}
 								handleSubmit={handleSubmit}
@@ -134,8 +135,8 @@ const Authentication = () => {
 						</div>
 					) : null}
 					{!isLogin ? (
-						<div>
-							<Register
+						<div className={classes.signUpContainer}>
+							<SignUP
 								handleChange={handleChange}
 								formData={registerForm}
 								handleSubmit={handleSubmit}

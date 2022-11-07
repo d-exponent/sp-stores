@@ -35,7 +35,7 @@ const Input = (props) => {
 		<div className={classes.formGroup}>
 			<label className={classes.formLabel} htmlFor={name}>
 				<p>{label}</p>
-				{required && <i>Required</i>}
+				{required && <span>Required</span>}
 			</label>
 
 			<input
@@ -44,7 +44,7 @@ const Input = (props) => {
 				id={name}
 				name={name}
 				ref={props.reference}
-				placeholder={`Enter ${label}`}
+				placeholder={props.placeholder}
 				required={required === true}
 			/>
 		</div>

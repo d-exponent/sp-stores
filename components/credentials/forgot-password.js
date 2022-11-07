@@ -1,8 +1,11 @@
 import { useRef, useContext } from 'react'
 
 import Input from '../ui/input'
+import Button from '../ui/button'
 import NotificationContext from '../../context/notification'
 import { withFetch } from '../../lib/auth-utils'
+
+import classes from './forgot-passowrd.module.css'
 
 const ForgotPassword = () => {
 	const emailInputRef = useRef()
@@ -38,16 +41,18 @@ const ForgotPassword = () => {
 	}
 
 	return (
-		<section>
+		<section className={classes.container}>
+			<h1>Recover your password</h1>
 			<form onSubmit={submitHandler}>
 				<Input
 					type='email'
 					required={true}
-					label='Email'
+					label='Enter your email'
 					name='email'
 					reference={emailInputRef}
+					placeholder='youremail@email.com'
 				/>
-				<button>Submit</button>
+				<Button text='Get Reset link' />
 			</form>
 		</section>
 	)
