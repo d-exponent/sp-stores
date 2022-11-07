@@ -35,16 +35,15 @@ function handler(req, res) {
 			customerCode: data.customer.customer_code,
 		})
 
-		console.log('newOrder🧰', newOrder)
-
 		const { connectionString, connectionConfiq } = getMongooseConnectArgs()
 
 		mongoose
 			.connect(connectionString, connectionConfiq)
 			.then(() => {
+				console.log('MongoDB connection established👍')
 				newOrder.save((err) => (err ? console.log(err.message) : ''))
 			})
-			.catch(() => console.log('Could not connect to mongodb'))
+			.catch(() => console.log('Could not connect to mongodb cluster🧰'))
 
 		res.status(200).send(200)
 	}

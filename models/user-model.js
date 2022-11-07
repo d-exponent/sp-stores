@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema(
 			required: true,
 			select: false,
 		},
-		passwordModifiedAt: Date,
+		passwordModifiedAt: { type: Date, select: false },
 		passwordResetToken: String,
 		passwordResetTokenExpiresAt: Date,
 		regMethod: {
@@ -53,7 +53,7 @@ const userSchema = new mongoose.Schema(
 	},
 	{
 		methods: {
-			 createResetToken() {
+			createResetToken() {
 				const resetToken = cryptoToken(30)
 
 				this.passwordResetToken = cryptoHash(resetToken)
@@ -69,6 +69,11 @@ userSchema.pre('save', async function (next) {
 	if (this.isNew === true) {
 		this.password = await bcryptHash(this.password)
 	}
+	next()
+})
+
+userSchema.pre(/^find/, function (next) {
+	this.select('-__v')
 	next()
 })
 

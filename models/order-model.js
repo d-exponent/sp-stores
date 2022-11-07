@@ -52,7 +52,7 @@ orderSchema.virtual('totalItemsPurchased').get(function () {
 orderSchema.pre(/^find/, function (next) {
 	this.populate({
 		path: 'items',
-		select: 'name price discountPrice slug',
+		select: 'name price discountPrice quantity',
 	})
 
 	this.select('-__v')

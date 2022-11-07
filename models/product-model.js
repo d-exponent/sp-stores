@@ -108,6 +108,11 @@ productSchema.pre('save', function (next) {
 	next()
 })
 
+productSchema.pre(/^find/, function (next) {
+	this.select('-__v')
+	next()
+})
+
 // AUTO GENERATE SLUG PRE-SAVE MIDDLEWARE
 productSchema.pre('save', function (next) {
 	const millisecondsToStringArr = Date.now().toString().split('')
