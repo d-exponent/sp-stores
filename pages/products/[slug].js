@@ -13,13 +13,14 @@ export async function getStaticProps(context) {
 		await dbConnect()
 		const results = await ProductModel.findOne({ slug })
 
-		if (!results)
+		if (!results) {
 			return {
 				redirect: {
 					destination: '/',
 				},
 			}
-
+		}
+		
 		return {
 			props: { product: purify(results) },
 		}

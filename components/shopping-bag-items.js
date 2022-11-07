@@ -14,6 +14,7 @@ const ShoppingBagItems = () => {
 	const { items, removeFromBag } = useContext(ShoppingItemsContext)
 	const { showNotification } = useContext(NotificationContext)
 
+	
 	const session = useSession()
 
 	useEffect(() => {
@@ -45,8 +46,6 @@ const ShoppingBagItems = () => {
 		const { user } = session.data
 		const { name, email } = user
 
-		
-
 		const checkoutData = {
 			client: { name, email },
 			items: {
@@ -54,7 +53,6 @@ const ShoppingBagItems = () => {
 				ids: getItemsIds(items),
 			},
 		}
-
 
 		try {
 			const { response, serverRes } = await withFetch({

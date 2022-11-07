@@ -1,15 +1,16 @@
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
-import { useContext } from 'react'
 import { TbCurrencyNaira } from 'react-icons/tb'
 import { formatToCurrency } from '../../lib/utils'
 
 const Product = ({ product }) => {
-	const [isDiscount, setIsDiscount] = useState(product.dicscountPrice)
+	const [isDiscount, ] = useState(product.discountPrice)
 	const router = useRouter()
 
-	const pushToItemDetailPageHandler = () => router.push(`/products/${product.slug}`)
+	const pushToItemDetailPageHandler = () => {
+		router.push(`/products/${product.slug}`)
+	}
 
 	return (
 		<figure onClick={pushToItemDetailPageHandler}>

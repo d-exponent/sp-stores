@@ -13,7 +13,7 @@ import classes from './css-modules/single-product.module.css'
 import Button from './ui/button'
 
 const SingleProductPage = ({ product }) => {
-	const [isDiscount, setIsDiscount] = useState(product.dicscountPrice)
+	const [isDiscount, ] = useState(product.discountPrice)
 
 	const { data, status } = useSession()
 
@@ -43,8 +43,6 @@ const SingleProductPage = ({ product }) => {
 		const {
 			user: { name, email },
 		} = data
-
-		
 
 		const productPrice = product.discountPrice || product.price
 
