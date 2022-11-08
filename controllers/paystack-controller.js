@@ -40,7 +40,7 @@ export const createSession = async (req, res) => {
 	responseSender(res, 200, { success: true, auth_url: authorization_url })
 }
 
-export const webhook_checkout = async (req, res) => {
+export const webhook_checkout = (req, res) => {
 	const { connectionString, connectionConfiq } = getMongooseConnectArgs()
 
 	const hash = crypto
@@ -50,6 +50,8 @@ export const webhook_checkout = async (req, res) => {
 
 	//Validate request payload from paystack
 	if (hash == req.headers['x-paystack-signature']) {
+		res.status(200).send(200)
+
 		const event = purify(req.body)
 		const { data } = event
 		const { metadata } = data
@@ -68,6 +70,7 @@ export const webhook_checkout = async (req, res) => {
 			customerCode: data.customer.customer_code,
 		}
 
+		console.log(order)
 		//Using an isolated connection to create order documents
 		mongoose
 			.createConnection(connectionString, connectionConfiq)
@@ -75,8 +78,8 @@ export const webhook_checkout = async (req, res) => {
 			.then((connection) => {
 				return connection.model('Order', orderSchema).create(order)
 			})
-			.then(() => {
-				res.status(200).send(200)
+			.then((doc) => {
+				console.log(doc)
 				mongoose.connection.close()
 			})
 			.catch((err) => {
