@@ -1,11 +1,10 @@
 import crypto from 'crypto'
-import mongoose from 'mongoose'
 
 import Order from '../../../models/order-model'
 import { dbConnect } from '../../../lib/db-utils'
 import { purify } from '../../../lib/utils'
 
-function handler(req, res) {
+async function handler(req, res) {
 	if (req.method !== 'POST') {
 		return
 	}
@@ -35,11 +34,12 @@ function handler(req, res) {
 			customerCode: data.customer.customer_code,
 		})
 
-		dbConnect()
-			.then(() => {
-				newOrder.save((err) => (err ? console.log(err.message) : ''))
-			})
-			.catch((err) => console.log(err.message))
+		try {
+			await dbConnect()
+			newOrder.save().catch((err) => console.log('🧰', err.message))
+		} catch (error) {
+			console.log('🧰', error.message)
+		}
 
 		res.status(200).send(200)
 	}
