@@ -9,6 +9,7 @@ const userSchema = new mongoose.Schema(
 			type: String,
 			required: [true, 'Please enter your first name'],
 			trim: true,
+			lowercase: true,
 		},
 		lastName: {
 			type: String,
@@ -22,7 +23,6 @@ const userSchema = new mongoose.Schema(
 			trim: true,
 			required: [true, 'Please enter your email address'],
 			validate: [isValidEmail, 'Please enter a valid email address'],
-			unique: true,
 		},
 		phoneNumber: String,
 		password: {
@@ -64,6 +64,8 @@ const userSchema = new mongoose.Schema(
 		},
 	}
 )
+
+userSchema.index({ email: 1, phoneNumber: -1 }, { unique: true })
 
 userSchema.pre('save', async function (next) {
 	if (this.isNew === true) {

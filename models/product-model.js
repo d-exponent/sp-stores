@@ -53,10 +53,7 @@ const productSchema = new mongoose.Schema(
 		ratingsAverage: Number,
 		salesCategory: String,
 		sizes: [{ type: String, lowercase: true }],
-		slug: {
-			type: String,
-			unique: true,
-		},
+		slug: String,
 		price: {
 			type: Number,
 			required: [true, 'A product must have a price'],
@@ -77,7 +74,7 @@ const productSchema = new mongoose.Schema(
 		toObject: { virtuals: true },
 	}
 )
-
+productSchema.index({ slug: 1 }, { unique: true })
 
 productSchema.virtual('priceAsCurrency').get(function () {
 	return formatToCurrency(this.price)

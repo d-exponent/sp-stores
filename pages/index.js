@@ -1,6 +1,6 @@
 import Home from '../components/home'
 import { getAllCollectionDirectoryData } from '../lib/collection-utils'
-import { getProductsByCategory } from '../lib/db-utils'
+import { getProductsByCategory } from '../lib/controller-utils'
 
 export default function HomePage(props) {
 	return <Home {...props} />
