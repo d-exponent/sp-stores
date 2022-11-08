@@ -1,15 +1,15 @@
 import mongoose from 'mongoose'
-import { getMongooseConnectArgs } from '../lib/db-utils'
 
-const orderSchema = new mongoose.Schema(
+export const orderSchema = new mongoose.Schema(
 	{
 		customerEmail: {
 			type: String,
-			required: [true, "An order must belong to a customers Email"],
+			required: [true, 'An order must belong to a customers Email'],
+			// unique: true,
 		},
 		customerName: {
 			type: String,
-			required: [true, "An orders customer must have a name"],
+			required: [true, 'An orders customer must have a name'],
 		},
 		items: {
 			type: [{ type: mongoose.Schema.ObjectId, ref: 'Product' }],
@@ -60,6 +60,4 @@ orderSchema.pre(/^find/, function (next) {
 	next()
 })
 
-const Order = mongoose.models.Order || mongoose.model('Order', orderSchema)
-
-export default Order
+export const orderModel = mongoose.models.Order || mongoose.model('Order', orderSchema)

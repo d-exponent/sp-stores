@@ -2,7 +2,7 @@ import axios from 'axios'
 import crypto from 'crypto'
 import mongoose from 'mongoose'
 
-import Order from '../models/order-model'
+import { orderSchema } from '../models/order-model'
 import { getMongooseConnectArgs } from '../lib/db-utils'
 import { purify } from '../lib/utils'
 import { responseSender } from '../lib/controller-utils'
@@ -40,24 +40,21 @@ export const createSession = async (req, res) => {
 	responseSender(res, 200, { success: true, auth_url: authorization_url })
 }
 
-export const webhook_checkout = (req, res) => {
+export const webhook_checkout = async (req, res) => {
+	const { connectionString, connectionConfiq } = getMongooseConnectArgs()
+
 	const hash = crypto
 		.createHmac('sha512', process.env.PAYSTACK_SECRET_KEY)
 		.update(JSON.stringify(req.body))
 		.digest('hex')
-		
 
 	//Validate request payload from paystack
 	if (hash == req.headers['x-paystack-signature']) {
-		//Using an isolated connection to create order documents
-		const { connectionString, connectionConfiq } = getMongooseConnectArgs()
-		const conn = mongoose.createConnection(connectionString, connectionConfiq)
-
 		const event = purify(req.body)
 		const { data } = event
 		const { metadata } = data
 
-		const orderData = {
+		const order = {
 			currency: data.currency,
 			items: metadata['bag_items_ids'],
 			paystack_ref: data.reference,
@@ -71,7 +68,20 @@ export const webhook_checkout = (req, res) => {
 			customerCode: data.customer.customer_code,
 		}
 
-		conn.collection(Order).insertOne(orderData)
-		res.status(200).send(200)
+		//Using an isolated connection to create order documents
+		mongoose
+			.createConnection(connectionString, connectionConfiq)
+			.asPromise()
+			.then((connection) => {
+				return connection.model('Order', orderSchema).create(order)
+			})
+			.then(() => {
+				res.status(200).send(200)
+				mongoose.connection.close()
+			})
+			.catch((err) => {
+				console.log(err.message)
+				mongoose.connection.close()
+			})
 	}
 }

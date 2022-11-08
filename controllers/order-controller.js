@@ -1,4 +1,4 @@
-import Order from '../models/order-model'
+import { orderModel as Order } from '../models/order-model'
 import catchAsync from '../middlewares/catch-async'
 import AppError from '../lib/app-error'
 
