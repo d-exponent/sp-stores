@@ -66,13 +66,13 @@ export const webhook_checkout = async (req, res) => {
 
 		const newOrder = new Order(order)
 		console.log(newOrder)
-		
+
 		try {
 			await newOrder.save()
 		} catch (error) {
 			const myBaseUrl = getBaseUrl(req)
 
-			await axios.post(`${myBaseUrl}/api/orders`, order).catch((error) => {
+			axios.post(`${myBaseUrl}/api/orders`, order).catch((error) => {
 				console.log('🧰🧰ERROR!', error.response.data.message)
 			})
 		}
