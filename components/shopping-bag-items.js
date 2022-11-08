@@ -6,6 +6,8 @@ import NotificationContext from '../context/notification'
 import ShoppingItemsContext from '../context/shopping-bag'
 import ShoppingItemCard from './cards/shopping-bag-item'
 import { withFetch } from '../lib/auth-utils'
+
+import Button from './ui/button'
 import classes from './css-modules/shopping-bag-items.module.css'
 
 const ShoppingBagItems = () => {
@@ -14,13 +16,14 @@ const ShoppingBagItems = () => {
 	const { items, removeFromBag } = useContext(ShoppingItemsContext)
 	const { showNotification } = useContext(NotificationContext)
 
-	
 	const session = useSession()
 
 	useEffect(() => {
 		if (items.length > 0) {
-			setIsBagItems(true)
+			return setIsBagItems(true)
 		}
+
+		setIsBagItems(false)
 	}, [items])
 
 	let itemsCardsEl
@@ -76,10 +79,15 @@ const ShoppingBagItems = () => {
 
 	return (
 		<section>
-			<h1>Proceed to checkout</h1>
-			{isBagItems ? <ul>{itemsCardsEl}</ul> : null}
+			{!isBagItems ? <div className={classes.empty}>
+				<h2>Your cart is Empty</h2>
+				<span>Place holder for shopping link</span>
+			</div> : null}
+			{isBagItems ? <ul className={classes.itemsList}>{itemsCardsEl}</ul> : null}
 			{isBagItems ? (
-				<button onClick={paystackCheckoutHandler}>Pay with paystack</button>
+				<div className={classes.cta}>
+					<Button onClick={paystackCheckoutHandler} text='Pay with Paystack' />
+				</div>
 			) : null}
 		</section>
 	)

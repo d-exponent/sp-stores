@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import { useContext } from 'react'
 
 import NotificationContext from '../../context/notification'
+import Button from './button'
 
 const LogoutButton = (props) => {
 	const router = useRouter()
@@ -24,7 +25,7 @@ const LogoutButton = (props) => {
 		}
 	}
 
-	return <button onClick={handleSignOut}>{props.text || 'Logout'}</button>
+	return <Button onClick={handleSignOut} text={props.text || 'Logout'} />
 }
 
 export default LogoutButton

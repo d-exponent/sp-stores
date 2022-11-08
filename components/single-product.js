@@ -69,10 +69,11 @@ const SingleProductPage = ({ product }) => {
 		handler.openIframe()
 	}
 
+	const formattedProductName = product.name.toUpperCase()
 	return (
 		<section>
 			<Carousel images={carouselImages} interval={3500} />
-			<p>{product.name}</p>
+			<p>{formattedProductName}</p>
 			<p>{product.description}</p>
 			{isDiscount ? (
 				<span className='flex'>

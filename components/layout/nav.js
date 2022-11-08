@@ -5,6 +5,7 @@ import { useContext, useState, useEffect } from 'react'
 
 import ShoppingItemsContext from '../../context/shopping-bag'
 import LogoutButton from '../ui/logout-button'
+import Button from '../ui/button'
 import { HiOutlineShoppingBag } from 'react-icons/hi'
 import classes from './nav.module.css'
 
@@ -38,11 +39,13 @@ const Nav = () => {
 
 	return (
 		<nav className={classes.nav}>
-			{authStatus === 'authenticated' ? (
-				<div className={classes.navLink}>
-					<LogoutButton />
-				</div>
-			) : null}
+			<Link href={'/shopping-bag'}>
+				<a className={classes.navLink}>
+					<div className={bagLogoClasses} data-items-count={itemsCount}>
+						<HiOutlineShoppingBag />
+					</div>
+				</a>
+			</Link>
 
 			{authStatus === 'authenticated' ? (
 				<Link href={'/account'} className={classes.navLink}>
@@ -51,22 +54,22 @@ const Nav = () => {
 					</a>
 				</Link>
 			) : null}
-
-			{authStatus !== 'authenticated' && authStatus !== 'loading' ? (
-				<div onClick={handlePushToAuthPage} className={classes.navLink}>
-					<p>
-						Login<span>\Register</span>
-					</p>
+			{authStatus === 'authenticated' ? (
+				<div className={`${classes.navLink} ${classes.logoutBtn}`}>
+					<LogoutButton />
 				</div>
 			) : null}
 
-			<Link href={'/shopping-bag'}>
-				<a className={classes.navLink}>
-					<div className={bagLogoClasses} data-items-count={itemsCount}>
-						<HiOutlineShoppingBag />
-					</div>
-				</a>
-			</Link>
+			{authStatus !== 'authenticated' && authStatus !== 'loading' ? (
+				<div
+					onClick={handlePushToAuthPage}
+					className={`${classes.navLink} ${classes.cta}`}
+				>
+					<p>
+						<Button text='Login/Signup' />
+					</p>
+				</div>
+			) : null}
 		</nav>
 	)
 }

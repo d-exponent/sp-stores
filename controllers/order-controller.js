@@ -1,5 +1,5 @@
 import AppError from '../lib/app-error'
-import Order from '../models/order-model'
+import { Order } from '../models/order-model'
 import { responseSender } from '../lib/controller-utils'
 
 export const getAllOrders = async (req, res) => {

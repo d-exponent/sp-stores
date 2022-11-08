@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-const orderSchema = new mongoose.Schema(
+export const orderSchema = new mongoose.Schema(
 	{
 		customerEmail: {
 			type: String,
@@ -47,7 +47,6 @@ const orderSchema = new mongoose.Schema(
 	}
 )
 
-
 orderSchema.virtual('totalItemsPurchased').get(function () {
 	return this.items.length
 })
@@ -62,5 +61,4 @@ orderSchema.pre(/^find/, function (next) {
 	next()
 })
 
-const Order = mongoose.models.Order || mongoose.model('Order', orderSchema)
-export default Order
+export const Order = mongoose.models.Order || mongoose.model('Order', orderSchema)

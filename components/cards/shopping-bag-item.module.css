@@ -1,0 +1,38 @@
+
+.list{
+    display: grid;
+    gap: 1em;
+}
+
+.list h3 {
+    font-weight: 400;
+    text-align: center;
+    font-size: 1.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: var(--font-roboto);
+}
+
+.list button {
+    color: var(--color-dark-gray-3);
+    text-transform: capitalize;
+    font-size: 1rem;
+
+}
+
+.naira{
+    display: grid;
+    place-content: center;
+}
+
+
+.cta{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5em;
+}
+
+.justify{
+    display: flex;
+    align-items: center;
+}
