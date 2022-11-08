@@ -1,14 +1,15 @@
 import mongoose from 'mongoose'
+import { getMongooseConnectArgs } from '../lib/db-utils'
 
 const orderSchema = new mongoose.Schema(
 	{
 		customerEmail: {
 			type: String,
-			required: [true, "An order must belong to a user's Email"],
+			required: [true, "An order must belong to a customers Email"],
 		},
 		customerName: {
 			type: String,
-			required: [true, "An orders' user must have a name"],
+			required: [true, "An orders customer must have a name"],
 		},
 		items: {
 			type: [{ type: mongoose.Schema.ObjectId, ref: 'Product' }],
