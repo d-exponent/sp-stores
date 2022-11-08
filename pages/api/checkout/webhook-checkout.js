@@ -1,8 +1,8 @@
 import crypto from 'crypto'
 import mongoose from 'mongoose'
 
-import { getMongooseConnectArgs } from '../../../lib/db-utils'
 import Order from '../../../models/order-model'
+import { dbConnect } from '../../../lib/db-utils'
 import { purify } from '../../../lib/utils'
 
 function handler(req, res) {
@@ -35,15 +35,11 @@ function handler(req, res) {
 			customerCode: data.customer.customer_code,
 		})
 
-		const { connectionString, connectionConfiq } = getMongooseConnectArgs()
-
-		mongoose
-			.connect(connectionString, connectionConfiq)
+		dbConnect()
 			.then(() => {
-				console.log('MongoDB connection established👍')
 				newOrder.save((err) => (err ? console.log(err.message) : ''))
 			})
-			.catch(() => console.log('Could not connect to mongodb cluster🧰'))
+			.catch((err) => console.log(err.message))
 
 		res.status(200).send(200)
 	}
