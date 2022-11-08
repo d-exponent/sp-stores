@@ -1,15 +1,12 @@
 import crypto from 'crypto'
-import mongoose from 'mongoose'
 
-import { orderSchema } from '../../../models/order-model'
-import { getMongooseConnectArgs } from '../../../lib/db-utils'
+import { dbConnect } from '../../../lib/db-utils'
+import { orderModel as Order } from '../../../models/order-model'
 
-const handler = async (req, res) => {
+function handler(req, res) {
 	if (req.method !== 'POST') {
 		return
 	}
-
-	const { connectionString, connectionConfiq } = getMongooseConnectArgs()
 
 	const hash = crypto
 		.createHmac('sha512', process.env.PAYSTACK_SECRET_KEY)
@@ -18,8 +15,7 @@ const handler = async (req, res) => {
 
 	//Validate request payload from paystack
 	if (hash == req.headers['x-paystack-signature']) {
-		res.status(200).send(200)
-
+	
 		const event = req.body
 		const { data } = event
 		const { metadata } = data
@@ -38,21 +34,12 @@ const handler = async (req, res) => {
 			customerCode: data.customer.customer_code,
 		}
 
-		//Using an isolated connection to create order documents
-		mongoose
-			.createConnection(connectionString, connectionConfiq)
-			.asPromise()
-			.then((connection) => {
-				return connection.model('Order', orderSchema).create(order)
+		dbConnect
+			.then(() => Order.create(order))
+			.then(() => {
+				res.status(200).send(200)
 			})
-			.then((doc) => {
-				console.log(doc)
-				mongoose.connection.close()
-			})
-			.catch((err) => {
-				console.log(err.message)
-				mongoose.connection.close()
-			})
+			.catch((error) => console.log('🧰', error.message))
 	}
 }
 
