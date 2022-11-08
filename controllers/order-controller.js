@@ -1,27 +1,19 @@
-import { orderModel as Order } from '../models/order-model'
-import catchAsync from '../middlewares/catch-async'
 import AppError from '../lib/app-error'
-
-import { dbConnect } from '../lib/db-utils'
+import { orderModel as Order } from '../models/order-model'
 import { responseSender } from '../lib/controller-utils'
 
-export const getAllOrders = catchAsync(async (req, res) => {
-	await dbConnect()
+export const getAllOrders = async (req, res) => {
 	const orders = await Order.find({})
-
 	responseSender(res, 201, { success: true, data: orders })
-})
+}
 
-export const createOrder = catchAsync(async (req, res) => {
-	await dbConnect()
+export const createOrder = async (req, res) => {
 	await Order.create(req.body)
 	responseSender(res, 201, { success: true })
-})
+}
 
-export const getOrderById = catchAsync(async (req, res) => {
+export const getOrderById = async (req, res) => {
 	const orderId = req.query.orderId
-
-	await dbConnect()
 	const order = await Order.findById(orderId)
 
 	if (!order) {
@@ -29,4 +21,4 @@ export const getOrderById = catchAsync(async (req, res) => {
 	}
 
 	responseSender(res, 200, { success: true, data: order })
-})
+}

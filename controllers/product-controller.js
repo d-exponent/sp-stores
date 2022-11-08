@@ -1,8 +1,5 @@
 import Product from '../models/product-model'
-import catchAsync from '../middlewares/catch-async'
 import AppError from '../lib/app-error'
-
-import { dbConnect } from '../lib/db-utils'
 import { responseSender } from '../lib/controller-utils'
 
 function setProductToSchema(obj) {
@@ -51,8 +48,7 @@ function setProductToSchema(obj) {
 	return config
 }
 
-export const getAllProducts = catchAsync(async (req, res) => {
-	await dbConnect()
+export const getAllProducts = async (req, res) => {
 	const allProducts = await Product.find({}).sort({ uploadedAt: -1 })
 
 	if (!allProducts) {
@@ -63,14 +59,12 @@ export const getAllProducts = catchAsync(async (req, res) => {
 		success: true,
 		data: allProducts,
 	})
-})
+}
 
-export const getProduct = catchAsync(async (req, res) => {
+export const getProduct = async (req, res) => {
 	const { slug } = req.query
 
-	await dbConnect()
 	const product = await Product.findOne({ slug })
-
 	if (!product) {
 		throw new AppError('Could not find product', 404)
 	}
@@ -79,9 +73,9 @@ export const getProduct = catchAsync(async (req, res) => {
 		success: true,
 		data: product,
 	})
-})
+}
 
-export const createProduct = catchAsync(async (req, res) => {
+export const createProduct = async (req, res) => {
 	if (!req.body) {
 		throw new AppError('Please provide product information', 400)
 	}
@@ -96,16 +90,15 @@ export const createProduct = catchAsync(async (req, res) => {
 		filtered.images = req.files.images
 	}
 
-	await dbConnect()
 	const newProduct = await Product.create(filtered)
 
 	responseSender(res, 201, {
 		success: true,
 		data: newProduct,
 	})
-})
+}
 
-export const updateProduct = catchAsync(async (req, res) => {
+export const updateProduct = async (req, res) => {
 	const { slug } = req.query
 
 	const optionsConfig = {
@@ -113,8 +106,6 @@ export const updateProduct = catchAsync(async (req, res) => {
 		runValidators: true,
 	}
 
-	await dbConnect()
 	const product = await Product.findOneAndUpdate({ slug }, req.body, optionsConfig)
-
 	responseSender(res, 200, { success: true, data: product })
-})
+}

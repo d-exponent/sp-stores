@@ -1,36 +1,30 @@
 import User from '../models/user-model'
-import catchAsync from '../middlewares/catch-async'
 import AppError from '../lib/app-error'
-
 import { isValidEmail } from '../lib/utils'
-import { dbConnect } from '../lib/db-utils'
 import { responseSender } from '../lib/controller-utils'
 
-export const getUsers = catchAsync(async (req, res) => {
-	await dbConnect()
+export const getUsers = async (req, res) => {
 	const allUsers = await User.find({})
 
 	if (!allUsers) {
-		throw new AppError('No users were found', 404)
+		throw new AppError('There are no users available', 404)
 	}
 
 	responseSender(res, 200, { success: true, data: allUsers })
-})
+}
 
-export const getUser = catchAsync(async (req, res) => {
-	const queryEmail = req.query.uemail
+export const getUser = async (req, res) => {
+	const { uemail: email } = req.query
 
 	//Validate the email address
-	if (!isValidEmail(queryEmail)) {
+	if (!isValidEmail(email)) {
 		throw new AppError("Please provide a valid email format 'youremail@email.com'", 400)
 	}
 
-	await dbConnect()
-	const user = await User.findOne({ email: queryEmail })
-
+	const user = await User.findOne({ email })
 	if (!user) {
 		throw new AppError('User not found', 404)
 	}
 
 	responseSender(res, 200, { success: true, data: user })
-})
+}
