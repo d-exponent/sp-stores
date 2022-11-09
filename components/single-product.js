@@ -13,7 +13,7 @@ import classes from './css-modules/single-product.module.css'
 import Button from './ui/button'
 
 const SingleProductPage = ({ product }) => {
-	const [isDiscount, ] = useState(product.discountPrice)
+	const [isDiscount] = useState(product.discountPrice)
 
 	const { data, status } = useSession()
 
@@ -69,28 +69,25 @@ const SingleProductPage = ({ product }) => {
 		handler.openIframe()
 	}
 
+	const price = product.discountPrice || product.price
+	const formattedPrice = formatToCurrency(price)
+
 	const formattedProductName = product.name.toUpperCase()
 	return (
 		<section>
 			<Carousel images={carouselImages} interval={3500} />
 			<p>{formattedProductName}</p>
 			<p>{product.description}</p>
-			{isDiscount ? (
-				<span className='flex'>
-					<TbCurrencyNaira />
-					{product.discountPriceAsCurrency || formatToCurrency(product.discountPrice)}
-				</span>
-			) : null}
-			{!isDiscount ? (
-				<span className='flex'>
-					<TbCurrencyNaira />
-					{product.priceAsCurrency || formatToCurrency(product.price)}
-				</span>
-			) : null}
+
+			<span className='flex'>
+				<TbCurrencyNaira />
+				{formattedPrice}
+			</span>
+
 			<div className={classes.cta}>
 				<>
 					<Button onClick={handleAddtoBag} text='Add to cart' />
-					<PaystackScript handleSubmit={handlePayWithPaystack} />
+					{/* <PaystackScript handleSubmit={handlePayWithPaystack} /> */}
 				</>
 			</div>
 			<h3>Reviews and ratings</h3>

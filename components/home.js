@@ -1,5 +1,5 @@
 import Hero from './layout/hero'
-import CollectionGrid from './collections/collections-grid'
+import CollectionsGrid from './collections/collections-grid'
 import CollectionItemsGrid from './collections/collection-items-grid'
 import classes from './css-modules/home.module.css'
 
@@ -8,10 +8,10 @@ const HomePage = (props) => {
 		<div className={classes.container}>
 			<>
 				<Hero />
-				<CollectionGrid collections={props.collections} />
+				<CollectionsGrid collections={props.collections} />
 			</>
 			<div className={classes.productsGrid}>
-				<CollectionItemsGrid items={props.products} />
+				<CollectionItemsGrid items={props.products} showToCollections={true} />
 			</div>
 		</div>
 	)

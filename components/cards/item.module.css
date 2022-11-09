@@ -1,0 +1,9 @@
+.container {
+    display: grid;
+}
+
+
+.ctaButtons>button {
+    margin-block: 4px;
+    text-transform: capitalize;
+}

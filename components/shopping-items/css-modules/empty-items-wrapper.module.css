@@ -1,0 +1,13 @@
+.empty {
+    display: grid;
+    height: 80vh;
+    place-content: center;
+    font-size: 1.5rem;
+    color: var(--color-dark-gray-3);
+}
+
+.empty span {
+    font-size: 1rem;
+    text-align: center;
+    color: var(--color-medium-blue);
+}

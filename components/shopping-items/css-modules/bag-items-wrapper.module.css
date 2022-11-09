@@ -1,0 +1,26 @@
+.cta {
+    display: grid;
+    margin-bottom: 3.5em;
+}
+
+.cta button {
+    background-color: var(--color-dark-blue);
+    padding-block: 1.2em;
+}
+
+.cta button {
+    color: var(--color-medium-blue);
+}
+
+.priceTotal {
+    margin: 3.3em 0 1em;
+    display: flex;
+    align-items: center;
+}
+
+.naira {
+    display: grid;
+    place-content: center;
+    margin-left: 15px;
+    font-size: 1.2rem;
+}

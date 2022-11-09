@@ -1,4 +1,4 @@
-import ShoppingBagItems from '../components/shopping-bag-items'
+import ShoppingBagItems from '../components/shopping-items/shopping-bag-items'
 
 const ShoppingItemsPage = () => {
 	return <ShoppingBagItems />

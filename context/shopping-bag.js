@@ -9,6 +9,7 @@ const ShoppingItemsContext = createContext({
 export const ShoppingItemsContextProvider = (props) => {
 	const localStorageKey = 'bagItems'
 	const [items, setItems] = useState([])
+	const [isItems, setIsItems] = useState(false)
 
 	useEffect(() => {
 		const storedItems = JSON.parse(localStorage.getItem(localStorageKey))
@@ -18,7 +19,10 @@ export const ShoppingItemsContextProvider = (props) => {
 	useEffect(() => {
 		if (items.length) {
 			localStorage.setItem(localStorageKey, JSON.stringify(items))
+			return setIsItems(true)
 		}
+
+		setIsItems(false)
 	}, [items])
 
 	async function addItemToBag(product) {
@@ -49,6 +53,7 @@ export const ShoppingItemsContextProvider = (props) => {
 
 	const contextValue = {
 		items: items,
+		isItems,
 		addToBag: addItemToBag,
 		removeFromBag: deleteItemBySlug,
 	}

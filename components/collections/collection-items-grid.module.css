@@ -1,22 +1,33 @@
+.grid * {
+    margin: 0;
+    padding: 0;
+}
+
 .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: .3em;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.2em;
+    padding-inline: 3%;
+    max-width: 900px;
+    margin: 0 auto;
 }
 
 .grid * h2 {
-    text-align: center;
     font-size: 12px;
     text-transform: uppercase;
     font-family: var(--font-roboto);
     font-weight: 400;
     font-style: normal;
-    color: #666;
+    color: var(--color-dark-gray-3);
     line-height: 1.6;
 }
 
 .grid figure {
     text-align: center;
+    box-sizing: border-box;
+    box-shadow:
+        0 .25rem .5rem 0 rgba(0, 0, 0, .1),
+        0 .125rem .25rem 0 rgba(0, 0, 0, .02);
 }
 
 .grid figure span {
@@ -25,12 +36,28 @@
     font-style: normal;
     color: rgb(80, 79, 79);
     justify-content: center;
+    margin-top: 0;
 }
 
-.grid figure button {
-    padding: 5px;
+.grid figcaption div {
+    display: grid;
+    padding: 0 1em;
+}
+
+.grid button {
+    padding: 5px 0;
     font-size: 11px;
-    color: rgb(71, 71, 71);
+    color: var(--color-medium-blue);
+    background-color: white;
+}
+
+.grid button:first-child {
+    color: var();
+}
+
+.grid button:last-child {
+    color: var(--color-dark-gray-3);
+    border: 1px solid var(--color-dark-gray-3);
 }
 
 @media (min-width: 768px) {
@@ -48,7 +75,6 @@
     }
 
 }
-
 
 
 .grid figcaption h2 {

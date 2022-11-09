@@ -1,7 +1,12 @@
+
+.container *{
+    padding: 0;
+    margin: 0;
+}
+
 .container {
-    padding-block: 2em;
+    margin: 6em 1em 2em;
     display: grid;
-    place-content: center;
 }
 
 .container>h2,
@@ -19,24 +24,13 @@
 }
 
 .cardsGrid {
-    overflow-x: scroll;
-    margin: 0 2em;
     display: grid;
-    grid-template-columns: repeat(3, 70vw);
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 1.2em;
-    padding-block: 0 2em;
+    max-width: 850px;
+    margin: 0 auto;
 }
 
-
-.cardsGrid::-webkit-scrollbar {
-    height: 2px;
-    background: #fff;
-}
-
-
-.cardsGrid::-webkit-scrollbar-thumb {
-    border-radius: 10px;
-}
 
 
 .cardsGrid>div {
@@ -50,7 +44,7 @@
 }
 
 .cardsGrid>div img {
-    object-position:center;
+    object-position: center;
     z-index: -1 !important;
 }
 
@@ -89,9 +83,8 @@
 
 }
 
-/* .cardsGrid::-webkit-scrollbar-thumb, */
 .cardsGrid button {
-    background-color: var(--color-dark-gray-2);
+    background-color: var(--color-dark-gray-4);
 }
 
 
@@ -109,10 +102,8 @@
 
     .cardsGrid {
         margin-bottom: 2em;
-        grid-template-columns: repeat(3, minmax(200px, 320px));
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 1.5em;
-        /* width: fit-content;
-        margin-inline: auto; */
     }
 
     .cardsGrid p {
@@ -120,8 +111,8 @@
     }
 
     .cardsGrid button {
-        align-self: start;
         text-transform: capitalize;
+        font-size: 1rem;
     }
 
 }

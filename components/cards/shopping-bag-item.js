@@ -19,13 +19,14 @@ const ShoppingBagItem = (props) => {
 			</div>
 			<div className={classes.cta}>
 				<div className={classes.justify}>
-					<span className={classes.naira}>
+					<span className='grid-center '>
 						<TbCurrencyNaira />
 					</span>
 					<span>{props.priceAsCurrency}</span>
 				</div>
-
-				<Button onClick={props.handleCta} text='Remove Item' />
+				<div className={classes.ctaBtnWrapper}>
+					<Button onClick={props.handleCta} text='Remove' />
+				</div>
 			</div>
 		</li>
 	)

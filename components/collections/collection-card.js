@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import Image from 'next/image'
 
-import CollectionButton from './collection-button'
+import Button from '../ui/button'
 import classes from './collection-card.module.css'
 
 const CollectionCard = (props) => {
@@ -28,7 +28,7 @@ const CollectionCard = (props) => {
 			</div>
 			<h3>{props.title}</h3>
 			<p>{props.summary}</p>
-			<CollectionButton handleClick={handleClick} text='view collection' />
+			<Button onClick={handleClick} text='view collection' />
 		</div>
 	)
 }

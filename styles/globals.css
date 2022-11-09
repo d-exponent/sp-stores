@@ -10,7 +10,7 @@
   --color-dark-gray-4: #313131;
   --color-dark-gray-5: #1f1e1e;
 
-  --color-off-white: #FAF9F6;
+  --color-off-white: #f5f5f5;
   --color-accent-blue: #6a51a4;
   --color-dark-blue: #011a31;
   --color-medium-blue: #09a0d4;
@@ -36,6 +36,8 @@
   /* Logo */
   --nav-logo-font-size: 1.5rem;
 
+  --margin-1: 3%;
+
 }
 
 html,
@@ -58,6 +60,7 @@ a {
 
 
 section {
+  /* background-color: var(--color-off-white); */
   padding-top: var(--header-height);
   padding-inline: 3%;
   z-index: 1;
@@ -78,6 +81,8 @@ button {
   align-items: center;
 }
 
-.grid{
+.grid-center {
   display: grid;
+  place-content: center;
 }
+
