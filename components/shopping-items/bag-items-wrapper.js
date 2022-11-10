@@ -8,7 +8,7 @@ import classes from './css-modules/bag-items-wrapper.module.css'
 const BagItemsWrapper = (props) => {
 	const formattedTotalPrice = formatToCurrency(props.totalPrice)
 	return (
-		<div>
+		<div className={classes.wrapper}>
 			<div className={classes.itemsList}>
 				<BagItems />
 			</div>

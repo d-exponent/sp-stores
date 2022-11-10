@@ -37,6 +37,9 @@
   /* Logo */
   --nav-logo-font-size: 1.5rem;
 
+  /* Paddings */
+  --padding-primary: 3%;
+
 
 }
 
@@ -63,7 +66,7 @@ a {
 
 section {
   padding-top: var(--header-height);
-  padding-inline: 3%;
+  padding-inline: var(--padding-primary);
   z-index: 1;
 }
 

@@ -1,10 +1,16 @@
 import Image from 'next/image'
 import { TbCurrencyNaira } from 'react-icons/tb'
+
+import Price from '../ui/price'
 import Button from '../ui/button'
 
 import classes from './shopping-bag-item.module.css'
 
 const ShoppingBagItem = (props) => {
+	const { discountPrice, price } = props
+
+	const productPrices = { discountPrice, price }
+
 	return (
 		<li className={classes.list}>
 			<h3>{props.name}</h3>
@@ -19,10 +25,7 @@ const ShoppingBagItem = (props) => {
 			</div>
 			<div className={classes.cta}>
 				<div className={classes.justify}>
-					<span className='grid-center '>
-						<TbCurrencyNaira />
-					</span>
-					<span>{props.priceAsCurrency}</span>
+					<Price product={productPrices} />
 				</div>
 				<div className={classes.ctaBtnWrapper}>
 					<Button onClick={props.handleCta} text='Remove' />

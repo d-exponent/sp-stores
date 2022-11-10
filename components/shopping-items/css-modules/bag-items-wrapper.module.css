@@ -1,3 +1,4 @@
+
 .cta {
     display: grid;
     margin-bottom: 3.5em;
@@ -6,10 +7,7 @@
 .cta button {
     background-color: var(--color-dark-blue);
     padding-block: 1.2em;
-}
-
-.cta button {
-    color: var(--color-medium-blue);
+    color: var(--color-blue-primary);
 }
 
 .priceTotal {

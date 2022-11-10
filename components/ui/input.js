@@ -30,6 +30,26 @@ const Input = (props) => {
 		)
 	}
 
+	if (type === 'password') {
+		return (
+			<div className={classes.formGroup}>
+				<label className={classes.formLabel} htmlFor={name}>
+					<p>{label}</p>
+					{required && <span>Required</span>}
+				</label>
+
+				<input
+					className={classes.formControl}
+					type={type}
+					id={name}
+					name={name}
+					ref={props.reference}
+					placeholder={props.placeholder}
+					required={required === true}
+				/>
+			</div>
+		)
+	}
 
 	return (
 		<div className={classes.formGroup}>

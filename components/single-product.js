@@ -1,10 +1,8 @@
-import { useState, useContext } from 'react'
+import {  useContext } from 'react'
 import { useSession } from 'next-auth/react'
+
+import Price from './ui/price'
 import Carousel from './ui/carousel'
-
-import { TbCurrencyNaira } from 'react-icons/tb'
-import { formatToCurrency } from '../lib/utils'
-
 import ShoppingItemsContext from '../context/shopping-bag'
 import NotificationContext from '../context/notification'
 import PaystackScript from './paystack-script'
@@ -13,8 +11,6 @@ import classes from './css-modules/single-product.module.css'
 import Button from './ui/button'
 
 const SingleProductPage = ({ product }) => {
-	const [isDiscount] = useState(product.discountPrice)
-
 	const { data, status } = useSession()
 
 	const { addToBag } = useContext(ShoppingItemsContext)
@@ -69,21 +65,15 @@ const SingleProductPage = ({ product }) => {
 		handler.openIframe()
 	}
 
-	const price = product.discountPrice || product.price
-	const formattedPrice = formatToCurrency(price)
-
+	
 	const formattedProductName = product.name.toUpperCase()
 	return (
-		<section>
+		<section className={classes.container}>
 			<Carousel images={carouselImages} interval={3500} />
-			<p>{formattedProductName}</p>
+			<h2>{formattedProductName}</h2>
 			<p>{product.description}</p>
-
-			<span className='flex'>
-				<TbCurrencyNaira />
-				{formattedPrice}
-			</span>
-
+			
+			<Price product={product}/>
 			<div className={classes.cta}>
 				<>
 					<Button onClick={handleAddtoBag} text='Add to cart' />

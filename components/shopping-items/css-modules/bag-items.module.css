@@ -3,7 +3,6 @@
     list-style-type: none;
     padding: 0;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-
 }
 
 .itemsList {
@@ -36,7 +35,8 @@
 
 .itemsList span {
     font-size: 1rem;
-    color: var(--color-medium-blue);
+    color: var(--color-dark-gray-5);
+    font-weight: 700;
 }
 
 @media screen and (min-width: 438px) {

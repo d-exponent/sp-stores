@@ -1,16 +1,42 @@
-.cta{
-    display:grid;
+.container {
+    font-family: var(--font-roboto);
+}
+
+.container>h2 {
+    font-size: 1rem;
+    color: var(--color-dark-gray-3);
+    font-weight: 400;
+    margin: .5em 0;
+}
+
+.container>h3{
+    font-weight: 400;
+    color: var(--color-dark-gray-4);
+}
+
+.container>p{
+    color: var(--color-dark-gray-2);
+    margin-bottom: .5em ;
+}
+
+.container>span{
+    margin-bottom: 2em;
+    font-weight: 700;
+}
+
+.cta {
+    display: grid;
     gap: 1em;
-    margin-top: 2.3em;
+    margin-bottom: 2.3em;
 }
 
 
-.cta button{
+.cta button {
     padding: 1.2em 0;
-    
+
 }
 
-.cta button:first-child{
+.cta button:first-child {
     border: 2px solid var(--color-medium-blue);
     color: var(--color-dark-blue);
     background-color: white;
@@ -18,10 +44,9 @@
     font-weight: 400;
 }
 
-.cta button:last-child{
+.cta button:last-child {
     color: var(--color-medium-blue);
     background-color: var(--color-dark-blue);
     text-transform: capitalize;
     letter-spacing: 1px;
 }
-

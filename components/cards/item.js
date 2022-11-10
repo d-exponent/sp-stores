@@ -1,21 +1,15 @@
 import Image from 'next/image'
 import { useContext } from 'react'
 import { useRouter } from 'next/router'
-import { TbCurrencyNaira } from 'react-icons/tb'
 
 import ShoppingBagContext from '../../context/shopping-bag'
+import Price from '../ui/price'
 import Button from '../ui/button'
 import { formatToCurrency } from '../../lib/utils'
 
 import classes from './item.module.css'
 
-function getProductPrice(product) {
-	if (product.discountPrice) {
-		return product.discountPrice
-	}
 
-	return product.price
-}
 
 const Item = (props) => {
 	const router = useRouter()
@@ -34,10 +28,9 @@ const Item = (props) => {
 
 	const pushToBagItemsPage = () => addToBag(product)
 
-	const productPrice = getProductPrice(product)
-	const formattedPrice = formatToCurrency(productPrice)
 
-	const displayCollectionBtnText = category === 'clothing' ? 'Clothes' : category
+	const displayCollectionBtnText =
+		category === 'clothing' || 'Clothing' ? 'Clothes' : category
 
 	return (
 		<figure
@@ -57,10 +50,7 @@ const Item = (props) => {
 			<figcaption className='grid'>
 				<h3>{product.name}</h3>
 
-				<span className='flex'>
-					<TbCurrencyNaira />
-					{formattedPrice}
-				</span>
+				<Price product={product} />
 				<div className='grid'>
 					<>
 						{/* <Button onClick={pushToDetailPage} text='See details' /> */}

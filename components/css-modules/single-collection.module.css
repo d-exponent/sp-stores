@@ -1,5 +1,10 @@
-.contianer * {
+.container * {
     margin: 0;
+}
+
+.container {
+    padding-top: 
+        calc(var(--header-height) + var(--padding-primary));
 }
 
 .summary {
@@ -9,21 +14,4 @@
     color: rgb(85, 85, 85);
     font-size: 1.1rem;
     line-height: 1.4;
-}
-
-.gridItems > div{
-    border: 1px solid red;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 300px));
-    gap: 2em;
-}
-
-.gridItems h2{
-    color: var(--color-dark-gray-2);
-    font-family: var(--font-open-sans);
-    font-size: 1rem;
-    text-align: center;
-}
-
-.gridItems button{
-    /* background-color: black; */
 }

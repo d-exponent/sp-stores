@@ -84,29 +84,6 @@
     color: var(--color-dark-gray-3);
 }
 
-.content li>div:last-child {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1em;
-    grid-row-gap: 2.4em;
-}
-
-.content li h3 {
-    font-size: 1rem;
-    margin: 1em 0 .5em;
-    text-transform: capitalize;
-    font-family: var(--font-roboto);
-    font-weight: 400;
-    font-style: normal;
-    color: var(--color-dark-gray-3);
-}
-
-.content li span {
-    font-weight: 700;
-    font-size: .77rem;
-    font-style: normal;
-    justify-content: flex-start;
-}
 
 .content li figure button {
     display: none;

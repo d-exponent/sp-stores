@@ -1,4 +1,4 @@
-import UserProfile from '../components/user-profile'
+import UserProfile from '../components/user-profile/profile'
 
 import { unstable_getServerSession } from 'next-auth/next'
 import { nextAuthConfig } from './api/auth/[...nextauth]'
