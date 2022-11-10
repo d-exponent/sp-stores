@@ -50,7 +50,7 @@ const Nav = () => {
 			{authStatus === 'authenticated' ? (
 				<Link href={'/account'} className={classes.navLink}>
 					<a>
-						<span>Account</span>
+						<span className={classes.profile}>Account</span>
 					</a>
 				</Link>
 			) : null}

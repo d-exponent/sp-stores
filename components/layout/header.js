@@ -1,8 +1,8 @@
 import { Fragment, useContext } from 'react'
 
+import SideNavContext from '../../context/side-nav'
 import Logo from './logo'
 import Nav from './nav'
-import SideNavContext from '../../context/side-nav'
 import SideNavigationPanel from './side-nav'
 import Hamburger from './hamburger-menu'
 import classes from './header.module.css'

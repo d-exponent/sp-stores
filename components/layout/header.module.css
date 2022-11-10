@@ -2,7 +2,7 @@
     height: var(--header-hight);
     margin-top: 0;
     display: flex;
-    padding-inline: 1em;
+    padding: 1em;
     align-items: center;
     -webkit-box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.13);
     -moz-box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.13);
@@ -11,6 +11,7 @@
     background: white;
     width: 100%;
     z-index: 10;
+    height: var(--header-hight);
 }
 
 .header * {

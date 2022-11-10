@@ -1,7 +1,9 @@
 import Image from 'next/image'
+import { useContext } from 'react'
 import { useRouter } from 'next/router'
 import { TbCurrencyNaira } from 'react-icons/tb'
 
+import ShoppingBagContext from '../../context/shopping-bag'
 import Button from '../ui/button'
 import { formatToCurrency } from '../../lib/utils'
 
@@ -15,10 +17,12 @@ function getProductPrice(product) {
 	return product.price
 }
 
-const Product = (props) => {
-	const { product, showToCollections } = props
-	const { category } = product
+const Item = (props) => {
 	const router = useRouter()
+	const { addToBag } = useContext(ShoppingBagContext)
+
+	const { product, showToCollections, toBag } = props
+	const { category } = product
 
 	const pushToDetailPage = () => {
 		router.push(`/products/${product.slug}`)
@@ -28,13 +32,18 @@ const Product = (props) => {
 		router.push(`/${category}`)
 	}
 
+	const pushToBagItemsPage = () => addToBag(product)
+
 	const productPrice = getProductPrice(product)
 	const formattedPrice = formatToCurrency(productPrice)
 
 	const displayCollectionBtnText = category === 'clothing' ? 'Clothes' : category
 
 	return (
-		<figure className={classes.container}>
+		<figure
+			className={`${classes.container} ${props.useBoxShadow}`}
+			onClick={pushToDetailPage}
+		>
 			<div>
 				<Image
 					src={`/images/products/${product.imageCover}`}
@@ -45,22 +54,23 @@ const Product = (props) => {
 					priority='eager'
 				/>
 			</div>
-			<figcaption>
-				<h2>{product.name}</h2>
+			<figcaption className='grid'>
+				<h3>{product.name}</h3>
 
 				<span className='flex'>
 					<TbCurrencyNaira />
 					{formattedPrice}
 				</span>
-				<div className={classes.ctaButtons}>
+				<div className='grid'>
 					<>
-						<Button onClick={pushToDetailPage} text='View details' />
+						{/* <Button onClick={pushToDetailPage} text='See details' /> */}
 						{showToCollections ? (
 							<Button
 								onClick={pushToCollectionsPage}
-								text={`View more ${displayCollectionBtnText} like this`}
+								text={`See more ${displayCollectionBtnText} like this`}
 							/>
 						) : null}
+						{toBag ? <Button onClick={pushToBagItemsPage} text='Add to bag' /> : null}
 					</>
 				</div>
 			</figcaption>
@@ -68,4 +78,4 @@ const Product = (props) => {
 	)
 }
 
-export default Product
+export default Item

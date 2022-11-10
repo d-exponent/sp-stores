@@ -26,7 +26,7 @@
     font-size: calc(var(--nav-logo-font-size) / 2);
     font-weight: bolder;
     background-color: teal;
-    background-color: var(--color-accent-blue);
+    background-color: var(--color-orange-primary);
     border: 2px solid var(--color-off-white);
     color: var(--color-off-white);
     padding: 2px 6px;
@@ -43,9 +43,14 @@
     animation: bounce .2s ease-in;
 }
 
+.profile{
+    font-size: .9rem;
+    color: var(--color-dark-gray-3);
+}
+
 .logoutBtn button {
     padding: .4em 1.3em;
-    color: var(--color-accent-blue);
+    color: var(--color-orange-primary);
     border: 1px solid var(--color-dark-gray-3);
     background-color: white;
     text-transform: capitalize;
@@ -62,10 +67,13 @@
     text-transform: capitalize;
     padding: .4em .6em;
     letter-spacing: .1px;
-    background-color: var(--color-accent-blue);
-    color: #fff;
+    background-color: transparent;
+    border: 1px solid var(--color-dark-gray-3);
+    color: var(--color-orange-primary);
     transform: scale(1);
     transition: transform .4s;
+    font-weight: 100;
+    margin-left: 1em;
 }
 
 .cta button:hover,

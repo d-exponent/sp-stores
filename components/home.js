@@ -1,20 +1,24 @@
+import { Fragment } from 'react'
+
 import Hero from './layout/hero'
 import CollectionsGrid from './collections/collections-grid'
-import CollectionItemsGrid from './collections/collection-items-grid'
+import CollectionGroup from './collections/collection-group'
 import classes from './css-modules/home.module.css'
 
-const HomePage = (props) => {
+const Home = (props) => {
 	return (
 		<div className={classes.container}>
-			<>
-				<Hero />
-				<CollectionsGrid collections={props.collections} />
-			</>
-			<div className={classes.productsGrid}>
-				<CollectionItemsGrid items={props.products} showToCollections={true} />
+			<Hero />
+			<div className={classes.content}>
+				<Fragment>
+					<CollectionsGrid collections={props.collections} />
+					<CollectionGroup groups={props.groups} />
+				</Fragment>
 			</div>
 		</div>
 	)
 }
 
-export default HomePage
+export default Home
+
+

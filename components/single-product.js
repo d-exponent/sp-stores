@@ -87,7 +87,7 @@ const SingleProductPage = ({ product }) => {
 			<div className={classes.cta}>
 				<>
 					<Button onClick={handleAddtoBag} text='Add to cart' />
-					{/* <PaystackScript handleSubmit={handlePayWithPaystack} /> */}
+					<PaystackScript handleSubmit={handlePayWithPaystack} />
 				</>
 			</div>
 			<h3>Reviews and ratings</h3>

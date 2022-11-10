@@ -3,7 +3,6 @@
 }
 
 
-.ctaButtons>button {
-    margin-block: 4px;
+.container button {
     text-transform: capitalize;
 }

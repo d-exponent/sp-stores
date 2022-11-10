@@ -1,6 +1,7 @@
 import Home from '../components/home'
+import Product from '../models/product-model'
 import { getAllCollectionDirectoryData } from '../lib/collection-utils'
-import { getProductsByCategory } from '../lib/controller-utils'
+import { getDocumentsByGroups } from '../lib/controller-utils'
 
 export default function HomePage(props) {
 	return <Home {...props} />
@@ -29,26 +30,19 @@ export const getServerSideProps = async (context) => {
 
 	try {
 		//Get the documents in each Products collection category
-		const groupedDocs = await getProductsByCategory()
-
-		//Lets get one random item from each category
-		const randomItemsByCategory = groupedDocs.map((doc) => {
-			const collectionDocs = doc.group
-
-			const randomIndex = Math.floor(Math.random() * collectionDocs.length)
-			const randomItem = collectionDocs[randomIndex]
-
-			const itemWithCategory = { ...randomItem, category: doc._id }
-			return itemWithCategory
-		})
+		const groupedDocs = await getDocumentsByGroups(Product, 'category')
 
 		return {
 			props: {
 				collections: collectionMetaData,
-				products: randomItemsByCategory,
+				groups: groupedDocs,
 			},
 		}
 	} catch (e) {
-		return { notFound: true }
+		return {
+			props: {
+				collections: collectionMetaData,
+			},
+		}
 	}
 }

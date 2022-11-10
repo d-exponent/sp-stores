@@ -6,8 +6,8 @@ const SingleCollectionPage = (props) => {
 
 	return (
 		<section className={classes.contianer}>
-			<div className={classes.grid}>
-				<CollectionItemsGrid items={products} />
+			<div className={`${classes.gridItems} grid`}>
+				<CollectionItemsGrid items={products} itemUseShadow='box-shadow-light' />
 			</div>
 
 			<div className={classes.summary}>

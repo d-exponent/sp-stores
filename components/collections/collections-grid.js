@@ -1,13 +1,14 @@
 import CollectionCard from './collection-card'
-import classes from './collections-grid.module.css'
 
-const CollectionGrid = (props) => {
-	const collectionCardsEl = props.collections.map((collection) => {
-		return <CollectionCard key={collection.slug} {...collection} />
-	})
+const CollectionGrid = ({ collections }) => {
 	return (
-		<div className={classes.container}>
-			<div className={classes.cardsGrid}>{collectionCardsEl}</div>
+		<div>
+			<h1>Explore our collections</h1>
+			<div>
+				{collections.map((collection) => (
+					<CollectionCard key={collection.slug} {...collection} />
+				))}
+			</div>
 		</div>
 	)
 }

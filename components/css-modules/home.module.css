@@ -1,6 +1,114 @@
 .container {
-    padding-top: var(--header-height);
     margin-bottom: 3em;
+    padding-top: var(--header-height);
 }
 
+.content {
+    padding-inline: 3%;
+}
+
+.content>div {
+    margin: 4em 0 2em;
+    padding-bottom: 2em;
+    border-bottom: 1px solid var(--color-dark-gray);
+}
+
+.content>div>h1 {
+    margin-bottom: 1rem;
+    font-size: 1.33rem;
+}
+
+.content>div>h1+div {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(120px, 1fr));
+    gap: 1em;
+}
+
+.content>div>div>div {
+    position: relative;
+}
+
+.content>div p {
+    position: absolute;
+    font-size: 13px;
+    top: 10px;
+    right: 10px;
+    color: white;
+    font-weight: 400;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--color-accent-blue);
+    letter-spacing: 1px;
+}
+
+@media (min-width: 500px) {
+    .content>div p {
+        font-size: 17px;
+    }
+}
+
+
+/* **************
+    Category Items
+*************** */
+.content>ul {
+    list-style-type: none;
+    padding: 0
+}
+
+.content h2 {
+    font-family: var(--font-roboto);
+    font-weight: 400;
+    text-transform: capitalize;
+    color: var(--color-dark-gray-3);
+}
+
+.content li {
+    padding: 0;
+    margin-bottom: 2em;
+}
+
+.content li>div:first-child {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 10px;
+    background-color: var(--color-orange-primary);
+    margin-bottom: 1.2em;
+}
+
+.content li>div:first-child h2{
+    color: white;
+}
+
+.content li>div:first-child button {
+    color: var(--color-dark-gray-3);
+}
+
+.content li>div:last-child {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1em;
+    grid-row-gap: 2.4em;
+}
+
+.content li h3 {
+    font-size: 1rem;
+    margin: 1em 0 .5em;
+    text-transform: capitalize;
+    font-family: var(--font-roboto);
+    font-weight: 400;
+    font-style: normal;
+    color: var(--color-dark-gray-3);
+}
+
+.content li span {
+    font-weight: 700;
+    font-size: .77rem;
+    font-style: normal;
+    justify-content: flex-start;
+}
+
+.content li figure button {
+    display: none;
+}
 

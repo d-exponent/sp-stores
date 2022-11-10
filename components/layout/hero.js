@@ -1,12 +1,10 @@
-import styles from './hero.module.css'
+import classes from './hero.module.css'
 
 const Hero = () => {
 	return (
-		<div className={styles.hero}>
-			<h1 className={styles.heroTitle}>
-				<span className={styles.heroTitleMain}>SP-Collections</span>
-				<span className={styles.heroTitleSub}>we swag different!😎</span>
-			</h1>
+		<div className={classes.hero}>
+			<h1 className={classes.title}>SP-Collections</h1>
+			<span className={classes.subTitle}>we swag different!😎</span>
 		</div>
 	)
 }
