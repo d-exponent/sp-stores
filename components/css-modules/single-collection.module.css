@@ -3,7 +3,7 @@
 }
 
 .container {
-    padding-top: 
+    padding-block: 
         calc(var(--header-height) + var(--padding-primary));
 }
 

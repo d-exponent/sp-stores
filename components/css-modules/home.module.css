@@ -1,10 +1,10 @@
 .container {
-    margin-bottom: 3em;
     padding-top: var(--header-height);
 }
 
 .content {
-    padding-inline: 3%;
+    padding: 3%;
+    ;
 }
 
 .content>div {
@@ -36,7 +36,6 @@
     color: white;
     font-weight: 400;
     text-transform: uppercase;
-    border-bottom: 1px solid var(--color-accent-blue);
     letter-spacing: 1px;
 }
 
@@ -59,7 +58,6 @@
     font-family: var(--font-roboto);
     font-weight: 400;
     text-transform: capitalize;
-    color: var(--color-dark-gray-3);
 }
 
 .content li {
@@ -71,21 +69,27 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 10px;
-    background-color: var(--color-orange-primary);
+    padding: 10px 0;
+    border-bottom: 1px solid var(--color-dark-gray-4);
     margin-bottom: 1.2em;
 }
 
-.content li>div:first-child h2{
-    color: white;
+.content li>div:first-child h2 {
+    color: var(--color-dark-gray-4);
 }
 
 .content li>div:first-child button {
-    color: var(--color-dark-gray-3);
+    color: #fff;
+    background-color: var(--color-dark-blue);
+    font-weight: 100;
+    letter-spacing: 2px;
 }
 
+.content li>div:nth-child(2) h3 {
+    color: var(--color-dark-gray-4);
+
+}
 
 .content li figure button {
     display: none;
 }
-

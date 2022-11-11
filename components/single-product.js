@@ -1,83 +1,67 @@
-import {  useContext } from 'react'
+import { useContext } from 'react'
 import { useSession } from 'next-auth/react'
+import { PaystackButton } from 'react-paystack'
 
 import Price from './ui/price'
 import Carousel from './ui/carousel'
-import ShoppingItemsContext from '../context/shopping-bag'
-import NotificationContext from '../context/notification'
-import PaystackScript from './paystack-script'
-import classes from './css-modules/single-product.module.css'
-
 import Button from './ui/button'
 
-const SingleProductPage = ({ product }) => {
-	const { data, status } = useSession()
+import NotificationContext from '../context/notification'
+import ShoppingItemsContext from '../context/shopping-bag'
+import classes from './css-modules/single-product.module.css'
 
+const SingleProductPage = ({ product }) => {
 	const { addToBag } = useContext(ShoppingItemsContext)
 	const { showNotification } = useContext(NotificationContext)
+	const { data, status } = useSession()
 
-	const secondaryImages = product.images.map((image, i) => ({
-		src: `/images/products/${image}`,
+	const handleAddtoBag = () => addToBag(product)
+
+	const imageSrc = '/images/products'
+	const coverImage = { src: `${imageSrc}/${product.imageCover}`, alt: product.name }
+
+	const secondaryImages = product.images?.map((image, i) => ({
+		src: `${imageSrc}/${image}`,
 		alt: `${product.name}-${i + 1}`,
 	}))
 
-	const coverImage = { src: `/images/products/${product.imageCover}`, alt: product.name }
-	const carouselImages = [coverImage, ...secondaryImages]
+	const carouselImages = secondaryImages ? [coverImage, ...secondaryImages] : [coverImage]
 
-	function handleAddtoBag() {
-		addToBag(product)
-	}
+	const handleSuccess = (reference) =>
+		showNotification('Verifying success status').success()
 
-	function handlePayWithPaystack(e) {
-		e.preventDefault()
+	const handleClose = () =>
+		showNotification('Payment was closed before completion').error()
 
-		if (status !== 'authenticated') {
-			return showNotification('Please login to make payment').error()
-		}
-
-		showNotification('Processing payment').pending()
-		const {
-			user: { name, email },
-		} = data
-
-		const productPrice = product.discountPrice || product.price
-
-		let handler = PaystackPop.setup({
-			key: 'pk_test_9b85118dc69a219c04177eaa758df84da917cdd1',
-			email: email,
-			amount: productPrice * 100,
+	let paystackProps
+	if (status === 'authenticated') {
+		paystackProps = {
+			publickey: 'pk_test_9b85118dc69a219c04177eaa758df84da917cdd1',
+			email: data.user.email,
+			amount: (product.discountPrice || product.price) * 100,
 			currency: 'NGN',
+			reference: `${data.user.email.split('@')[0]}${Date.now()}`,
 			metadata: {
 				bag_items_ids: [product._id],
-				customer_names: name,
+				customer_names: data.user.name,
 			},
-			onClose: function () {
-				showNotification('Payment was terminated. Please try again').error()
-			},
-
-			callback: function (response) {
-				let reference = response.reference
-
-				//TODO: Make a fetch requet via api to confirm reference. Show notification
-			},
-		})
-
-		handler.openIframe()
+			text: 'Buy Now',
+			onClose: handleClose,
+			onSuccess: (reference) => handleSuccess(reference),
+		}
 	}
 
-	
-	const formattedProductName = product.name.toUpperCase()
 	return (
 		<section className={classes.container}>
 			<Carousel images={carouselImages} interval={3500} />
-			<h2>{formattedProductName}</h2>
+			<h2>{product.name.toUpperCase()}</h2>
 			<p>{product.description}</p>
-			
-			<Price product={product}/>
+
+			<Price product={product} />
 			<div className={classes.cta}>
 				<>
 					<Button onClick={handleAddtoBag} text='Add to cart' />
-					<PaystackScript handleSubmit={handlePayWithPaystack} />
+					<PaystackButton {...paystackProps} />
 				</>
 			</div>
 			<h3>Reviews and ratings</h3>

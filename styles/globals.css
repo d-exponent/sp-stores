@@ -12,9 +12,8 @@
 
   --color-off-white: #f5f5f5;
   --color-accent-blue: #6a51a4;
-  --color-dark-blue: #011a31;
+  --color-dark-blue: #0e204e;
   --color-medium-blue: #09a0d4;
-  --color-teal: teal;
 
   --color-blue-primary: #5fc2d5;
   --color-orange-primary: #f7b500;
@@ -68,6 +67,7 @@ section {
   padding-top: var(--header-height);
   padding-inline: var(--padding-primary);
   z-index: 1;
+  padding-bottom: 1px;
 }
 
 img {

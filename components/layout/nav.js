@@ -63,7 +63,7 @@ const Nav = () => {
 			{authStatus !== 'authenticated' && authStatus !== 'loading' ? (
 				<div
 					onClick={handlePushToAuthPage}
-					className={`${classes.navLink} ${classes.cta}`}
+					className={`${classes.navLink} ${classes.loginBtn}`}
 				>
 					<p>
 						<Button text='Login/Signup' />

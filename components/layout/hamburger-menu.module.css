@@ -1,6 +1,6 @@
 .burger,
 .cross {
-    color: var(--color-dark-gray-2);
+    color: var(--color-dark-gray-4);
     display: grid;
     place-content: center;
 }
