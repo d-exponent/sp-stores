@@ -5,7 +5,7 @@ const SingleCollectionPage = (props) => {
 	const { markdown, products } = props
 
 	return (
-		<section className={classes.container}>
+		<section className={`${classes.container} pd-top-30`}>
 			<div className={classes.gridItems}>
 				<CollectionItemsGrid items={products} />
 			</div>

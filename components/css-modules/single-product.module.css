@@ -1,5 +1,5 @@
 .container {
-    padding-top: calc(var(--header-height) + 20px) ;
+    padding-top: calc(var(--header-height) + 20px);
 }
 
 .container>h2 {
@@ -43,6 +43,7 @@
 }
 
 .cta button:last-child {
+    padding-block: calc(1.2em + 2px);
     color: white;
     background-color: var(--blue-2);
     text-transform: uppercase;

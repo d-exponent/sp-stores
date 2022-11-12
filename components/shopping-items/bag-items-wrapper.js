@@ -1,12 +1,25 @@
-import Button from '../ui/button'
-import BagItems from './bag-items'
+import { useContext } from 'react'
 import { TbCurrencyNaira } from 'react-icons/tb'
+
 import { formatToCurrency } from '../../lib/utils'
+import { getCheckoutPrice, getItemsIds } from '../../lib/checkout-utils'
+import BagItems from './bag-items'
+import PaystackPayButton from '../ui/paystack-pay-button'
+import ShoppingBagContext from '../../context/shopping-bag'
 
 import classes from './css-modules/bag-items-wrapper.module.css'
 
-const BagItemsWrapper = (props) => {
-	const formattedTotalPrice = formatToCurrency(props.totalPrice)
+const BagItemsWrapper = () => {
+	const { items } = useContext(ShoppingBagContext)
+
+	const totalPrice = getCheckoutPrice(items)
+	const formattedTotalPrice = formatToCurrency(totalPrice)
+
+	const checkoutItemsData = {
+		totalPrice: totalPrice * 100,
+		ids: getItemsIds(items),
+	}
+
 	return (
 		<div className={classes.wrapper}>
 			<div className={classes.itemsList}>
@@ -21,7 +34,7 @@ const BagItemsWrapper = (props) => {
 					<span>{formattedTotalPrice}</span>
 				</div>
 				<div className={`${classes.cta} grid`}>
-					<Button onClick={props.handlePaystack} text='Pay with Paystack' />
+					<PaystackPayButton checkoutItemsData={checkoutItemsData} text='Checkout' />
 				</div>
 			</div>
 		</div>

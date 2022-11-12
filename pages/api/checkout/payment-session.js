@@ -1,6 +1,6 @@
 import handler from '../../../controllers/app-controller'
-import { createSession } from '../../../controllers/paystack-controller'
+import { createCheckoutSession } from '../../../controllers/paystack-controller'
 
-handler.post(createSession)
+handler.post(createCheckoutSession)
 
 export default handler

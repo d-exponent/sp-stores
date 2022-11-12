@@ -16,11 +16,11 @@ const Item = (props) => {
 	const { product, showToCollections, toBag } = props
 	const { category } = product
 
-	const pushToDetailPage = () => push(`/products/${product.slug}`)
+	const handlePushItemDetail = () => push(`/products/${product.slug}`)
 
-	const pushToCollectionsPage = () => push(`/${category}`)
+	const handlePushToCollection = () => push(`/${category}`)
 
-	const pushToBagItemsPage = () => addToBag(product)
+	const handlePushToBag = () => addToBag(product)
 
 	const displayCollectionBtnText =
 		category === 'clothing' || 'Clothing' ? 'Clothes' : category
@@ -28,7 +28,7 @@ const Item = (props) => {
 	return (
 		<figure
 			className={`${classes.container} ${props.useBoxShadow} grid`}
-			onClick={pushToDetailPage}
+			onClick={handlePushItemDetail}
 		>
 			<div>
 				<Image
@@ -47,11 +47,11 @@ const Item = (props) => {
 					<>
 						{showToCollections ? (
 							<Button
-								onClick={pushToCollectionsPage}
+								onClick={handlePushToCollection}
 								text={`See more ${displayCollectionBtnText} like this`}
 							/>
 						) : null}
-						{toBag ? <Button onClick={pushToBagItemsPage} text='Add to bag' /> : null}
+						{toBag ? <Button onClick={handlePushToBag} text='Add to bag' /> : null}
 					</>
 				</div>
 			</figcaption>
