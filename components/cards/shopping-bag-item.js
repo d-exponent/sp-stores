@@ -12,7 +12,7 @@ const ShoppingBagItem = (props) => {
 	const productPrices = { discountPrice, price }
 
 	return (
-		<li className={classes.list}>
+		<li className={`${classes.list} grid`}>
 			<h3>{props.name}</h3>
 			<div>
 				<Image
@@ -23,11 +23,11 @@ const ShoppingBagItem = (props) => {
 					layout='responsive'
 				/>
 			</div>
-			<div className={classes.cta}>
-				<div className={classes.justify}>
+			<div className={`${classes.cta} flex`}>
+				<div className={`${classes.alignCenter} flex`}>
 					<Price product={productPrices} />
 				</div>
-				<div className={classes.ctaBtnWrapper}>
+				<div className={`${classes.ctaBtnWrapper} grid`}>
 					<Button onClick={props.handleCta} text='Remove' />
 				</div>
 			</div>

@@ -8,12 +8,11 @@ import classes from './css-modules/bag-items.module.css'
 const BagItems = () => {
 	const { items, removeFromBag } = useContext(ShoppingItemsContext)
 	return (
-		<ul className={classes.itemsList}>
+		<ul className={`${classes.itemsList} grid`}>
 			{items.map((item) => {
-				const imagePath = `/images/products/${item.imageCover}`
 				const customProps = {
 					...item,
-					imagePath,
+					imagePath:`/images/products/${item.imageCover}`,
 					handleCta: () => removeFromBag(item.slug),
 				}
 				return <ShoppingBagItem key={item.slug} {...customProps} />

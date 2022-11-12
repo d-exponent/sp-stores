@@ -11,7 +11,7 @@
     background-color: beige;
     padding: 3em;
     margin-block: 3em;
-    color: rgb(85, 85, 85);
+    color: var(--gray-3);
     font-size: 1.1rem;
     line-height: 1.4;
 }

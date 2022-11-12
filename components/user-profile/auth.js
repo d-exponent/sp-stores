@@ -1,7 +1,5 @@
 import Link from 'next/link'
 
-import classes from './auth.module.css'
-
 const Auth = (props) => {
 	return (
 		<div>

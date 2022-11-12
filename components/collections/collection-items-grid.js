@@ -3,7 +3,7 @@ import classes from './collections-items-grid.module.css'
 
 const CollectionItemsGrid = (props) => {
 	return (
-		<div className={classes.container}>
+		<div className={`${classes.container} grid`}>
 			{props.items.map((item) => (
 				<ItemCard
 					key={item._id}

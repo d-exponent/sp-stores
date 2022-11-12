@@ -2,8 +2,9 @@
     position: fixed;
     top: var(--header-height);
     bottom: 0;
-    right: 0;
-    left: 0;
+    /* right: 0;
+    left: 0; */
+    width: 100%;
     background: rgba(0, 0, 0, 0.7);
 
     display: flex;
@@ -21,7 +22,7 @@
     border-radius: 10%;
     font-size: 1.4rem;
     color: white;
-    animation: fade .4s;
+    /* animation: fade .4s; */
 }
 
 .navPane {

@@ -1,6 +1,5 @@
 .headerLogo {
-    color: var(--color-dark-gray-4);
-    font-family: var(--font-gloria);
+    color: var(--gray-4);
     margin: 0;
     margin-right: auto;
     font-size: .7rem;

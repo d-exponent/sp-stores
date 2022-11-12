@@ -13,14 +13,14 @@ const BagItemsWrapper = (props) => {
 				<BagItems />
 			</div>
 			<div>
-				<div className={classes.priceTotal}>
+				<div className={`${classes.priceTotal} flex-align-center`}>
 					<span>Total Price:</span>
 					<span className={`${classes.naira} grid-center `}>
 						<TbCurrencyNaira />
 					</span>
 					<span>{formattedTotalPrice}</span>
 				</div>
-				<div className={classes.cta}>
+				<div className={`${classes.cta} grid`}>
 					<Button onClick={props.handlePaystack} text='Pay with Paystack' />
 				</div>
 			</div>

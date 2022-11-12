@@ -8,7 +8,7 @@ import ShoppingItemsContext from '../../context/shopping-bag'
 import BagItemsWrapper from './bag-items-wrapper'
 import EmptyItemsWrapper from './empty-items-wrapper'
 
-import classes from './shopping-bag-items.module.css'
+import classes from './css-modules/shopping-bag-items.module.css'
 
 const ShoppingBagItems = () => {
 	const { items, isItems } = useContext(ShoppingItemsContext)
@@ -53,7 +53,7 @@ const ShoppingBagItems = () => {
 	}
 
 	return (
-		<section className={classes.bagItemsWrapper}>
+		<section className={classes.container}>
 			{!isItems ? <EmptyItemsWrapper /> : null}
 			{isItems ? (
 				<BagItemsWrapper

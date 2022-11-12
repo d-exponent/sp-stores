@@ -6,7 +6,7 @@ import SignUP from '../forms/register'
 import SignIn from './signin'
 import NotificationContext from '../../context/notification'
 import { handleSignIn, withFetch } from '../../lib/auth-utils'
-import classes from '../css-modules/authentication.module.css'
+import classes from './authentication.module.css'
 
 const getErrorMessage = (error) =>
 	error.message || "It's not you, it's us. Please try again! 😭"
@@ -37,7 +37,7 @@ const Authentication = () => {
 	function handleChange(event) {
 		const { name, value } = event.target
 
-		let formDataValue = value
+		let formDataValue = value.toLowerCase().trim()
 		if ([name] !== 'password' && [name] !== 'confirmPassword') {
 			formDataValue = value.trim()
 		}
@@ -112,7 +112,7 @@ const Authentication = () => {
 	}
 
 	return (
-		<section>
+		<section className='pd-top-30'>
 			<div className={classes.container}>
 				<div>
 					<p>

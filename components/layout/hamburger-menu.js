@@ -7,7 +7,7 @@ import classes from './hamburger-menu.module.css'
 const Hamburger = () => {
 	const { showSideNav, isShowSideNav, hideSideNav } = useContext(SideNavContext)
 
-	function showSideNavToggler() {
+	function handleSideNavToggle() {
 		if (isShowSideNav) {
 			return hideSideNav()
 		}
@@ -15,14 +15,10 @@ const Hamburger = () => {
 	}
 
 	return (
-		<div className={classes.container} onClick={showSideNavToggler}>
-			{!isShowSideNav ? (
-				<div className={classes.burger}>
-					<GiHamburgerMenu />
-				</div>
-			) : (
-				<span className={classes.cross}>&#10006;</span>
-			)}
+		<div className={classes.container} onClick={handleSideNavToggle}>
+			<div className={`${classes.burger} grid`}>
+				<GiHamburgerMenu />
+			</div>
 		</div>
 	)
 }

@@ -5,10 +5,6 @@
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 
-.itemsList {
-    display: grid;
-}
-
 .itemsList li {
     box-sizing: border-box;
     border-radius: 14px;
@@ -29,13 +25,13 @@
     padding: .4em .9em;
     font-size: .9rem;
     text-transform: capitalize;
-    color: var(--color-dark-gray-3);
+    color: var(--gray-3);
 }
 
 
 .itemsList span {
     font-size: 1rem;
-    color: var(--color-dark-gray-5);
+    color: var(--gray-5);
     font-weight: 700;
 }
 
@@ -48,7 +44,7 @@
 
 .itemsList h3,
 .itemsList li>div:last-child>div {
-    color: var(--color-dark-gray-2);
+    color: var(--gray-2);
 }
 
 .itemsList li * {

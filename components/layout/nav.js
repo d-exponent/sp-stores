@@ -38,9 +38,9 @@ const Nav = () => {
 	}
 
 	return (
-		<nav className={classes.nav}>
+		<nav className={`${classes.nav} flex-align-center`}>
 			<Link href={'/shopping-bag'}>
-				<a className={classes.navLink}>
+				<a className={`${classes.navLink} flex`}>
 					<div className={bagLogoClasses} data-items-count={itemsCount}>
 						<HiOutlineShoppingBag />
 					</div>
@@ -48,14 +48,14 @@ const Nav = () => {
 			</Link>
 
 			{authStatus === 'authenticated' ? (
-				<Link href={'/account'} className={classes.navLink}>
+				<Link href={'/account'} className={`${classes.navLink} flex`}>
 					<a>
 						<span className={classes.profile}>Account</span>
 					</a>
 				</Link>
 			) : null}
 			{authStatus === 'authenticated' ? (
-				<div className={`${classes.navLink} ${classes.logoutBtn}`}>
+				<div className={`${classes.navLink} flex ${classes.logoutBtn}`}>
 					<LogoutButton />
 				</div>
 			) : null}
@@ -63,7 +63,7 @@ const Nav = () => {
 			{authStatus !== 'authenticated' && authStatus !== 'loading' ? (
 				<div
 					onClick={handlePushToAuthPage}
-					className={`${classes.navLink} ${classes.loginBtn}`}
+					className={`${classes.navLink}  flex ${classes.loginBtn}`}
 				>
 					<p>
 						<Button text='Login/Signup' />

@@ -4,13 +4,11 @@
 
 .content {
     padding: 3%;
-    ;
 }
 
 .content>div {
     margin: 4em 0 2em;
     padding-bottom: 2em;
-    border-bottom: 1px solid var(--color-dark-gray);
 }
 
 .content>div>h1 {
@@ -55,7 +53,7 @@
 }
 
 .content h2 {
-    font-family: var(--font-roboto);
+    font-family: var(--roboto-condensed);
     font-weight: 400;
     text-transform: capitalize;
 }
@@ -70,23 +68,23 @@
     justify-content: space-between;
     align-items: center;
     padding: 10px 0;
-    border-bottom: 1px solid var(--color-dark-gray-4);
+    border-bottom: 1px solid var(--gray);
     margin-bottom: 1.2em;
 }
 
 .content li>div:first-child h2 {
-    color: var(--color-dark-gray-4);
+    color: var(--gray-4);
 }
 
 .content li>div:first-child button {
     color: #fff;
-    background-color: var(--color-dark-blue);
+    background-color: var(--blue-2);
     font-weight: 100;
     letter-spacing: 2px;
 }
 
 .content li>div:nth-child(2) h3 {
-    color: var(--color-dark-gray-4);
+    color: var(--gray-4);
 
 }
 

@@ -3,6 +3,7 @@ import { getProductPrice } from '../../lib/utils'
 
 const Price = ({ product }) => {
 	const price = getProductPrice(product)
+	
 
 	return (
 		<span className='flex'>

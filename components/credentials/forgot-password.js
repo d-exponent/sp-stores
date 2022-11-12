@@ -41,7 +41,7 @@ const ForgotPassword = () => {
 	}
 
 	return (
-		<section className={classes.container}>
+		<section className={`${classes.container} grid`}>
 			<h1>Recover your password</h1>
 			<form onSubmit={submitHandler}>
 				<Input

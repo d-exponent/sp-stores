@@ -1,5 +1,5 @@
 .list {
-    display: grid;
+    /* display: grid; */
     gap: 1em;
 }
 
@@ -9,7 +9,7 @@
     font-size: 1rem;
     text-transform: uppercase;
     letter-spacing: 1px;
-    font-family: var(--font-roboto);
+    font-family: var(--roboto-condensed);
 }
 
 @media screen and (min-width: 435px) {
@@ -19,24 +19,24 @@
 }
 
 .list button {
-    color: var(--color-dark-gray-3);
+    color: var(--gray-3);
     text-transform: capitalize;
     font-size: 1rem;
 }
 
 
 .cta {
-    display: flex;
+    /* display: flex; */
     justify-content: space-between;
     margin-top: 5em;
 }
 
-.justify {
-    display: flex;
+.alignCenter {
+    /* display: flex; */
     align-items: center;
 }
 
 .ctaBtnWrapper {
-    display: grid;
+    /* display: grid; */
     place-content: center;
 }

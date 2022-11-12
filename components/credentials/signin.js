@@ -20,15 +20,15 @@ const AuthenticationPage = (props) => {
 					</Link>
 				</>
 			</div>
-			<div className={classes.divider}>
+			<div className={`${classes.divider} flex`}>
 				<div></div>
-				<span className={classes.span}>or</span>
+				<span className={`${classes.dividerText} grid`}>or</span>
 				<div></div>
 			</div>
 			<div className={classes.ctaWrapper}>
 				<Button onClick={googleSignInHandler} renderChildren>
-					<div className={classes.googleSignin}>
-						<span className={classes.googleLogo}>
+					<div className={`${classes.googleSignin} flex`}>
+						<span className={`${classes.googleLogo} grid`}>
 							<FcGoogle />
 						</span>
 						<span className={classes.googleText}>Sign in with google</span>

@@ -1,20 +1,16 @@
 .nav {
-    display: flex;
     gap: 1.5em;
-    align-items: center;
 }
-
 
 .navLink,
 .navLogo {
-    display: flex;
     place-content: center;
     align-items: flex-end;
 }
 
 .navLogo {
     font-size: var(--nav-logo-font-size);
-    color: var(--color-dark-gray-3);
+    color: var(--gray-4);
 }
 
 .bagIcon {
@@ -24,17 +20,17 @@
 .bagIcon::before {
     content: attr(data-items-count);
     font-size: calc(var(--nav-logo-font-size) / 2);
-    font-weight: bolder;
-    background-color: var(--color-dark-blue);
-    border: 2px solid var(--color-off-white);
-    color: var(--color-off-white);
+    font-weight: 400;
+    background-color: var(--blue-2);
+    border: 2px solid var(-off-white);
+    color: var(--off-white);
     padding: 2px 6px;
     position: absolute;
-    top: calc(-1 * var(--nav-logo-font-size) / 3);
-    right: calc(-1 * var(--nav-logo-font-size) / 1.5);
+    top: calc(-1 * var(--nav-logo-font-size) / 3.7);
+    right: calc(-1 * var(--nav-logo-font-size) / 2.3);
     display: grid;
     place-content: center;
-    border-radius: 45%;
+    border-radius: 60%;
 }
 
 .bagIcon:hover::before,
@@ -44,41 +40,30 @@
 
 .profile {
     font-size: .9rem;
-    color: var(--color-dark-gray-3);
+    color: var(--gray-3);
 }
 
-.logoutBtn button {
+.logoutBtn > button {
     padding: .4em 1.3em;
-    color: var(--color-dark-gray-4);
-    border: 1px solid var(--color-dark-gray-3);
-    background-color: white;
+    color: var(--gray-4);
     text-transform: capitalize;
-    transform: scale(1);
-    transition: transform .4s;
 }
 
-.logoutBtn button:hover,
-.logoutBtn button:focus {
-    transform: scale(1.07, 1);
-}
+
 
 .loginBtn button {
     text-transform: capitalize;
     padding: .4em .6em;
     letter-spacing: .1px;
     background-color: transparent;
-    border: 1px solid var(--color-dark-gray-3);
-    color: var(--color-dark-blue);
-    transform: scale(1);
-    transition: transform .4s;
+    border: 1px solid var(--gray-3);
+    color: var(--blue);
+
     font-weight: 400;
     margin-left: 1em;
 }
 
-.loginBtn button:hover,
-.loginBtn button:focus {
-    transform: scale(1.07, 1);
-}
+
 
 @keyframes bounce {
     0% {

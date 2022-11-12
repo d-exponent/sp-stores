@@ -1,13 +1,12 @@
 import { useRef, useContext, useState } from 'react'
 import { useSession } from 'next-auth/react'
-import Link from 'next/link'
 
-import NotificationContext from '../../context/notification'
 import { withFetch } from '../../lib/auth-utils'
-import Button from '../ui/button'
+import NotificationContext from '../../context/notification'
 import UpdatePasswordForm from '../forms/update-password'
+import Button from '../ui/button'
 import Auth from './auth'
-import classes from './profile.module.css'
+import classes from './css-modules/profile.module.css'
 
 const UserProfile = () => {
 	const [updatePassword, setUpdatePassword] = useState(false)

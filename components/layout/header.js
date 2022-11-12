@@ -1,4 +1,4 @@
-import { Fragment, useContext } from 'react'
+import { useContext } from 'react'
 
 import SideNavContext from '../../context/side-nav'
 import Logo from './logo'
@@ -10,16 +10,15 @@ import classes from './header.module.css'
 const Header = () => {
 	const { isShowSideNav } = useContext(SideNavContext)
 	return (
-		<header className={classes.header}>
-			<Fragment>
+		<header className={`${classes.header} flex`}>
+			<>
 				<Hamburger />
 				<Logo />
 				<Nav />
 				{isShowSideNav && <SideNavigationPanel />}
-			</Fragment>
+			</>
 		</header>
 	)
 }
 
 export default Header
-

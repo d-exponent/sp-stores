@@ -6,7 +6,7 @@ import Button from '../ui/button'
 const CollectionGroup = ({ groups }) => {
 	const router = useRouter()
 
-	const toCollectionHandler = (groupName) => {
+	const handleToCollection = (groupName) => {
 		return () => {
 			router.push(`/${groupName}`)
 		}
@@ -18,7 +18,7 @@ const CollectionGroup = ({ groups }) => {
 				<li key={_id}>
 					<div>
 						<h2>{_id}</h2>
-						<Button onClick={toCollectionHandler(_id)} text='View More' />
+						<Button onClick={handleToCollection(_id)} text='View More' />
 					</div>
 
 					<CollectionItemsGrid

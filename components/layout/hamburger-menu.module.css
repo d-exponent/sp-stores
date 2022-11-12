@@ -1,7 +1,5 @@
-.burger,
-.cross {
-    color: var(--color-dark-gray-4);
-    display: grid;
+.burger {
+    color: var(--gray-4);
     place-content: center;
 }
 

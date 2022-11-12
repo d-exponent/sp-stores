@@ -1,14 +1,17 @@
 .hero {
+    
     height: 40vh;
-    background: linear-gradient(gray, black), url(/images/products/bg-img.jpg);
+    background: 
+        linear-gradient(var(--gray-4), black), 
+        url(/images/products/bg-img.jpg);
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
     background-blend-mode: multiply;
 
+    font-family: var(--inter-tight);
     margin-top: 1em;
     padding-inline: 1.3em;
-    display: grid;
     place-content: center;
     color: white;
 }
@@ -27,6 +30,11 @@
 
 
 @media (min-width: 568px) {
+
+    .hero{
+        height: 65vh;
+    }
+    
     .title {
         font-size: 2.8rem;
         letter-spacing: 8px;

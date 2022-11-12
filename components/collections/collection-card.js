@@ -1,8 +1,6 @@
 import { useRouter } from 'next/router'
 import Image from 'next/image'
 
-import Button from '../ui/button'
-
 const CollectionCard = (props) => {
 	const router = useRouter()
 
