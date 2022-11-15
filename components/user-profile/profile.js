@@ -39,12 +39,11 @@ const UserProfile = () => {
 				method: 'PATCH',
 			})
 
-			if (!response.ok) {
-				throw new Error(serverRes.message)
-			}
+			if (!response.ok) throw new Error(serverRes.message)
 
 			currentPasswordRef.current.value = ''
 			newPasswordRef.current.value = ''
+
 			setUpdatePassword(false)
 			showNotification('Password updated successfully').success()
 		} catch (error) {
@@ -68,10 +67,7 @@ const UserProfile = () => {
 				</div>
 
 				<div className={classes.ctaWrapper}>
-					<Button 
-						text={updatePasswordTogglerText} 
-						onClick={showUpdatePasswordToggler} 
-					/>
+					<Button text={updatePasswordTogglerText} onClick={showUpdatePasswordToggler} />
 					{updatePassword ? (
 						<UpdatePasswordForm
 							onSubmit={formSubmitHandler}

@@ -6,7 +6,7 @@ const Auth = (props) => {
 			<h2>{props.title}</h2>
 			<p>{props.text}</p>
 			<Link href={props.href}>
-				<a className={classes.link}>
+				<a>
 					<span>{'->'}</span>
 					<p>{props.linkText}</p>
 				</a>

@@ -8,10 +8,12 @@
     position: fixed;
     background: white;
     width: 100%;
-    z-index: 10;
+    z-index: 5;
     height: var(--header-hight);
 }
 
 .header * {
     cursor: pointer;
+
 }
+

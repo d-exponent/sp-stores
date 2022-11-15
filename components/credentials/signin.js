@@ -13,11 +13,7 @@ const AuthenticationPage = (props) => {
 			<div>
 				<>
 					<Login {...props} />
-					<Link href='/auth/forgot-password'>
-						<a>
-							<span>Forgot password?</span>
-						</a>
-					</Link>
+					<Link href='/auth/forgot-password'>Forgot password?</Link>
 				</>
 			</div>
 			<div className={`${classes.divider} flex`}>

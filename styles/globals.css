@@ -17,7 +17,7 @@
   --blue-2: #0e204e;
 
   --orange: #f7b500;
-  
+
 
   /* FONTS */
   --inter-tight: 'Inter Tight',
@@ -49,7 +49,7 @@ body {
 }
 
 
-.pd-top-30{
+.pd-top-30 {
   padding-top: calc(30px + var(--header-height));
 }
 
@@ -71,6 +71,12 @@ section {
   z-index: 1;
 }
 
+@media screen and (max-width: 342px) {
+  section {
+    padding-top: calc(var(--header-height) + 4px);
+  }
+}
+
 img {
   z-index: 0;
   object-fit: cover;
@@ -85,7 +91,7 @@ button {
   display: flex;
 }
 
-.flex-align-center{
+.flex-align-center {
   display: flex;
   align-items: center;
 }

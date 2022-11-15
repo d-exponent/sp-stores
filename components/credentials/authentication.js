@@ -30,7 +30,7 @@ const Authentication = () => {
 	const { showNotification } = useContext(NotificationContext)
 
 	const ctaText = isLogin ? 'Not' : 'Already'
-	const ctaSpan = isLogin ? ' Sign Up' : ' Login'
+	const ctaSpan = isLogin ? ' Register' : ' Login'
 
 	const toggleLogin = () => setIsLogin((prevLogin) => !prevLogin)
 
@@ -47,7 +47,6 @@ const Authentication = () => {
 	}
 
 	async function handleSubmit(event) {
-
 		event.preventDefault()
 		// Login form
 		if (isLogin) {
@@ -71,6 +70,12 @@ const Authentication = () => {
 		}
 
 		//SignUP form
+		// if (registerForm.password.length < 8) {
+		// 	return showNotification(
+		// 		'Password must be at least eight(8) characters long'
+		// 	).error()
+		// }
+
 		setDisableRegisterBtn(true)
 		showNotification('Creating your account...').pending()
 
@@ -113,12 +118,12 @@ const Authentication = () => {
 
 	return (
 		<section className='pd-top-30'>
-			<div className={classes.container}>
+			<div className={`${classes.container} box-shadow-light`}>
 				<div>
 					<p>
 						{ctaText} a member?
 						<span className={classes.cta} onClick={toggleLogin}>
-							 {ctaSpan}
+							{ctaSpan}
 						</span>
 					</p>
 				</div>

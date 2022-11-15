@@ -13,6 +13,10 @@ import {
 export const createUser = async (req, res) => {
 	const { password, confirmPassword } = req.body
 
+	if (password.length < 8) {
+		throwOperationalError('The password must be at least 8 characters', 400)
+	}
+
 	if (password !== confirmPassword) {
 		throwOperationalError('Passwords are not the same.', 400)
 	}
