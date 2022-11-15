@@ -3,6 +3,7 @@ import nextConnect from 'next-connect'
 import handleError from './error-controller'
 import logger from '../middlewares/logger'
 import { dbConnect } from '../lib/db-utils'
+import { logByEnviroment } from '../lib/utils'
 
 const handler = nextConnect({
 	onNoMatch: (req, res) => {
@@ -13,15 +14,11 @@ const handler = nextConnect({
 	onError: handleError,
 })
 
-if (process.env.NODE_ENV !== 'production') {
-	handler.use(logger)
-}
+process.env.NODE_ENV !== 'production' && handler.use(logger)
 
 dbConnect()
 	.then(() => {
-		if (process.env.NODE_ENV !== 'production') {
-			console.log('Connected to database successfully 👍')
-		}
+		logByEnviroment('development', 'Connected to mongoDb instance successfully 👍')
 	})
 	.catch((err) => {
 		console.log('🧰 Error connecting to database' + err.message)

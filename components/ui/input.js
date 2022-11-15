@@ -35,7 +35,7 @@ const Input = (props) => {
 			<div className={classes.formGroup}>
 				<label className={classes.formLabel} htmlFor={name}>
 					<p>{label}</p>
-					{required && <span>Required</span>}
+					{required && <span>*</span>}
 				</label>
 
 				<input
@@ -55,7 +55,7 @@ const Input = (props) => {
 		<div className={classes.formGroup}>
 			<label className={classes.formLabel} htmlFor={name}>
 				<p>{label}</p>
-				{required && <span>Required</span>}
+				{required && <span>*</span>}
 			</label>
 
 			<input

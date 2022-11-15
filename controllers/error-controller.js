@@ -1,5 +1,5 @@
 import { responseSender } from '../lib/controller-utils'
-import AppError from '../lib/app-error'
+import { AppError } from '../lib/app-error'
 import { purify } from '../lib/utils'
 
 function handleMongooseDuplicateError(err) {
@@ -62,8 +62,6 @@ function handleError(err, req, res, next) {
 			err,
 		})
 	}
-
-
 
 	//Production Mode
 	sendProdError(res, error)

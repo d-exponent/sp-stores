@@ -2,7 +2,7 @@
     font-size: 13px;
     padding: 10px 25px;
     border-radius: 2px;
-    font-family: var(--font-roboto);
+    font-family: var(--roboto-condensed);
     font-weight: 500;
     font-style: normal;
     text-rendering: optimizeLegibility;

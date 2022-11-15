@@ -1,5 +1,5 @@
 import Product from '../models/product-model'
-import AppError from '../lib/app-error'
+import throwOperationalError from '../lib/app-error'
 import { responseSender } from '../lib/controller-utils'
 
 function setProductToSchema(obj) {
@@ -52,7 +52,7 @@ export const getAllProducts = async (req, res) => {
 	const allProducts = await Product.find({}).sort({ uploadedAt: -1 })
 
 	if (!allProducts) {
-		throw new AppError('Could not find any products', 404)
+		throwOperationalError('Could not find any products', 404)
 	}
 
 	responseSender(res, 200, {
@@ -66,7 +66,7 @@ export const getProduct = async (req, res) => {
 
 	const product = await Product.findOne({ slug })
 	if (!product) {
-		throw new AppError('Could not find product', 404)
+		throwOperationalError('Could not find product', 404)
 	}
 
 	responseSender(res, 200, {
@@ -77,7 +77,7 @@ export const getProduct = async (req, res) => {
 
 export const createProduct = async (req, res) => {
 	if (!req.body) {
-		throw new AppError('Please provide product information', 400)
+		throwOperationalError('Please provide product information', 400)
 	}
 
 	const filtered = setProductToSchema(req.body)

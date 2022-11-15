@@ -10,15 +10,17 @@ import classes from './css-modules/profile.module.css'
 
 const UserProfile = () => {
 	const [updatePassword, setUpdatePassword] = useState(false)
+
 	const { showNotification } = useContext(NotificationContext)
+
 	const { data, status } = useSession()
 
 	const currentPasswordRef = useRef(null)
 	const newPasswordRef = useRef(null)
 
-	function showUpdatePasswordToggler() {
-		setUpdatePassword((prev) => !prev)
-	}
+	const updatePasswordTogglerText = updatePassword ? 'Hide ' : 'Update Password'
+
+	const showUpdatePasswordToggler = () => setUpdatePassword((prev) => !prev)
 
 	async function formSubmitHandler(event) {
 		event.preventDefault()
@@ -66,7 +68,10 @@ const UserProfile = () => {
 				</div>
 
 				<div className={classes.ctaWrapper}>
-					<Button text='Update your password' onClick={showUpdatePasswordToggler} />
+					<Button 
+						text={updatePasswordTogglerText} 
+						onClick={showUpdatePasswordToggler} 
+					/>
 					{updatePassword ? (
 						<UpdatePasswordForm
 							onSubmit={formSubmitHandler}

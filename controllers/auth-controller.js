@@ -1,4 +1,4 @@
-import AppError from '../lib/app-error'
+import throwOperationalError from '../lib/app-error'
 import Email from '../lib/email'
 import User from '../models/user-model'
 import {
@@ -14,7 +14,7 @@ export const createUser = async (req, res) => {
 	const { password, confirmPassword } = req.body
 
 	if (password !== confirmPassword) {
-		throw new AppError('Passwords are not the same.', 400)
+		throwOperationalError('Passwords are not the same.', 400)
 	}
 
 	const newUser = await User.create(req.body)
@@ -32,30 +32,33 @@ export const updatePassword = async (req, res) => {
 	const { currentPassword, newPassword } = req.body
 
 	if (!email) {
-		throw new AppError('Please provide the email address', 422)
+		throwOperationalError('Please provide the email address', 422)
 	}
 
 	if (!currentPassword || !newPassword) {
-		throw new AppError('Please provide your current password and the new password', 422)
+		throwOperationalError(
+			'Please provide your current password and the new password',
+			422
+		)
 	}
 
 	if (currentPassword === newPassword) {
-		throw new AppError('New password is the same as the old password', 400)
+		throwOperationalError('New password is the same as the old password', 400)
 	}
 
 	if (newPassword.length < 8) {
-		throw new AppError('Password must be at least 8 characters', 400)
+		throwOperationalError('Password must be at least 8 characters', 400)
 	}
 
 	const user = await User.findOne({ email }).select('+password')
 
 	if (!user) {
-		throw new AppError('This account is in our records', 404)
+		throwOperationalError('This account is in our records', 404)
 	}
 
 	const isValidPassword = await bcryptCompare(currentPassword, user.password)
 	if (!isValidPassword) {
-		throw new AppError('Invalid password', 401)
+		throwOperationalError('Invalid password', 401)
 	}
 
 	user.password = await bcryptHash(newPassword)
@@ -69,12 +72,12 @@ export const forgotPassword = async (req, res) => {
 	const { email } = req.body
 
 	if (!email) {
-		throw new AppError('Please provide the email address of your account', 422)
+		throwOperationalError('Please provide the email address of your account', 422)
 	}
 
 	const user = await User.findOne({ email })
 	if (!user) {
-		throw new AppError('Not Found! Confrim your email address and try again', 404)
+		throwOperationalError('Not Found! Confrim your email address and try again', 404)
 	}
 
 	const resetToken = user.createResetToken()
@@ -107,27 +110,27 @@ export const resetPassword = async (req, res) => {
 	const { newPassword, confirmPassword, resetToken } = req.body
 
 	if (!newPassword || !confirmPassword || !resetToken) {
-		throw new AppError('Please provide valid credentials', 400)
+		throwOperationalError('Please provide valid credentials', 400)
 	}
 
 	if (newPassword !== confirmPassword) {
-		throw new AppError('New password and confrim password mush match', 400)
+		throwOperationalError('New password and confrim password mush match', 400)
 	}
 
 	if (newPassword.length < 8) {
-		throw new AppError('Password must be at least 8 characters', 400)
+		throwOperationalError('Password must be at least 8 characters', 400)
 	}
 
 	const hashedToken = cryptoHash(resetToken)
 	const user = await User.findOne({ passwordResetToken: hashedToken }).select('+password')
 
 	if (!user) {
-		throw new AppError('Invalid Inputs. Try again !', 500)
+		throwOperationalError('Invalid Inputs. Try again !', 500)
 	}
 
 	const currentTime = Date.now()
 	if (currentTime > user.passwordResetTokenExpiresAt) {
-		throw new AppError('Your reset timer has expired', 400)
+		throwOperationalError('Your reset timer has expired', 400)
 	}
 
 	user.password = await bcryptHash(newPassword)

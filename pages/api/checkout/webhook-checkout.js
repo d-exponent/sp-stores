@@ -50,10 +50,9 @@ function handler(req, res) {
 			})
 			.catch((err) => {
 				console.log('🧰 Initial Error message: ' + err.message)
-				const myBaseUrl = getBaseUrl(req)
-
+				
 				//Last resort
-				axios.post(`${myBaseUrl}/api/orders`, order).catch((error) => {
+				axios.post(`${getBaseUrl(req)}/api/orders`, order).catch((error) => {
 					console.log('🧰🧰ERROR! ' + error.response.data.message)
 				})
 			})

@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-import AppError from '../lib/app-error'
+import throwOperationalError from '../lib/app-error'
 import { responseSender } from '../lib/controller-utils'
 
 export const createCheckoutSession = async (req, res) => {
@@ -34,7 +34,7 @@ export const createCheckoutSession = async (req, res) => {
 	} = response.data
 
 	if (!authorization_url) {
-		throw new AppError('Something went wrong!', 500)
+		throwOperationalError('Something went wrong!', 500)
 	}
 
 	responseSender(res, 200, { success: true, auth_url: authorization_url })

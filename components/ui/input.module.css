@@ -1,7 +1,7 @@
-
-.formGroup *{
+.formGroup * {
     margin: 0;
 }
+
 .formGroup {
     display: grid;
     gap: .4em;
@@ -10,9 +10,10 @@
 .formGroup input {
     padding: 10px 12px;
     font-size: .9rem;
-    background-color: #f4f4f4;
+    background-color: transparent;
     border: none;
-    border: 1px solid rgb(240, 231, 231);
+    border: 1px solid var(--gray-2);
+    border-radius: 3px;
     font-weight: 400;
     font-style: normal;
     color: #666;
@@ -21,15 +22,17 @@
     max-width: 450px;
 }
 
-.formGroup span{
-    color: firebrick;
-    font-size: x-small;
-    text-transform: lowercase;
-}
-
-.formLabel{
+.formLabel {
     display: flex;
     align-items: flex-end;
-    gap: .4em;
+    gap: .1em;
     margin-bottom: 0;
+}
+
+.formLabel>span {
+    color: firebrick;
+    font-size: .8rem;
+    position: relative;
+    bottom: 4px;
+    left: 1px;
 }
