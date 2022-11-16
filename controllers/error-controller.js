@@ -1,4 +1,4 @@
-import { responseSender } from '../lib/controller-utils'
+import { sendResponse } from '../lib/controller-utils'
 import { AppError } from '../lib/app-error'
 import { purify } from '../lib/utils'
 
@@ -28,12 +28,12 @@ function sendProdError(res, err) {
 
 	if (err.isOperational) {
 		//Expose error message for operational errors
-		return responseSender(res, err.status, jsonRes)
+		return sendResponse(res, err.status, jsonRes)
 	}
 
 	//Show generic message for non-operational errors
 	jsonRes.message = 'Something went wrong'
-	responseSender(res, 500, jsonRes)
+	sendResponse(res, 500, jsonRes)
 }
 
 function handleError(err, req, res, next) {
@@ -56,7 +56,7 @@ function handleError(err, req, res, next) {
 
 	//Development mode
 	if (process.env.NODE_ENV !== 'production') {
-		return responseSender(res, error.status || 500, {
+		return sendResponse(res, error.status || 500, {
 			success: false,
 			message: error.message,
 			err,

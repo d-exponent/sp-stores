@@ -1,16 +1,16 @@
 import { useContext } from 'react'
+import { useSession } from 'next-auth/react'
 
 import Price from './ui/price'
 import Carousel from './ui/carousel'
 import Button from './ui/button'
 
-import PaystackPayButton from './ui/paystack-pay-button'
+import PaystackCustomerPay from './ui/paystack'
 import ShoppingItemsContext from '../context/shopping-bag'
 import classes from './css-modules/single-product.module.css'
 
 const SingleProductPage = ({ product }) => {
 	const { addToBag } = useContext(ShoppingItemsContext)
-	
 
 	const handleAddtoBag = () => addToBag(product)
 
@@ -26,11 +26,6 @@ const SingleProductPage = ({ product }) => {
 
 	const price = product.discountPrice || product.price
 
-	const checkoutItemsData = {
-		totalPrice: price * 100,
-		ids: [product._id],
-	}
-
 	return (
 		<section className={classes.container}>
 			<Carousel images={carouselImages} interval={3500} />
@@ -41,7 +36,7 @@ const SingleProductPage = ({ product }) => {
 			<div className={`${classes.cta} grid`}>
 				<>
 					<Button onClick={handleAddtoBag} text='Add to cart' />
-					<PaystackPayButton text='Buy now' checkoutItemsData={checkoutItemsData} />
+					<PaystackCustomerPay itemIds={[product._id]} amount={price} />
 				</>
 			</div>
 			<h3>Reviews and ratings</h3>

@@ -1,10 +1,11 @@
+import Router from 'next/router'
 import { useContext } from 'react'
 import { TbCurrencyNaira } from 'react-icons/tb'
 
 import { formatToCurrency } from '../../lib/utils'
 import { getCheckoutPrice, getItemsIds } from '../../lib/checkout-utils'
 import BagItems from './bag-items'
-import PaystackPayButton from '../ui/paystack-pay-button'
+import PaystackCustomerPay from '../ui/paystack'
 import ShoppingBagContext from '../../context/shopping-bag'
 
 import classes from './css-modules/bag-items-wrapper.module.css'
@@ -15,9 +16,9 @@ const BagItemsWrapper = () => {
 	const totalPrice = getCheckoutPrice(items)
 	const formattedTotalPrice = formatToCurrency(totalPrice)
 
-	const checkoutItemsData = {
-		totalPrice: totalPrice * 100,
-		ids: getItemsIds(items),
+	const clearLocalStorage = () => {
+		window.localStorage.clear()
+		Router.reload(window.location.pathname)
 	}
 
 	return (
@@ -34,7 +35,12 @@ const BagItemsWrapper = () => {
 					<span>{formattedTotalPrice}</span>
 				</div>
 				<div className={`${classes.cta} grid`}>
-					<PaystackPayButton checkoutItemsData={checkoutItemsData} text='Checkout' />
+					<PaystackCustomerPay
+						itemIds={getItemsIds(items)}
+						amount={totalPrice}
+						text='Checkout'
+						execute={clearLocalStorage}
+					/>
 				</div>
 			</div>
 		</div>

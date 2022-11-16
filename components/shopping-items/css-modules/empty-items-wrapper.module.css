@@ -4,7 +4,7 @@
     color: var(--gray-3);
 }
 
-.empty span {
+.empty a {
     font-size: 1rem;
     text-align: center;
     color: var(--blue-1);

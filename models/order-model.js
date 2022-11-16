@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-export const orderSchema = new mongoose.Schema(
+const orderSchema = new mongoose.Schema(
 	{
 		customerEmail: {
 			type: String,
@@ -61,4 +61,6 @@ orderSchema.pre(/^find/, function (next) {
 	next()
 })
 
-export const Order = mongoose.models.Order || mongoose.model('Order', orderSchema)
+const Order = mongoose.models.Order || mongoose.model('Order', orderSchema)
+
+export default Order

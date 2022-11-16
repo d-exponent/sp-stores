@@ -1,6 +1,6 @@
 import Product from '../models/product-model'
 import throwOperationalError from '../lib/app-error'
-import { responseSender } from '../lib/controller-utils'
+import { sendResponse } from '../lib/controller-utils'
 
 function setProductToSchema(obj) {
 	const configArr = [
@@ -55,7 +55,7 @@ export const getAllProducts = async (req, res) => {
 		throwOperationalError('Could not find any products', 404)
 	}
 
-	responseSender(res, 200, {
+	sendResponse(res, 200, {
 		success: true,
 		data: allProducts,
 	})
@@ -69,7 +69,7 @@ export const getProduct = async (req, res) => {
 		throwOperationalError('Could not find product', 404)
 	}
 
-	responseSender(res, 200, {
+	sendResponse(res, 200, {
 		success: true,
 		data: product,
 	})
@@ -92,7 +92,7 @@ export const createProduct = async (req, res) => {
 
 	const newProduct = await Product.create(filtered)
 
-	responseSender(res, 201, {
+	sendResponse(res, 201, {
 		success: true,
 		data: newProduct,
 	})
@@ -107,5 +107,5 @@ export const updateProduct = async (req, res) => {
 	}
 
 	const product = await Product.findOneAndUpdate({ slug }, req.body, optionsConfig)
-	responseSender(res, 200, { success: true, data: product })
+	sendResponse(res, 200, { success: true, data: product })
 }

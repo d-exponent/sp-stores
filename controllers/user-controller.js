@@ -1,7 +1,7 @@
 import User from '../models/user-model'
 import throwOperationalError from '../lib/app-error'
 import { isValidEmail } from '../lib/utils'
-import { responseSender } from '../lib/controller-utils'
+import { sendResponse } from '../lib/controller-utils'
 
 export const getUsers = async (req, res) => {
 	const allUsers = await User.find({})
@@ -10,7 +10,7 @@ export const getUsers = async (req, res) => {
 		throwOperationalError('There are no users available', 404)
 	}
 
-	responseSender(res, 200, { success: true, data: allUsers })
+	sendResponse(res, 200, { success: true, data: allUsers })
 }
 
 export const getUser = async (req, res) => {
@@ -29,5 +29,5 @@ export const getUser = async (req, res) => {
 		throwOperationalError('User not found', 404)
 	}
 
-	responseSender(res, 200, { success: true, data: user })
+	sendResponse(res, 200, { success: true, data: user })
 }

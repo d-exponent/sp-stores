@@ -1,0 +1,22 @@
+.container{
+    padding-top: calc(var(--header-height) + 20px);
+}
+
+.empty {
+    height: 95vh;  
+    font-size: 1.2rem;
+}
+
+
+@media  screen and (min-width: 435px) {
+    .empty{
+        font-size: 1.4rem;
+    }
+}
+
+
+@media  screen and (min-width: 800px) {
+    .empty{
+        font-size: 1.65rem;
+    }
+}

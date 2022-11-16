@@ -2,7 +2,7 @@ import throwOperationalError from '../lib/app-error'
 import Email from '../lib/email'
 import User from '../models/user-model'
 import {
-	responseSender,
+	sendResponse,
 	bcryptCompare,
 	getProtocol,
 	getHost,
@@ -28,7 +28,7 @@ export const createUser = async (req, res) => {
 	const url = `${protocol}://${host}`
 
 	await new Email(newUser, url).sendWelcome()
-	responseSender(res, 201, { success: true, message: 'Account created successfully' })
+	sendResponse(res, 201, { success: true, message: 'Account created successfully' })
 }
 
 export const updatePassword = async (req, res) => {
@@ -69,7 +69,7 @@ export const updatePassword = async (req, res) => {
 	user.passwordModifiedAt = Date.now()
 	await user.save()
 
-	responseSender(res, 200, { success: true, message: 'Password is updated sucessfully' })
+	sendResponse(res, 200, { success: true, message: 'Password is updated sucessfully' })
 }
 
 export const forgotPassword = async (req, res) => {
@@ -93,7 +93,7 @@ export const forgotPassword = async (req, res) => {
 		await new Email(user, resetUrl).sendPasswordResetLink()
 		await user.save({ validateBeforeSave: false })
 
-		responseSender(res, 200, {
+		sendResponse(res, 200, {
 			success: true,
 			message:
 				"Check your email for the reset link. Check your Junk folder if it's not in your primary inbox ",
@@ -103,7 +103,7 @@ export const forgotPassword = async (req, res) => {
 		user.passwordResetTokenExpiresAt = undefined
 		user.save((err) => console.log(err.message))
 
-		return responseSender(res, 500, {
+		return sendResponse(res, 500, {
 			success: false,
 			message: error.message || 'Something went wrong!',
 		})
@@ -143,7 +143,7 @@ export const resetPassword = async (req, res) => {
 	user.passwordModifiedAt = currentTime
 	await user.save()
 
-	responseSender(res, 200, {
+	sendResponse(res, 200, {
 		success: true,
 		message: 'Password has been reset successfully',
 	})
