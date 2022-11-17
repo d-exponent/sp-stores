@@ -5,6 +5,7 @@ import logger from '../middlewares/logger'
 import connectDb from '../middlewares/connect-db'
 import { sendResponse } from '../lib/controller-utils'
 
+
 const handleNoMatch = (req, res) => {
 	sendResponse(res, 400, {
 		success: false,
@@ -19,5 +20,7 @@ const handler = nextConnect({
 
 handler.use(connectDb)
 handler.use(logger('dev'))
+
+
 
 export default handler

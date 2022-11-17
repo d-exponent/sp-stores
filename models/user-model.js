@@ -52,20 +52,18 @@ const userSchema = new mongoose.Schema(
 		},
 	},
 	{
-		methods: {
-			createResetToken() {
-				const resetToken = cryptoToken(30)
-
-				this.passwordResetToken = cryptoHash(resetToken)
-				this.passwordResetTokenExpiresAt = Date.now() + 5 * 60 * 1000 // 5 minutes
-
-				return resetToken
-			},
-		},
+		toJSON: { virtuals: true },
+		toObject: { virtuals: true },
 	}
 )
 
 userSchema.index({ email: 1, phoneNumber: -1 }, { unique: true })
+
+userSchema.virtual('fullName').get(function () {
+	return `${this.firstName} ${this.lastName}`
+})
+
+
 
 userSchema.pre('save', async function (next) {
 	if (this.isNew === true) {
@@ -79,5 +77,14 @@ userSchema.pre(/^find/, function (next) {
 	next()
 })
 
-const User = mongoose.models.User || mongoose.model('User', userSchema)
-export default User
+userSchema.methods.createResetToken = function () {
+	const resetToken = cryptoToken(30)
+
+	this.passwordResetToken = cryptoHash(resetToken)
+	this.passwordResetTokenExpiresAt = Date.now() + 5 * 60 * 1000 // 5 minutes
+
+	return resetToken
+}
+
+
+export default mongoose.models.User || mongoose.model('User', userSchema)

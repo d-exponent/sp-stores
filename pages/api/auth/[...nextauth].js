@@ -44,8 +44,7 @@ export const nextAuthConfig = {
 
 				return {
 					email: user.email,
-					name: `${user.firstName} ${user.lastName}`,
-					x: 'x02343,3qmk qql'
+					name: user.fullName,
 				}
 			},
 		}),

@@ -14,17 +14,18 @@ export const getUsers = async (req, res) => {
 }
 
 export const getUser = async (req, res) => {
-	const { uemail: email } = req.query
+
+	const { uemail } = req.query
 
 	//Validate the email address
-	if (!isValidEmail(email)) {
+	if (!isValidEmail(uemail)) {
 		throwOperationalError(
 			"Please provide a valid email format 'youremail@email.com'",
 			400
 		)
 	}
 
-	const user = await User.findOne({ email })
+	const user = await User.findOne({ email: uemail })
 	if (!user) {
 		throwOperationalError('User not found', 404)
 	}

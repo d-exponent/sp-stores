@@ -1,5 +1,5 @@
-import AppError from '../lib/app-error'
-import  Order  from '../models/order-model'
+import Order from '../models/order-model'
+import { throwOperationalError } from '../lib/app-error'
 import { sendResponse } from '../lib/controller-utils'
 
 export const getAllOrders = async (req, res) => {
@@ -15,5 +15,6 @@ export const createOrder = async (req, res) => {
 export const getOrderById = async (req, res) => {
 	const { orderId } = req.query
 	const order = await Order.findById(orderId)
+	
 	sendResponse(res, 200, { success: true, data: order })
 }

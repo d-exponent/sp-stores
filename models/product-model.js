@@ -126,6 +126,6 @@ productSchema.pre(/^find/, function (next) {
 	next()
 })
 
-const Product = mongoose.models.Product || mongoose.model('Product', productSchema)
 
-export default Product
+
+export default mongoose.models.Product || mongoose.model('Product', productSchema)

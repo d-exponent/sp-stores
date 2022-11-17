@@ -2,16 +2,22 @@ import { useSession } from 'next-auth/react'
 import { useContext } from 'react'
 import { usePaystackPayment } from 'react-paystack'
 
+import { withFetch } from '../../lib/auth-utils'
 import NotificationContext from '../../context/notification'
 import Button from './button'
 
 const handleSuccess = (notify, func) => {
 	return async ({ reference }) => {
 		// Validate the payment status and notify the user
-		const res = await fetch(`/api/checkout/verify-payment?reference=${reference}`)
-		const { message } = await res.json()
+		const { response, serverRes } = await withFetch({
+			method: 'POST',
+			data: { reference },
+			url: '/api/checkout/verify-payment',
+		})
 
-		if (!res.ok) return notify(message).error()
+		const { message } = serverRes
+
+		if (!response.ok) return notify(message).error()
 
 		notify(message).success()
 

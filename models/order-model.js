@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import Product from './product-model'
 
 const orderSchema = new mongoose.Schema(
 	{
@@ -13,8 +14,13 @@ const orderSchema = new mongoose.Schema(
 			lowercase: true,
 		},
 		items: {
-			type: [{ type: mongoose.Schema.ObjectId, ref: 'Product' }],
-			required: [true, 'Order items must have at least one product'],
+			required: [true, 'An order must be made for at least one item'],
+			type: [
+				{
+					type: mongoose.Schema.ObjectId,
+					ref: Product,
+				},
+			],
 		},
 		currency: String,
 		createdAt: {
@@ -26,17 +32,17 @@ const orderSchema = new mongoose.Schema(
 			type: Number,
 			required: [true, 'An order must have a total amount of purchase'],
 		},
-		paid_at: String,
-		paystack_ref: String,
-		paystack_fees: {
+		paidAt: String,
+		paystackRef: String,
+		paystackFees: {
 			type: Number,
 			required: [true, 'Paystack fees must be included in the order'],
 		},
-		payment_method: {
+		paymentMethod: {
 			type: String,
 			required: [true, 'An order must have a payment method'],
 		},
-		payment_status: {
+		paymentStatus: {
 			type: String,
 			required: [true, 'Order must contain a payment status'],
 		},
@@ -54,13 +60,11 @@ orderSchema.virtual('totalItemsPurchased').get(function () {
 orderSchema.pre(/^find/, function (next) {
 	this.populate({
 		path: 'items',
-		select: 'name price discountPrice quantity',
+		select: 'name brand category price discountPrice ',
 	})
 
 	this.select('-__v')
 	next()
 })
 
-const Order = mongoose.models.Order || mongoose.model('Order', orderSchema)
-
-export default Order
+export default mongoose.models.Order || mongoose.model('Order', orderSchema)

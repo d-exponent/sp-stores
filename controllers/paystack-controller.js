@@ -42,7 +42,7 @@ import { sendResponse } from '../lib/controller-utils'
 // }
 
 export const verifyPayment = async (req, res) => {
-	const { reference } = req.query
+	const { reference } = req.body
 
 	const paystackVerifyUrl = `https://api.paystack.co/transaction/verify/${reference}`
 
@@ -69,10 +69,10 @@ export const verifyPayment = async (req, res) => {
 		currency: data.currency,
 		items: metadata['bag_items_ids'],
 		paystack_ref: data.reference,
-		payment_method: data.channel,
-		paystack_fees: +data.fees / 100,
-		paid_at: data.paidAt,
-		payment_status: data.status,
+		paymentMethod: data.channel,
+		paystackFees: +data.fees / 100,
+		paidAt: data.paidAt,
+		paymentStatus: data.status,
 		totalAmount: +data.amount / 100,
 		customerEmail: data.customer.email,
 		customerName: metadata['customer_names'],
@@ -85,4 +85,3 @@ export const verifyPayment = async (req, res) => {
 		console.log(e.message)
 	}
 }
-
