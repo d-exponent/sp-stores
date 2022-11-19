@@ -45,11 +45,15 @@ const productSchema = new mongoose.Schema(
 		quantity: {
 			type: Number,
 			default: 0,
+			required: [true, 'A product must have at least one item'],
 		},
 		imageCover: String,
 		images: [String],
-		inStock: Boolean,
-		rating: Number,
+		inStock: {
+			type: Boolean,
+			default: true,
+		},
+		totalRatings: Number,
 		ratingsAverage: Number,
 		salesCategory: String,
 		sizes: [{ type: String, lowercase: true }],
@@ -84,17 +88,6 @@ productSchema.virtual('discountPriceAsCurrency').get(function () {
 	return formatToCurrency(this.discountPrice)
 })
 
-productSchema.pre('save', function (next) {
-	//Make instock value false if there is no product qunatity
-	if (this.quantity < 1) {
-		this.inStock = false
-		return next()
-	}
-
-	//Make instock value true if there is at least one product qunatity
-	this.inStock = true
-	next()
-})
 
 // Create/Save Middlewares
 productSchema.pre('save', function (next) {
@@ -102,11 +95,7 @@ productSchema.pre('save', function (next) {
 		const percentage = (this.discountPrice / this.price) * 100
 		this.discountPercentage = 100 - Math.round(percentage)
 	}
-	next()
-})
 
-productSchema.pre(/^find/, function (next) {
-	this.select('-__v')
 	next()
 })
 
@@ -126,6 +115,13 @@ productSchema.pre(/^find/, function (next) {
 	next()
 })
 
+// findOneAndUpdate, findOneAndDelete ......
+productSchema.pre(/^findOneAnd/, function (next) {
+	if (this.quantity === 0) {
+		this.inStock = false
+	}
 
+	next()
+})
 
 export default mongoose.models.Product || mongoose.model('Product', productSchema)

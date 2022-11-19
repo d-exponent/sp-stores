@@ -14,7 +14,7 @@ const reviewSchema = new mongoose.Schema(
 			ref: Product,
 			required: [true, 'A review must be for a product'],
 		},
-		rating: {
+		ratings: {
 			type: Number,
 			min: 1,
 			max: 5,
@@ -36,8 +36,20 @@ const reviewSchema = new mongoose.Schema(
 
 reviewSchema.index({ product: 1, customer: 1 }, { unique: true })
 
-reviewSchema.pre(/^find/, function (next) {
+reviewSchema.statics.calculateProductRatingsStats = async function (productId) {
+	//Get all the reviews for the product and find the average
+	const ratingsStats = await this.aggregate([
+		{ $match: { product: productId } },
+		{
+			$group: {
+				_id: '$product',
+				averageRating: { $avg: '$ratings' },
+			},
+		},
+	])
+}
 
+reviewSchema.pre(/^find/, function (next) {
 	this.select('-__v')
 
 	this.populate({
@@ -45,7 +57,7 @@ reviewSchema.pre(/^find/, function (next) {
 		select: 'name price discountPrice',
 	}).populate({
 		path: 'customer',
-		select: 'firstName LastName email phoneNumber',
+		select: 'firstName lastName email phoneNumber',
 	})
 	next()
 })

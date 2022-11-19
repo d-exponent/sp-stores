@@ -53,7 +53,7 @@ const orderSchema = new mongoose.Schema(
 	}
 )
 
-orderSchema.virtual('totalItemsPurchased').get(function () {
+orderSchema.virtual('totalProducts').get(function () {
 	return this.items.length
 })
 

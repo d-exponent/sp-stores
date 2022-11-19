@@ -89,14 +89,14 @@ export const forgotPassword = async (req, res) => {
 	const host = getHost(req)
 	const resetUrl = `${protocol}://${host}/auth/reset-password?token=${resetToken}`
 
+	const toSend = new Email(user, resetUrl).sendPasswordResetLink()
+	const saved = user.save({ validateBeforeSave: false })
 	try {
-		await new Email(user, resetUrl).sendPasswordResetLink()
-		await user.save({ validateBeforeSave: false })
+		(await Promise.all([toSend, saved]))
 
 		sendResponse(res, 200, {
 			success: true,
-			message:
-				"Check your email for the reset link. Check your Junk folder if it's not in your primary inbox ",
+			message: 'A reset link has been sent to your email address. Expires in 5 minutes. ',
 		})
 	} catch (error) {
 		user.passwordResetToken = undefined
@@ -118,11 +118,11 @@ export const resetPassword = async (req, res) => {
 	}
 
 	if (newPassword !== confirmPassword) {
-		throwOperationalError('New password and confrim password mush match', 400)
+		throwOperationalError('New password and confrim password do not match', 400)
 	}
 
 	if (newPassword.length < 8) {
-		throwOperationalError('Password must be at least 8 characters', 400)
+		throwOperationalError('Password must be at least of 8 characters', 400)
 	}
 
 	const hashedToken = cryptoHash(resetToken)
