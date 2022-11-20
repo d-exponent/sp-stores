@@ -55,6 +55,7 @@ const productSchema = new mongoose.Schema(
 		},
 		totalRatings: Number,
 		ratingsAverage: Number,
+		ratingsTotal: Number,
 		salesCategory: String,
 		sizes: [{ type: String, lowercase: true }],
 		slug: String,

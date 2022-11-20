@@ -1,10 +1,10 @@
 import nextConnect from 'next-connect'
+import morgan from 'morgan'
+
 
 import handleError from './error-controller'
-import logger from '../middlewares/logger'
 import connectDb from '../middlewares/connect-db'
 import { sendResponse } from '../lib/controller-utils'
-
 
 const handleNoMatch = (req, res) => {
 	sendResponse(res, 400, {
@@ -19,8 +19,7 @@ const handler = nextConnect({
 })
 
 handler.use(connectDb)
-handler.use(logger('dev'))
 
-
+handler.use(morgan('dev'))
 
 export default handler
