@@ -47,7 +47,9 @@ export const verifyPayment = async (req, res) => {
 	const paystackVerifyUrl = `https://api.paystack.co/transaction/verify/${reference}`
 
 	const axiosConfig = {
-		headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}` },
+		headers: {
+			Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
+		},
 	}
 
 	const response = await axios.get(paystackVerifyUrl, axiosConfig)
@@ -60,7 +62,10 @@ export const verifyPayment = async (req, res) => {
 		throwOperationalError('Payment was declined', 400)
 	}
 
-	sendResponse(res, 200, { success: true, message: 'Your payment was successfull' })
+	sendResponse(res, 200, {
+		success: true,
+		message: 'Your payment was successfull',
+	})
 
 	//Save order document
 	const { metadata } = data

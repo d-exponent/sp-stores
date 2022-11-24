@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { useRef, useContext } from 'react'
 
 import Input from '../ui/input'
@@ -5,7 +6,7 @@ import Button from '../ui/button'
 import NotificationContext from '../../context/notification'
 import { withFetch } from '../../lib/auth-utils'
 
-import classes from './forgot-passowrd.module.css'
+import classes from './forgot-passoword.module.css'
 
 const ForgotPassword = () => {
 	const emailInputRef = useRef()
@@ -28,7 +29,7 @@ const ForgotPassword = () => {
 
 			if (!response.ok) {
 				const errorMessage = 'Error resetting your password. Please try again!'
-				throw new Error(serverRes.message || errorMessage).error()
+				throw new Error(serverRes.message || errorMessage)
 			}
 
 			const successMessage = `A password reset link has been sent to your email address. Click on the link to reset your password`
@@ -36,7 +37,7 @@ const ForgotPassword = () => {
 
 			emailInputRef.current.value = ''
 		} catch (error) {
-			showNotification('Something went wrong').error()
+			showNotification(error.message).error()
 		}
 	}
 
@@ -53,6 +54,10 @@ const ForgotPassword = () => {
 				/>
 				<Button text='Get Reset link' />
 			</form>
+			<div href=''>
+				<span>Back to </span>
+				<Link href='/auth/users'>Login</Link>
+			</div>
 		</section>
 	)
 }

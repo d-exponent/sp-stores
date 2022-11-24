@@ -1,5 +1,5 @@
 import Review from '../models/review-model'
-import { throwOperationalError } from '../lib/app-error'
+import throwOperationalError from '../lib/app-error'
 import { sendResponse } from '../lib/controller-utils'
 import { purify } from '../lib/utils'
 

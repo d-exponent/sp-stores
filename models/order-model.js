@@ -1,5 +1,4 @@
 import mongoose from 'mongoose'
-import Product from './product-model'
 
 const orderSchema = new mongoose.Schema(
 	{
@@ -18,14 +17,14 @@ const orderSchema = new mongoose.Schema(
 			type: [
 				{
 					type: mongoose.Schema.ObjectId,
-					ref: Product,
+					ref: 'Product',
 				},
 			],
 		},
 		currency: String,
 		createdAt: {
 			type: Date,
-			default: Date.now(),
+			default: Date.now,
 		},
 		customerCode: String,
 		totalAmount: {

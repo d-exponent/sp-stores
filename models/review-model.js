@@ -1,17 +1,17 @@
 import mongoose from 'mongoose'
-import User from './user-model'
 import Product from './product-model'
+import User from './user-model'
 
 const reviewSchema = new mongoose.Schema(
 	{
 		customer: {
 			type: mongoose.Schema.ObjectId,
-			ref: User,
+			ref: 'User',
 			required: [true, 'A review must be from a customer'],
 		},
 		product: {
 			type: mongoose.Schema.ObjectId,
-			ref: Product,
+			ref: 'Product',
 			required: [true, 'A review must be for a product'],
 		},
 		ratings: {
@@ -25,7 +25,7 @@ const reviewSchema = new mongoose.Schema(
 		},
 		createdAt: {
 			type: Date,
-			default: Date.now(),
+			default: Date.now,
 		},
 	},
 	{
@@ -34,12 +34,33 @@ const reviewSchema = new mongoose.Schema(
 	}
 )
 
-reviewSchema.index({ product: 1, customer: 1 }, { unique: true })
+reviewSchema.index({ product: 1, customer: -1 }, { unique: true })
 
-reviewSchema.statics.calculateProductRatingsStats = async function (productId) {
+reviewSchema.pre('save', function (next) {
+	// So we don't have to worry about coverting data type to number from a form
+	this.ratings = +this.ratings
+	next()
+})
+
+reviewSchema.pre(/^find/, function (next) {
+	this.select('-__v')
+
+	this.populate({
+		path: 'product',
+		select: 'name',
+	}).populate({
+		path: 'customer',
+		select: 'firstName lastName',
+	})
+	next()
+})
+
+//price discountPrice
+
+reviewSchema.statics.handleRatingStats = async function (productId) {
 	//Get all the reviews for the product and find the average
 	const ratingsStats = await this.aggregate([
-		{ $match: { product: productId } },
+		{ $match: { product: new mongoose.Types.ObjectId(productId) } },
 		{
 			$group: {
 				_id: '$product',
@@ -49,28 +70,22 @@ reviewSchema.statics.calculateProductRatingsStats = async function (productId) {
 		},
 	])
 
-	if (ratingsStats.length > 0) {
+	if (!ratingsStats.length) {
 		await Product.findByIdAndUpdate(productId, {
-			ratingsAverage: group.averageRating,
-			ratingsTotal: group.sumOfRatings,
+			ratingsAverage: 4,
+			totalRatings: 0,
 		})
+		return
 	}
 
-	//TODO: Find a way to run this function when a review is made
-	//TODO: Consider edge cases, Consider error handling
+	await Product.findByIdAndUpdate(productId, {
+		ratingsAverage: ratingsStats[0].averageRating,
+		totalRatings: ratingsStats[0].sumOfRatings,
+	})
 }
 
-reviewSchema.pre(/^find/, function (next) {
-	this.select('-__v')
-
-	this.populate({
-		path: 'product',
-		select: 'name price discountPrice',
-	}).populate({
-		path: 'customer',
-		select: 'firstName lastName email phoneNumber',
-	})
-	next()
+reviewSchema.post('save', function () {
+	this.constructor.handleRatingStats(this.product)
 })
 
 export default mongoose.models.Review || mongoose.model('Review', reviewSchema)

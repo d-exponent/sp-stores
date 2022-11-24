@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import slugify from 'slugify'
+import reviewModel from './review-model'
 
 import { formatToCurrency } from '../lib/utils'
 
@@ -47,18 +48,36 @@ const productSchema = new mongoose.Schema(
 			default: 0,
 			required: [true, 'A product must have at least one item'],
 		},
+		initialQuantity: {
+			type: Number,
+			select: false,
+		},
 		imageCover: String,
 		images: [String],
 		inStock: {
 			type: Boolean,
 			default: true,
 		},
-		totalRatings: Number,
-		ratingsAverage: Number,
-		ratingsTotal: Number,
+		lastModifiedAt: Date,
+		totalRatings: {
+			type: Number,
+			default: 0,
+		},
+		ratingsAverage: {
+			type: Number,
+			default: 4,
+		},
 		salesCategory: String,
-		sizes: [{ type: String, lowercase: true }],
-		slug: String,
+		sizes: [
+			{
+				type: String,
+				lowercase: true,
+			},
+		],
+		slug: {
+			type: String,
+			unique: true,
+		},
 		price: {
 			type: Number,
 			required: [true, 'A product must have a price'],
@@ -71,7 +90,7 @@ const productSchema = new mongoose.Schema(
 		},
 		uploadedAt: {
 			type: Date,
-			default: Date.now(),
+			default: Date.now,
 		},
 	},
 	{
@@ -79,7 +98,6 @@ const productSchema = new mongoose.Schema(
 		toObject: { virtuals: true },
 	}
 )
-productSchema.index({ slug: 1 }, { unique: true })
 
 productSchema.virtual('priceAsCurrency').get(function () {
 	return formatToCurrency(this.price)
@@ -89,39 +107,52 @@ productSchema.virtual('discountPriceAsCurrency').get(function () {
 	return formatToCurrency(this.discountPrice)
 })
 
+productSchema.virtual('reviews', {
+	ref: 'Review',
+	foreignField: 'product',
+	localField: '_id',
+})
 
-// Create/Save Middlewares
-productSchema.pre('save', function (next) {
+
+//On save or update
+productSchema.pre('save' || /^findOneAnd/, function (next) {
+	// Handle discount price changes
 	if (this.discountPrice) {
 		const percentage = (this.discountPrice / this.price) * 100
 		this.discountPercentage = 100 - Math.round(percentage)
 	}
 
+	// Handle inStock Boolean
+	this.inStock = this.quantity > 0
 	next()
 })
 
-// AUTO GENERATE SLUG PRE-SAVE MIDDLEWARE
+//Set initial quantity
 productSchema.pre('save', function (next) {
-	const millisecondsToStringArr = Date.now().toString().split('')
-	const lastFiveChar = millisecondsToStringArr.splice(8).join('')
+	this.initialQuantity = this.quantity
+	next()
+})
+
+// AUTO GENERATE SLUG ON SAVE
+productSchema.pre('save', function (next) {
+	const nowInMillisecondsStr = Date.now().toString()
+	const dateStringLength = nowInMillisecondsStr.length
+	const lastFiveChar = nowInMillisecondsStr.slice(dateStringLength - 5)
 
 	const slugString = `${this.brand} ${this.name} ${lastFiveChar}`
 	this.slug = slugify(slugString, { lower: true })
 	next()
 })
 
-// Query Middlewares
+// Remove __v feild from queries
 productSchema.pre(/^find/, function (next) {
 	this.select('-__v')
 	next()
 })
 
-// findOneAndUpdate, findOneAndDelete ......
+// Show date of lastModified
 productSchema.pre(/^findOneAnd/, function (next) {
-	if (this.quantity === 0) {
-		this.inStock = false
-	}
-
+	this.lastModifiedAt = Date.now()
 	next()
 })
 

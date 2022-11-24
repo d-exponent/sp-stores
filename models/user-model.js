@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-import { isValidEmail } from '../lib/utils'
+import { isValidEmail, capitalize } from '../lib/utils'
 import { bcryptHash, cryptoToken, cryptoHash } from '../lib/controller-utils'
 
 const userSchema = new mongoose.Schema(
@@ -9,12 +9,10 @@ const userSchema = new mongoose.Schema(
 			type: String,
 			required: [true, 'Please enter your first name'],
 			trim: true,
-			lowercase: true,
 		},
 		lastName: {
 			type: String,
 			required: [true, 'Please enter your last name'],
-			lowercase: true,
 			trim: true,
 		},
 		email: {
@@ -31,7 +29,10 @@ const userSchema = new mongoose.Schema(
 			required: true,
 			select: false,
 		},
-		passwordModifiedAt: { type: Date, select: false },
+		passwordModifiedAt: {
+			type: Date,
+			select: false,
+		},
 		passwordResetToken: String,
 		passwordResetTokenExpiresAt: Date,
 		regMethod: {
@@ -50,6 +51,11 @@ const userSchema = new mongoose.Schema(
 			type: Boolean,
 			default: true,
 		},
+		createdAt: {
+			type: Date,
+			default: Date.now,
+		},
+		
 	},
 	{
 		toJSON: { virtuals: true },
@@ -59,12 +65,20 @@ const userSchema = new mongoose.Schema(
 
 userSchema.index({ email: 1, phoneNumber: -1 }, { unique: true })
 
+//Concatenate names
 userSchema.virtual('fullName').get(function () {
-	return `${this.firstName} ${this.lastName}`
+	return this.firstName + ' ' + this.lastName
 })
 
+//Capitalize Names
+userSchema.pre('save', function (next) {
+	this.firstName = capitalize(this.firstName)
+	this.lastName = capitalize(this.lastName)
 
+	next()
+})
 
+// Hash Password
 userSchema.pre('save', async function (next) {
 	if (this.isNew === true) {
 		this.password = await bcryptHash(this.password)
@@ -72,11 +86,14 @@ userSchema.pre('save', async function (next) {
 	next()
 })
 
+//Remove __v feild
 userSchema.pre(/^find/, function (next) {
 	this.select('-__v')
 	next()
 })
 
+
+//Handle passsword reset token
 userSchema.methods.createResetToken = function () {
 	const resetToken = cryptoToken(30)
 
@@ -85,6 +102,5 @@ userSchema.methods.createResetToken = function () {
 
 	return resetToken
 }
-
 
 export default mongoose.models.User || mongoose.model('User', userSchema)

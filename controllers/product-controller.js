@@ -1,58 +1,32 @@
 import Product from '../models/product-model'
 import throwOperationalError from '../lib/app-error'
-import { sendResponse } from '../lib/controller-utils'
+import { sendResponse, filterProductUpload } from '../lib/controller-utils'
 
-function setProductToSchema(obj) {
-	const configArr = [
-		'name',
-		'description',
-		'brand',
-		'category',
-		'productType',
-		'price',
-		'color',
-		'quantity',
-		'discountPrice',
-		'sizes',
-	]
+export const createProduct = async (req, res) => {
+	if (!req.body) {
+		throwOperationalError('Please provide product information', 400)
+	}
 
-	const config = {}
+	const filtered = filterProductUpload(req.body)
 
-	//Set the data type of the product's value to match the Schema
-	configArr.forEach((element) => {
-		if (element === 'quantity') {
-			// Convert value to Number data type
-			return (config[element] = +obj[element])
-		}
+	if (req.files.imageCover) {
+		filtered.imageCover = req.files.imageCover
+	}
 
-		if (element === 'sizes') {
-			// Lets make sure of no duplicates
-			const sizesArray = obj[element].split(',') //Split to an array
-			const unique = [...new Set(sizesArray)] // Remove duplicates
+	if (req.files.images) {
+		filtered.images = req.files.images
+	}
 
-			return (config[element] = unique)
-		}
+	const newProduct = await Product.create(filtered)
 
-		if (element === 'price' || element === 'discountPrice') {
-			const initialValue = obj[element]
-
-			const valueFormatted = initialValue.replace(/,/g, '') //lets remove commas
-			const finalValue = valueFormatted ? +valueFormatted : +initialValue //convert to Number
-
-			return (config[element] = finalValue)
-		}
-
-		config[element] = obj[element]
+	sendResponse(res, 201, {
+		success: true,
+		data: newProduct,
 	})
-
-	return config
 }
 
 export const getAllProductsInStock = async (req, res) => {
-	const allProducts = await Product.find({ quantity: { $ne: 0 } })
-		.sort({
-			uploadedAt: -1,
-		})
+	const allProducts = await Product.find({ inStock: true }).sort({ uploadedAt: -1 })
 
 	if (!allProducts) {
 		throwOperationalError('Could not find any products', 404)
@@ -69,6 +43,9 @@ export const getProduct = async (req, res) => {
 	const { slug } = req.query
 
 	const product = await Product.findOne({ slug })
+		.populate('reviews')
+
+		
 	if (!product) {
 		throwOperationalError('Could not find product', 404)
 	}
@@ -76,29 +53,6 @@ export const getProduct = async (req, res) => {
 	sendResponse(res, 200, {
 		success: true,
 		data: product,
-	})
-}
-
-export const createProduct = async (req, res) => {
-	if (!req.body) {
-		throwOperationalError('Please provide product information', 400)
-	}
-
-	const filtered = setProductToSchema(req.body)
-
-	if (req.files.imageCover) {
-		filtered.imageCover = req.files.imageCover
-	}
-
-	if (req.files.images) {
-		filtered.images = req.files.images
-	}
-
-	const newProduct = await Product.create(filtered)
-
-	sendResponse(res, 201, {
-		success: true,
-		data: newProduct,
 	})
 }
 

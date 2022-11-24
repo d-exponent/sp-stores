@@ -4,6 +4,7 @@
 *.env
 # dependencies
 /node_modules
+/pages/api/test
 /.pnp
 .pnp.js
 

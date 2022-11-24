@@ -30,12 +30,17 @@ export const nextAuthConfig = {
 				await dbConnect()
 				const user = await User.findOne({ email }).select('+password')
 
-				if (!user) {
-					throw new Error(
-						'Incorrect email address. Please confirm the email address or register a new account'
-					)
+				//Verify active
+				if (!user.active) {
+					throw new Error('Account does not exist or has been deleted')
 				}
 
+				//Verify User
+				if (!user) {
+					throw new Error('Incorrect email address. Register a new account?')
+				}
+
+				//Verify password
 				const isVerifiedPassword = await bcryptCompare(password, user.password)
 
 				if (!isVerifiedPassword) {
