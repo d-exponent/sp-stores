@@ -1,15 +1,26 @@
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
 
 import Price from './ui/price'
 import Carousel from './ui/carousel'
 import Button from './ui/button'
+import Star from './ui/star'
+import Reviews from './cards/review'
 
 import PaystackCustomerPay from './ui/paystack'
 import ShoppingItemsContext from '../context/shopping-bag'
 import classes from './css-modules/single-product.module.css'
 
-const SingleProductPage = ({ product }) => {
+const SingleProductPage = (props) => {
+	const [product, setProduct] = useState(props.product)
+
+	useEffect(() => {
+		fetch(`/api/products/${product.slug}`)
+			.then((res) => res.json())
+			.then(({ data }) => setProduct(data))
+		// .catch((err) => console.log(err)) //TODO: Handle error
+	}, [product.slug])
+
 	const { addToBag } = useContext(ShoppingItemsContext)
 
 	const handleAddtoBag = () => addToBag(product)
@@ -40,6 +51,13 @@ const SingleProductPage = ({ product }) => {
 				</>
 			</div>
 			<h3>Reviews and ratings</h3>
+			<div className={classes.stats}>
+				{product.totalRatings ? <p>Total Ratings: {product.totalRatings}</p> : null}
+				<Star goldCount={product.ratingsAverage} />
+			</div>
+			<div className={classes.reviews}>
+				{product.reviews ? <Reviews reviews={product.reviews} /> : null}
+			</div>
 		</section>
 	)
 }
