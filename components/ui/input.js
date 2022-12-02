@@ -1,7 +1,7 @@
 import classes from './input.module.css'
 
 const Input = (props) => {
-	const { type, name, label, accept, required } = props
+	const { type, name, label, accept, required, reference } = props
 
 	if (type === 'textarea') {
 		return (
@@ -14,6 +14,7 @@ const Input = (props) => {
 					rows={6}
 					id={name}
 					name={name}
+					ref={reference}
 				></textarea>
 			</div>
 		)
@@ -43,7 +44,7 @@ const Input = (props) => {
 					type={type}
 					id={name}
 					name={name}
-					ref={props.reference}
+					ref={reference}
 					placeholder={props.placeholder}
 					required={required === true}
 				/>

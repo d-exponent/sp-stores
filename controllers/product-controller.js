@@ -42,10 +42,8 @@ export const getAllProductsInStock = async (req, res) => {
 export const getProduct = async (req, res) => {
 	const { slug } = req.query
 
-	const product = await Product.findOne({ slug })
-		.populate('reviews')
+	const product = await Product.findOne({ slug }).populate('reviews')
 
-		
 	if (!product) {
 		throwOperationalError('Could not find product', 404)
 	}
@@ -59,11 +57,10 @@ export const getProduct = async (req, res) => {
 export const updateProduct = async (req, res) => {
 	const { slug } = req.query
 
-	const optionsConfig = {
+	const product = await Product.findOneAndUpdate({ slug }, req.body, {
 		new: true,
 		runValidators: true,
-	}
+	})
 
-	const product = await Product.findOneAndUpdate({ slug }, req.body, optionsConfig)
 	sendResponse(res, 200, { success: true, data: product })
 }

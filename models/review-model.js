@@ -2,27 +2,32 @@ import mongoose from 'mongoose'
 import Product from './product-model'
 import User from './user-model'
 
+import { isValidEmail } from '../lib/utils'
+
 const reviewSchema = new mongoose.Schema(
 	{
-		customer: {
-			type: mongoose.Schema.ObjectId,
-			ref: 'User',
-			required: [true, 'A review must be from a customer'],
+		customerEmail: {
+			type: String,
+			lowercase: true,
+			trim: true,
+			required: [true, 'A review must belong to a user email'],
+			validate: [isValidEmail, 'Please enter a valid email address'],
+		},
+		customerName: {
+			type: String,
+			required: [true, 'A review must belong to a user email'],
 		},
 		product: {
 			type: mongoose.Schema.ObjectId,
 			ref: 'Product',
 			required: [true, 'A review must be for a product'],
 		},
-		ratings: {
+		rating: {
 			type: Number,
 			min: 1,
 			max: 5,
 		},
-		review: {
-			type: String,
-			required: true,
-		},
+		review: String,
 		createdAt: {
 			type: Date,
 			default: Date.now,
@@ -36,22 +41,8 @@ const reviewSchema = new mongoose.Schema(
 
 reviewSchema.index({ product: 1, customer: -1 }, { unique: true })
 
-reviewSchema.pre('save', function (next) {
-	// So we don't have to worry about coverting data type to number from a form
-	this.ratings = +this.ratings
-	next()
-})
-
 reviewSchema.pre(/^find/, function (next) {
 	this.select('-__v')
-
-	this.populate({
-		path: 'product',
-		select: 'name',
-	}).populate({
-		path: 'customer',
-		select: 'firstName lastName',
-	})
 	next()
 })
 
@@ -65,7 +56,7 @@ reviewSchema.statics.handleRatingStats = async function (productId) {
 			$group: {
 				_id: '$product',
 				sumOfRatings: { $sum: 1 },
-				averageRating: { $avg: '$ratings' },
+				averageRating: { $avg: '$rating' },
 			},
 		},
 	])
@@ -82,9 +73,11 @@ reviewSchema.statics.handleRatingStats = async function (productId) {
 		ratingsAverage: ratingsStats[0].averageRating,
 		totalRatings: ratingsStats[0].sumOfRatings,
 	})
+
+	console.log("🧰👌")
 }
 
-reviewSchema.post('save', function () {
+reviewSchema.pre('save', function () {
 	this.constructor.handleRatingStats(this.product)
 })
 

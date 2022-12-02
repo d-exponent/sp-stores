@@ -1,14 +1,16 @@
 import Star from '../ui/star'
 
 const Reviews = ({ reviews }) => {
+	console.log(reviews)
+
 	return (
 		<ul>
-			{reviews.map(({ _id, customer, ratings, review }) => (
+			{reviews.map(({ _id, customerName, rating, review }) => (
 				<li key={_id}>
-					<h4>{customer.fullName}</h4>
+					<h4>{customerName}</h4>
 					<p>{review}</p>
 					<span>
-						<Star goldCount={ratings} />
+						<Star goldCount={rating} />
 					</span>
 				</li>
 			))}

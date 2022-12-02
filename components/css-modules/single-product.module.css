@@ -11,6 +11,7 @@
 .container>h2 {
     font-size: 1rem;
     margin: .5em 0;
+    text-transform: uppercase;
 }
 
 .container>h3 {
@@ -28,6 +29,21 @@
 .container>span {
     margin-bottom: 2em;
     font-weight: 700;
+}
+
+.container>div:last-child {
+    box-shadow: var(--shadow-light);
+    padding: .8em;
+    margin-bottom: 1.6em;
+}
+
+.container>div:last-child>form {
+    display: grid;
+    gap: .7em;
+}
+
+.container>div:last-child>form>select {
+    padding: .5em;
 }
 
 .cta {
@@ -54,7 +70,7 @@
     background-color: var(--gray-5);
 }
 
-.stats{
+.stats {
     display: flex;
     justify-content: space-around;
 }
@@ -79,7 +95,7 @@
     border-bottom: 1px solid var(--gray);
 }
 
-.reviews li:last-child{
+.reviews li:last-child {
     border-bottom: none;
 }
 
@@ -88,7 +104,7 @@
     color: var(--gray-2);
 }
 
-.reviews li > h4{
+.reviews li>h4 {
     text-transform: capitalize;
     color: var(--gray-4);
 }
