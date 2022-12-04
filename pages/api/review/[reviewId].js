@@ -1,6 +1,6 @@
 import handler from '../../../controllers/app-controller'
-import { getReviewById } from '../../../controllers/review-controller'
+import { getReview } from '../../../controllers/review-controller'
 
-handler.get(getReviewById)
+handler.get(getReview)
 
 export default handler

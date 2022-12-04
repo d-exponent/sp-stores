@@ -25,8 +25,11 @@ export const createProduct = async (req, res) => {
 	})
 }
 
-export const getAllProductsInStock = async (req, res) => {
-	const allProducts = await Product.find({ inStock: true }).sort({ uploadedAt: -1 })
+export const getAllProducts = async (req, res) => {
+
+	const allProducts = await Product.find({ inStock: true })
+		.sort({ uploadedAt: -1 })
+
 
 	if (!allProducts) {
 		throwOperationalError('Could not find any products', 404)
@@ -40,10 +43,13 @@ export const getAllProductsInStock = async (req, res) => {
 }
 
 export const getProduct = async (req, res) => {
-	const { slug } = req.query
+	
+	const product = await Product.findOne(req.query)
+		.populate('reviews')
+		.exec()
 
-	const product = await Product.findOne({ slug }).populate('reviews')
-
+		console.log('🧰product', product)
+	
 	if (!product) {
 		throwOperationalError('Could not find product', 404)
 	}
@@ -55,12 +61,13 @@ export const getProduct = async (req, res) => {
 }
 
 export const updateProduct = async (req, res) => {
-	const { slug } = req.query
 
-	const product = await Product.findOneAndUpdate({ slug }, req.body, {
+	const options = {
 		new: true,
 		runValidators: true,
-	})
+	}
+	
+	const product = await Product.findOneAndUpdate(req.query, req.body, options)
 
 	sendResponse(res, 200, { success: true, data: product })
 }

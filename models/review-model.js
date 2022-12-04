@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 import Product from './product-model'
-import User from './user-model'
+
 
 import { isValidEmail } from '../lib/utils'
 

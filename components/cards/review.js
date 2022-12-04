@@ -1,8 +1,6 @@
 import Star from '../ui/star'
 
 const Reviews = ({ reviews }) => {
-	console.log(reviews)
-
 	return (
 		<ul>
 			{reviews.map(({ _id, customerName, rating, review }) => (

@@ -1,7 +1,7 @@
 import handler from '../../../controllers/app-controller'
 import imageUploadHandler from '../../../middlewares/multer'
 import imageResizeHandler from '../../../middlewares/sharp'
-import { getAllProductsInStock, createProduct } from '../../../controllers/product-controller'
+import { getAllProducts, createProduct } from '../../../controllers/product-controller'
 
 
 export const config = {
@@ -12,7 +12,7 @@ export const config = {
 
 
 handler
-	.get(getAllProductsInStock)
+	.get(getAllProducts)
 	.use(imageUploadHandler)
 	.use(imageResizeHandler)
 	.post(createProduct)

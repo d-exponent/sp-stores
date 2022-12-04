@@ -19,7 +19,7 @@ const Carousel = (props) => {
 					return
 				}
 				return props.images.map((image, index) => (
-					<div key={image.alt}>
+					<div key={index}>
 						<Image
 							src={image.src}
 							alt={image.alt}

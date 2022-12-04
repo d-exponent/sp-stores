@@ -1,10 +1,11 @@
 import nextConnect from 'next-connect'
 import morgan from 'morgan'
-
+import helmet from 'helmet'
+import mongoSanitize from 'express-mongo-sanitize'
 
 import handleError from './error-controller'
-import connectDb from '../middlewares/connect-db'
-import { sendResponse } from '../lib/controller-utils'
+import { sendResponse, isProductionEnv } from '../lib/controller-utils'
+import { dbConnect } from '../lib/db-utils'
 
 const handleNoMatch = (req, res) => {
 	sendResponse(res, 400, {
@@ -13,13 +14,22 @@ const handleNoMatch = (req, res) => {
 	})
 }
 
+const connectDb = async (req, res, next) => {
+	await dbConnect()
+	next()
+}
+
 const handler = nextConnect({
 	onNoMatch: handleNoMatch,
 	onError: handleError,
 })
 
 handler.use(connectDb)
+handler.use(helmet())
+handler.use(mongoSanitize())
 
-handler.use(morgan('dev'))
+!isProductionEnv() && handler.use(morgan('dev'))
+
+
 
 export default handler

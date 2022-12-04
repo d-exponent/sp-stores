@@ -1,6 +1,6 @@
 import handler from '../../../controllers/app-controller'
-import { getOrderById } from '../../../controllers/order-controller'
+import { getOrder } from '../../../controllers/order-controller'
 
-handler.get(getOrderById)
+handler.get(getOrder)
 
 export default handler

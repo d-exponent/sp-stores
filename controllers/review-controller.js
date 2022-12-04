@@ -12,7 +12,7 @@ export const createReview = async (req, res) => {
 }
 
 export const getReviews = async (req, res) => {
-	const reviews = await Review.find({})
+	const reviews = await Review.find(req.query)
 
 	if (!reviews) {
 		throwOperationalError('No documents were found', 404)
@@ -20,12 +20,13 @@ export const getReviews = async (req, res) => {
 
 	sendResponse(res, 200, {
 		success: true,
+		results: reviews.length,
 		data: reviews,
 	})
 }
 
-export const getReviewById = async (req, res) => {
-	const review = await Review.findById(req.query.reviewId)
+export const getReview = async (req, res) => {
+	const review = await Review.findById(req.query)
 
 	sendResponse(res, 200, {
 		success: true,

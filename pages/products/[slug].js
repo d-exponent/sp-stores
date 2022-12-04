@@ -2,6 +2,7 @@ import Product from '../../models/product-model'
 import SingleProduct from '../../components/single-product'
 import { dbConnect } from '../../lib/db-utils'
 import { purify } from '../../lib/utils'
+import { redirectToPage } from '../../lib/controller-utils'
 
 const ProductPage = (props) => {
 	return <SingleProduct {...props} />
@@ -9,27 +10,26 @@ const ProductPage = (props) => {
 
 export async function getStaticProps(context) {
 	const { slug } = context.params
+
+	const redirect = redirectToPage('/products')
+
 	try {
 		await dbConnect()
-		const results = await Product.findOne({ slug })
+		const result = await Product.findOne({ slug })
+			.populate('reviews')
+			.exec()
 
-		if (!results) {
-			return {
-				redirect: {
-					destination: '/',
-				},
-			}
+		if (!result) {
+			return redirect
 		}
-		
+
+		const product = purify(result)
+
 		return {
-			props: { product: purify(results) },
+			props: { product },
 		}
 	} catch (error) {
-		return {
-			redirect: {
-				destination: '/',
-			},
-		}
+		return redirect
 	}
 }
 

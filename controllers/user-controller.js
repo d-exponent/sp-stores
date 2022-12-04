@@ -14,7 +14,6 @@ export const getUsers = async (req, res) => {
 }
 
 export const getUser = async (req, res) => {
-
 	const { uemail } = req.query
 
 	//Validate the email address
@@ -31,4 +30,20 @@ export const getUser = async (req, res) => {
 	}
 
 	sendResponse(res, 200, { success: true, data: user })
+}
+
+export const updateUser = async (req, res) => {
+	const updatedUser = await User.findOneAndUpdate(req.query, req.body, {
+		new: true,
+		runValidators: true,
+	})
+
+	if (!updatedUser) {
+		throwOperationalError('User update failed', 404)
+	}
+
+	sendResponse(res, 200, {
+		success: true,
+		data: updatedUser,
+	})
 }
