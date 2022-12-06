@@ -6,7 +6,7 @@ import { withFetch } from '../../lib/auth-utils'
 import NotificationContext from '../../context/notification'
 import Button from './button'
 
-const handleSuccess = (notify, func) => {
+const handleSuccess = (notify, funcOne, funcTwo) => {
 	return async ({ reference }) => {
 		// Validate the payment status and notify the user
 		const { response, serverRes } = await withFetch({
@@ -21,8 +21,9 @@ const handleSuccess = (notify, func) => {
 
 		notify(message).success()
 
-		if (func) {
-			func()
+		if (funcOne) {
+			console.log("Executing")
+			funcOne()
 		}
 	}
 }
@@ -31,7 +32,7 @@ const handleClose = (fn, message) => {
 	return () => fn(message).error()
 }
 
-const PaystackCustomerPay = (props) => {
+const Paystack = (props) => {
 	const { showNotification } = useContext(NotificationContext)
 
 	const { data, status } = useSession()
@@ -77,4 +78,4 @@ const PaystackCustomerPay = (props) => {
 	return <Button text={btnText} onClick={handleClick} />
 }
 
-export default PaystackCustomerPay
+export default Paystack

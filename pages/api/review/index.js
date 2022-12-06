@@ -1,8 +1,8 @@
 import handler from '../../../controllers/app-controller'
-import { createReview, getReviews } from '../../../controllers/review-controller'
+import Review from '../../../models/review-model'
+import factory from '../../../controllers/handler-factory'
 
-
-handler.post(createReview)
-handler.get(getReviews)
+handler.get(factory.getAll(Review))
+handler.post(factory.createOne(Review))
 
 export default handler

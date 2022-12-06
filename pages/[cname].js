@@ -1,4 +1,4 @@
-import ProductModel from '../models/product-model'
+import Product from '../models/product-model'
 import SingleCollection from '../components/single-collection'
 import { purify } from '../lib/utils'
 import {
@@ -7,9 +7,11 @@ import {
 } from '../lib/collection-utils'
 import { dbConnect } from '../lib/db-utils'
 
+
 const CollectionPage = (props) => {
 	return <SingleCollection {...props} />
 }
+
 
 export async function getStaticProps(context) {
 	const { cname } = context.params
@@ -18,7 +20,7 @@ export async function getStaticProps(context) {
 	try {
 		await dbConnect()
 
-		const docs = await ProductModel.find({ category: cname })
+		const docs = await Product.find({ category: cname })
 
 		if (!docs) return { notFound: true }
 
@@ -29,7 +31,6 @@ export async function getStaticProps(context) {
 			},
 		}
 	} catch (error) {
-		console.log(error.message)
 		return { notFound: true }
 	}
 }

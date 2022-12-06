@@ -1,84 +1,73 @@
 import { sendResponse } from '../lib/controller-utils'
 import throwOperationalError from '../lib/app-error'
 
-const setItemIdToQuery = (req, res, next) => {
-	const urlParts = req.url.split('/')
-	const id = urlParts[urlParts.length - 1]
-
-	req.query.itemId = id
-
-	next()
+const throwNotFoundError = (msg = 'Not Found') => {
+	throwOperationalError(msg, 404)
 }
 
-const throwNotFoundError = (msg) => {
-	throwOperationalError(msg || 'Not found', 404)
+const setId = (itemId) => {
+	return (req, res, next) => {
+		req.query.id = req.query[itemId]
+		next()
+	}
 }
 
-const getAllItems = (Model) => {
+const createOne = (Model) => {
 	return async (req, res) => {
-		const items = await Model.find({})
+		const doc = await Model.create(req.body)
 
-		const isEmptyItems = items.length <= 0 || !items
-
-		if (isEmptyItems) throwNotFoundError()
-
-		sendResponse(res, 200, {
+		sendResponse(res, 201, {
 			success: true,
-			results: items.length,
-			data: items,
+			data: doc,
 		})
 	}
 }
 
-const createItem = (Model, options) => {
+const getAll = (Model) => {
 	return async (req, res) => {
-		const item = await Model.create(req.body)
+		const docs = await Model.find(req.query)
 
-		const response = { success: true }
+		const isEmptyItems = docs.length === 0 || !docs
 
-		if (options.returnItem) {
-			response.data = item
+		if (isEmptyItems) {
+			throwNotFoundError('Could not find any documents')
 		}
 
-		sendResponse(res, 201, response)
-	}
-}
-
-const deleteItem = (Model) => {
-	return async (req, res) => {
-
-		await Model.findByIdAndDelete(req.query.itemId)
-
-		sendResponse(res, 204, {
+		sendResponse(res, 200, {
 			success: true,
-			data: null,
+			results: docs.length,
+			data: docs,
 		})
 	}
 }
 
-const getItem = (Model) => {
+const getOne = (Model, populate) => {
 	return async (req, res) => {
-		const item = await Model.findById(req.query.itemId)
+		let doc
+		if (populate) {
+			doc = await Model.findById(req.query.id).populate(populate)
+		} else {
+			doc = await Model.findById(req.query.id)
+		}
 
-		if (!item) throwNotFoundError()
+		if (!doc) throwNotFoundError()
 
 		sendResponse(res, 200, {
 			success: true,
-			data: item,
+			data: doc,
 		})
 	}
 }
 
-const updateItem = (Model, queryOptions) => {
+const updateOne = (Model) => {
 	return async (req, res) => {
-		const updatedItem = await Model.findByIdAndUpdate(
-			req.query.ItemId,
-			req.body,
-			queryOptions
-		)
+		const updatedItem = await Model.findByIdAndUpdate(req.query.id, req.body, {
+			new: true,
+			runValidators: true,
+		})
 
 		if (!updatedItem) {
-			throwNotFoundError()
+			throwNotFoundError('Could not update  the document')
 		}
 
 		sendResponse(res, 200, {
@@ -88,15 +77,21 @@ const updateItem = (Model, queryOptions) => {
 	}
 }
 
+const deleteOne = (Model) => {
+	return async (req, res) => {
+		await Model.findByIdAndDelete(req.query.id)
+
+		sendResponse(res, 204, null)
+	}
+}
+
 const factory = {
-	deleteOne: deleteItem,
-	updateOne: updateItem,
-	getOne: getItem,
-	getAll: getAllItems,
-	createOne: createItem,
-	middlewares: {
-		setItemIdToQuery,
-	},
+	deleteOne,
+	updateOne,
+	getOne,
+	getAll,
+	createOne,
+	setId,
 }
 
 export default factory

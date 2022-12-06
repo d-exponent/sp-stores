@@ -1,7 +1,6 @@
 import nextConnect from 'next-connect'
 import morgan from 'morgan'
-import helmet from 'helmet'
-import mongoSanitize from 'express-mongo-sanitize'
+
 
 import handleError from './error-controller'
 import { sendResponse, isProductionEnv } from '../lib/controller-utils'
@@ -25,8 +24,7 @@ const handler = nextConnect({
 })
 
 handler.use(connectDb)
-handler.use(helmet())
-handler.use(mongoSanitize())
+
 
 !isProductionEnv() && handler.use(morgan('dev'))
 

@@ -69,13 +69,7 @@ const Authentication = () => {
 			return
 		}
 
-		//SignUP form
-		// if (registerForm.password.length < 8) {
-		// 	return showNotification(
-		// 		'Password must be at least eight(8) characters long'
-		// 	).error()
-		// }
-
+		// SignUp form
 		setDisableRegisterBtn(true)
 		showNotification('Creating your account...').pending()
 
@@ -119,6 +113,7 @@ const Authentication = () => {
 	return (
 		<section className='pd-top-30'>
 			<div className={`${classes.container} box-shadow-light`}>
+			
 				<div>
 					<p>
 						{ctaText} a member?
@@ -129,7 +124,7 @@ const Authentication = () => {
 				</div>
 
 				<div className={classes.formsWrapper}>
-					{isLogin ? (
+					{isLogin && (
 						<div className={classes.signInContainer}>
 							<SignIn
 								handleChange={handleChange}
@@ -138,8 +133,8 @@ const Authentication = () => {
 								disableBtn={disableLoginBtn}
 							/>
 						</div>
-					) : null}
-					{!isLogin ? (
+					)}
+					{!isLogin && (
 						<div className={classes.signUpContainer}>
 							<SignUP
 								handleChange={handleChange}
@@ -148,7 +143,7 @@ const Authentication = () => {
 								disableBtn={disableRegisterBtn}
 							/>
 						</div>
-					) : null}
+					)}
 				</div>
 			</div>
 		</section>

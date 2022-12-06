@@ -89,10 +89,10 @@ export const forgotPassword = async (req, res) => {
 	const host = getHost(req)
 	const resetUrl = `${protocol}://${host}/auth/reset-password?token=${resetToken}`
 
-	const toSend = new Email(user, resetUrl).sendPasswordResetLink()
+	const resetEmail = new Email(user, resetUrl).sendPasswordResetLink()
 	const saved = user.save({ validateBeforeSave: false })
 	try {
-		(await Promise.all([toSend, saved]))
+		await Promise.all([resetEmail, saved])
 
 		sendResponse(res, 200, {
 			success: true,

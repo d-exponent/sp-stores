@@ -11,7 +11,6 @@ const orderSchema = new mongoose.Schema(
 		customerName: {
 			type: String,
 			required: [true, 'An orders customer must have a name'],
-			lowercase: true,
 		},
 		items: {
 			required: [true, 'An order must be made for at least one item'],

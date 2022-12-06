@@ -1,7 +1,8 @@
 import handler from '../../../controllers/app-controller'
-import { getAllOrders, createOrder } from '../../../controllers/order-controller'
+import Order from '../../../models/order-model'
+import factory from '../../../controllers/handler-factory'
 
-handler.get(getAllOrders)
-handler.post(createOrder)
+handler.get(factory.getAll(Order))
+handler.post(factory.createOne(Order))
 
 export default handler

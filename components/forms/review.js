@@ -1,5 +1,5 @@
-import { useSession } from 'next-auth/react'
-import { useContext, useRef } from 'react'
+import React, { useSession } from 'next-auth/react'
+import { useContext, useRef, forwardRef } from 'react'
 
 import Input from '../ui/input'
 import Button from '../ui/button'
@@ -7,7 +7,7 @@ import Button from '../ui/button'
 import { withFetch } from '../../lib/auth-utils'
 import NotificationContext from '../../context/notification'
 
-const Review = (props) => {
+const Review = (props, ref) => {
 	const { showNotification } = useContext(NotificationContext)
 
 	const { data, status } = useSession()
@@ -18,7 +18,6 @@ const Review = (props) => {
 	const handleSubmit = async (event) => {
 		event.preventDefault()
 
-
 		if (status !== 'authenticated') {
 			return showNotification('Login to write a review').error()
 		}
@@ -27,7 +26,7 @@ const Review = (props) => {
 
 		const enteredRating = ratingRef.current?.value * 1
 
-		if (!enteredRating) {
+		if (!props.useUpdateReview && !enteredRating) {
 			return showNotification('Please enter a rating').error()
 		}
 
@@ -38,14 +37,26 @@ const Review = (props) => {
 			customerName: data.user.name,
 			product: props.productId,
 			review: enteredReview || '',
-			rating: +enteredRating,
+			rating: +enteredRating || undefined,
 		}
 
-
+		
+		let url = '/api/review'
+		let method = 'POST'
+		
+		if (props.useUpdateReview) {
+			url = `${url}/${props.updateReviewId}?`
+			method = 'PATCH'
+			
+			delete review.customerEmail 
+			delete review.customerName 
+			delete review.product 
+		}
+	
 		try {
 			const { response, serverRes } = await withFetch({
-				url: '/api/review',
-				method: 'POST',
+				url,
+				method,
 				data: review,
 			})
 
@@ -58,8 +69,8 @@ const Review = (props) => {
 
 			reviewRef.current.value = ''
 			ratingRef.current.value = ''
-
 		} catch (err) {
+			console.warn(err)
 			const duplicateReviewServerMessage =
 				'This product already exits. Please try another!'
 			const isDuplicateMessage = err.message.trim() === duplicateReviewServerMessage
@@ -73,7 +84,7 @@ const Review = (props) => {
 	}
 
 	return (
-		<form onSubmit={handleSubmit}>
+		<form onSubmit={handleSubmit} ref={ref}>
 			<select ref={ratingRef}>
 				<option value='0'>--Rating--</option>
 				<option value='1'>1</option>
@@ -89,4 +100,4 @@ const Review = (props) => {
 	)
 }
 
-export default Review
+export default forwardRef(Review)

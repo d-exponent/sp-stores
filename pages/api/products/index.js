@@ -1,8 +1,9 @@
 import handler from '../../../controllers/app-controller'
+import factory from '../../../controllers/handler-factory'
+import { setProductFeilds } from '../../../middlewares/product'
+import Product from '../../../models/product-model'
 import imageUploadHandler from '../../../middlewares/multer'
 import imageResizeHandler from '../../../middlewares/sharp'
-import { getAllProducts, createProduct } from '../../../controllers/product-controller'
-
 
 export const config = {
 	api: {
@@ -10,12 +11,10 @@ export const config = {
 	},
 }
 
-
 handler
-	.get(getAllProducts)
+	.get(factory.getAll(Product))
 	.use(imageUploadHandler)
 	.use(imageResizeHandler)
-	.post(createProduct)
-
+	.post(setProductFeilds, factory.createOne(Product))
 
 export default handler

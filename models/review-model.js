@@ -1,8 +1,7 @@
 import mongoose from 'mongoose'
 import Product from './product-model'
 
-
-import { isValidEmail } from '../lib/utils'
+import { isValidEmail, purify } from '../lib/utils'
 
 const reviewSchema = new mongoose.Schema(
 	{
@@ -15,7 +14,7 @@ const reviewSchema = new mongoose.Schema(
 		},
 		customerName: {
 			type: String,
-			required: [true, 'A review must belong to a user email'],
+			required: [true, 'A user creating a review must have a name'],
 		},
 		product: {
 			type: mongoose.Schema.ObjectId,
@@ -32,6 +31,7 @@ const reviewSchema = new mongoose.Schema(
 			type: Date,
 			default: Date.now,
 		},
+		modifiedAt: Date,
 	},
 	{
 		toJSON: { virtuals: true },
@@ -39,28 +39,25 @@ const reviewSchema = new mongoose.Schema(
 	}
 )
 
-reviewSchema.index({ product: 1, customer: -1 }, { unique: true })
+// reviewSchema.index({ customerEmail: 1, product: 1 }, { unique: true })
 
-reviewSchema.pre(/^find/, function (next) {
-	this.select('-__v')
-	next()
-})
-
-//price discountPrice
-
-reviewSchema.statics.handleRatingStats = async function (productId) {
+reviewSchema.statics.calculateRatinsStats = async function (productId) {
 	//Get all the reviews for the product and find the average
-	const ratingsStats = await this.aggregate([
-		{ $match: { product: new mongoose.Types.ObjectId(productId) } },
-		{
-			$group: {
-				_id: '$product',
-				sumOfRatings: { $sum: 1 },
-				averageRating: { $avg: '$rating' },
-			},
-		},
-	])
 
+	const ratingsStats = purify(
+		await this.aggregate([
+			{ $match: { product: new mongoose.Types.ObjectId(productId) } },
+			{
+				$group: {
+					_id: '$product',
+					sumOfRatings: { $sum: 1 },
+					averageRating: { $avg: '$rating' },
+				},
+			},
+		])
+	)
+
+	//Set to default values
 	if (!ratingsStats.length) {
 		await Product.findByIdAndUpdate(productId, {
 			ratingsAverage: 4,
@@ -69,16 +66,33 @@ reviewSchema.statics.handleRatingStats = async function (productId) {
 		return
 	}
 
+	// Use Modified stats
 	await Product.findByIdAndUpdate(productId, {
 		ratingsAverage: ratingsStats[0].averageRating,
-		totalRatings: ratingsStats[0].sumOfRatings,
+		totalRatings: Math.round(ratingsStats[0].sumOfRatings),
 	})
-
-	console.log("🧰👌")
 }
 
-reviewSchema.pre('save', function () {
-	this.constructor.handleRatingStats(this.product)
+reviewSchema.pre(/^find/, function (next) {
+	this.select('-__v')
+	next()
+})
+
+reviewSchema.pre('save', async function (next) {
+	await this.constructor.calculateRatinsStats(this.product)
+	next()
+})
+
+reviewSchema.pre(/^findOneAnd/, async function (next) {
+	this.modifiedAt = Date.now()
+
+	this.r = await this.findOne().clone()
+
+	next()
+})
+
+reviewSchema.post(/^findOneAnd/, async function () {
+	await this.r.constructor.calculateRatinsStats(this.r.product)
 })
 
 export default mongoose.models.Review || mongoose.model('Review', reviewSchema)
