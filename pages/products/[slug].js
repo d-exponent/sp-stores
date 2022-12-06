@@ -11,8 +11,6 @@ const ProductPage = (props) => {
 export async function getStaticProps(context) {
 	const { slug } = context.params
 
-	const redirect = redirectToPage('/products')
-
 	try {
 		await dbConnect()
 		const result = await Product.findOne({ slug })
@@ -20,7 +18,7 @@ export async function getStaticProps(context) {
 			.exec()
 
 		if (!result) {
-			return redirect
+			throw new Error('Error')
 		}
 
 		const product = purify(result)
@@ -29,14 +27,14 @@ export async function getStaticProps(context) {
 			props: { product },
 		}
 	} catch (error) {
-		return redirect
+		return redirectToPage('/products')
 	}
 }
 
 export async function getStaticPaths() {
 	await dbConnect()
 
-	const allProducts = await Product.find({})
+	const allProducts = await Product.find().exec()
 
 	const pathsWithSlug = purify(allProducts).map((product) => ({
 		params: {

@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
-import Product from './product-model'
 
-import { isValidEmail, purify } from '../lib/utils'
+import Product from './product-model'
+import { isValidEmail } from '../lib/utils'
 
 const reviewSchema = new mongoose.Schema(
 	{
@@ -34,6 +34,32 @@ const reviewSchema = new mongoose.Schema(
 		modifiedAt: Date,
 	},
 	{
+		statics: {
+			async calculateRatinsStats(productId) {
+				//calcultate stats for the reviews on a product and update the product
+				const ratingStats = await this.aggregate([
+					{ $match: { product: new mongoose.Types.ObjectId(productId) } },
+					{
+						$group: {
+							_id: '$product',
+							numOfRatings: { $sum: 1 },
+							averageRating: { $avg: '$rating' },
+						},
+					},
+				])
+
+				const hasNewStats = ratingStats.length > 0
+
+				await Product.findByIdAndUpdate(productId, {
+					ratingsAverage: hasNewStats ? ratingStats[0].averageRating : 4,
+					totalRatings: hasNewStats ? ratingStats[0].numOfRatings : 0,
+				})
+
+				//End of calculateRatinsStats
+			},
+		},
+	},
+	{
 		toJSON: { virtuals: true },
 		toObject: { virtuals: true },
 	}
@@ -41,58 +67,19 @@ const reviewSchema = new mongoose.Schema(
 
 // reviewSchema.index({ customerEmail: 1, product: 1 }, { unique: true })
 
-reviewSchema.statics.calculateRatinsStats = async function (productId) {
-	//Get all the reviews for the product and find the average
-
-	const ratingsStats = purify(
-		await this.aggregate([
-			{ $match: { product: new mongoose.Types.ObjectId(productId) } },
-			{
-				$group: {
-					_id: '$product',
-					sumOfRatings: { $sum: 1 },
-					averageRating: { $avg: '$rating' },
-				},
-			},
-		])
-	)
-
-	//Set to default values
-	if (!ratingsStats.length) {
-		await Product.findByIdAndUpdate(productId, {
-			ratingsAverage: 4,
-			totalRatings: 0,
-		})
-		return
-	}
-
-	// Use Modified stats
-	await Product.findByIdAndUpdate(productId, {
-		ratingsAverage: ratingsStats[0].averageRating,
-		totalRatings: Math.round(ratingsStats[0].sumOfRatings),
-	})
-}
-
 reviewSchema.pre(/^find/, function (next) {
 	this.select('-__v')
 	next()
 })
 
-reviewSchema.pre('save', async function (next) {
-	await this.constructor.calculateRatinsStats(this.product)
-	next()
-})
-
 reviewSchema.pre(/^findOneAnd/, async function (next) {
 	this.modifiedAt = Date.now()
-
-	this.r = await this.findOne().clone()
-
 	next()
 })
 
-reviewSchema.post(/^findOneAnd/, async function () {
-	await this.r.constructor.calculateRatinsStats(this.r.product)
-})
+/**
+ * ERROR: For some reason we can't run calculateRatinsStats via middlewares
+ * Workaroud will be implemented in the handler factory controllers
+ */
 
 export default mongoose.models.Review || mongoose.model('Review', reviewSchema)

@@ -25,7 +25,17 @@ const createOne = (Model) => {
 
 const getAll = (Model) => {
 	return async (req, res) => {
-		const docs = await Model.find(req.query)
+		const query = { ...req.query }
+
+		Object.entries(query).forEach((entry) => {
+			const [key, value] = entry
+
+			if (value === 'true') {
+				query[key] = true
+			}
+		})
+
+		const docs = await Model.find(query)
 
 		const isEmptyItems = docs.length === 0 || !docs
 
@@ -79,14 +89,15 @@ const updateOne = (Model) => {
 
 const deleteOne = (Model) => {
 	return async (req, res) => {
-		await Model.findByIdAndDelete(req.query.id)
 
+		await Model.findByIdAndDelete(req.query.id)
 		sendResponse(res, 204, null)
 	}
 }
 
 const factory = {
 	deleteOne,
+	
 	updateOne,
 	getOne,
 	getAll,

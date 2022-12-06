@@ -1,5 +1,6 @@
-import ProductModel from '../../models/product-model'
+import Product from '../../models/product-model'
 import { dbConnect } from '../../lib/db-utils'
+import { redirectToPage } from '../../lib/controller-utils'
 import { purify } from '../../lib/utils'
 import _ from 'lodash'
 
@@ -10,28 +11,24 @@ const Products = (props) => {
 }
 
 export async function getStaticProps() {
-	const redirect = () => ({
-		redirect: {
-			destination: '/',
-		},
-	})
+
 
 	try {
 		await dbConnect()
-		const products = await ProductModel.find({})
+		const products = await Product.find({ inStock: true })
 
 		if (!products) {
-			return redirect()
+			throw new Error('Error')
 		}
 
 		const shuffledProducts = _.shuffle(purify(products))
-		
+
 		return {
 			props: { products: shuffledProducts },
 			revalidate: 1,
 		}
 	} catch (e) {
-		return redirect()
+		return redirectToPage()
 	}
 }
 
