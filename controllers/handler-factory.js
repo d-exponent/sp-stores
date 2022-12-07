@@ -1,20 +1,28 @@
 import { sendResponse } from '../lib/controller-utils'
 import throwOperationalError from '../lib/app-error'
+import Product from '../models/product-model'
 
 const throwNotFoundError = (msg = 'Not Found') => {
 	throwOperationalError(msg, 404)
 }
 
-const setId = (itemId) => {
-	return (req, res, next) => {
-		req.query.id = req.query[itemId]
-		next()
-	}
+const setId = (itemId) => (req, res, next) => {
+	req.query.id = req.query[itemId]
+	next()
 }
 
-const createOne = (Model) => {
+const getModel = (arr) => arr[0]
+
+const createOne = (...args) => {
+	const Model = getModel(args)
 	return async (req, res) => {
 		const doc = await Model.create(req.body)
+
+		if (args[1] && args[1] === 'calculateRatinsStats') {
+			await Model.calculateRatinsStats(doc.product)
+
+			console.log('Calculating stats🤖🤖🧰')
+		}
 
 		sendResponse(res, 201, {
 			success: true,
@@ -23,7 +31,8 @@ const createOne = (Model) => {
 	}
 }
 
-const getAll = (Model) => {
+const getAll = (...args) => {
+	const Model = getModel(args)
 	return async (req, res) => {
 		const query = { ...req.query }
 
@@ -51,9 +60,14 @@ const getAll = (Model) => {
 	}
 }
 
-const getOne = (Model, populate) => {
+const getOne = (...args) => {
+	//
+	const Model = getModel(args)
+	const populate = args[1] ? args[1] : null
+
 	return async (req, res) => {
 		let doc
+
 		if (populate) {
 			doc = await Model.findById(req.query.id).populate(populate)
 		} else {
@@ -69,15 +83,21 @@ const getOne = (Model, populate) => {
 	}
 }
 
-const updateOne = (Model) => {
+const updateOne = (...args) => {
+	const Model = getModel(args)
+
 	return async (req, res) => {
 		const updatedItem = await Model.findByIdAndUpdate(req.query.id, req.body, {
 			new: true,
 			runValidators: true,
 		})
 
+		if (args[1] && args[1] === 'calculateRatinsStats') {
+			await Model.calculateRatinsStats(updatedItem.product)
+		}
+
 		if (!updatedItem) {
-			throwNotFoundError('Could not update  the document')
+			throwNotFoundError('Could not update the document')
 		}
 
 		sendResponse(res, 200, {
@@ -87,17 +107,25 @@ const updateOne = (Model) => {
 	}
 }
 
-const deleteOne = (Model) => {
-	return async (req, res) => {
+const deleteOne = (...args) => {
+	const Model = getModel(args)
 
-		await Model.findByIdAndDelete(req.query.id)
-		sendResponse(res, 204, null)
+	return async (req, res) => {
+		Model.findByIdAndDelete(req.query.id).then(()=>{}).catch()
+
+		if (args[1] && args[1] === 'calculateRatinsStats') {
+			const toUpdate = await Product.findById(req.query.productId)
+
+			await Model.calculateRatinsStats(toUpdate._id)
+		}
+
+		res.status(204)
 	}
 }
 
 const factory = {
 	deleteOne,
-	
+
 	updateOne,
 	getOne,
 	getAll,
