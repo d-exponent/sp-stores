@@ -1,38 +1,17 @@
 import { sendResponse } from '../lib/controller-utils'
 import throwOperationalError from '../lib/app-error'
-import Product from '../models/product-model'
 
-const throwNotFoundError = (msg = 'Not Found') => {
-	throwOperationalError(msg, 404)
-}
+const getModelFromArgs = (arr) => arr[0]
 
-const setId = (itemId) => (req, res, next) => {
+const setIdOnQuery = (itemId) => (req, res, next) => {
 	req.query.id = req.query[itemId]
+	// delete req.query[itemId]
 	next()
 }
 
-const getModel = (arr) => arr[0]
-
-const createOne = (...args) => {
-	const Model = getModel(args)
-	return async (req, res) => {
-		const doc = await Model.create(req.body)
-
-		if (args[1] && args[1] === 'calculateRatinsStats') {
-			await Model.calculateRatinsStats(doc.product)
-
-			console.log('Calculating stats🤖🤖🧰')
-		}
-
-		sendResponse(res, 201, {
-			success: true,
-			data: doc,
-		})
-	}
-}
-
 const getAll = (...args) => {
-	const Model = getModel(args)
+	const Model = getModelFromArgs(args)
+
 	return async (req, res) => {
 		const query = { ...req.query }
 
@@ -46,10 +25,8 @@ const getAll = (...args) => {
 
 		const docs = await Model.find(query)
 
-		const isEmptyItems = docs.length === 0 || !docs
-
-		if (isEmptyItems) {
-			throwNotFoundError('Could not find any documents')
+		if (docs.length < 1) {
+			throwOperationalError('Could not find any documents', 404)
 		}
 
 		sendResponse(res, 200, {
@@ -61,8 +38,8 @@ const getAll = (...args) => {
 }
 
 const getOne = (...args) => {
-	//
-	const Model = getModel(args)
+	const Model = getModelFromArgs(args)
+
 	const populate = args[1] ? args[1] : null
 
 	return async (req, res) => {
@@ -74,7 +51,9 @@ const getOne = (...args) => {
 			doc = await Model.findById(req.query.id)
 		}
 
-		if (!doc) throwNotFoundError()
+		if (!doc) {
+			throwOperationalError('Could not find the document', 404)
+		}
 
 		sendResponse(res, 200, {
 			success: true,
@@ -83,22 +62,27 @@ const getOne = (...args) => {
 	}
 }
 
+const createOne = (...args) => {
+	const Model = getModelFromArgs(args)
+
+	return async (req, res) => {
+		const doc = await Model.create(req.body)
+
+		sendResponse(res, 201, {
+			success: true,
+			data: doc,
+		})
+	}
+}
+
 const updateOne = (...args) => {
-	const Model = getModel(args)
+	const Model = getModelFromArgs(args)
 
 	return async (req, res) => {
 		const updatedItem = await Model.findByIdAndUpdate(req.query.id, req.body, {
 			new: true,
 			runValidators: true,
 		})
-
-		if (args[1] && args[1] === 'calculateRatinsStats') {
-			await Model.calculateRatinsStats(updatedItem.product)
-		}
-
-		if (!updatedItem) {
-			throwNotFoundError('Could not update the document')
-		}
 
 		sendResponse(res, 200, {
 			success: true,
@@ -108,29 +92,21 @@ const updateOne = (...args) => {
 }
 
 const deleteOne = (...args) => {
-	const Model = getModel(args)
+	const Model = getModelFromArgs(args)
 
 	return async (req, res) => {
-		Model.findByIdAndDelete(req.query.id).then(()=>{}).catch()
-
-		if (args[1] && args[1] === 'calculateRatinsStats') {
-			const toUpdate = await Product.findById(req.query.productId)
-
-			await Model.calculateRatinsStats(toUpdate._id)
-		}
-
-		res.status(204)
+		await Model.findByIdAndDelete(req.query.id)
+		res.status(204).send('Deleted')
 	}
 }
 
 const factory = {
 	deleteOne,
-
 	updateOne,
 	getOne,
 	getAll,
 	createOne,
-	setId,
+	setId: setIdOnQuery,
 }
 
 export default factory

@@ -114,8 +114,9 @@ productSchema.virtual('reviews', {
 })
 
 
-//On save or update
-productSchema.pre('save' || /^findOneAnd/, function (next) {
+
+//Set initial quantity
+productSchema.pre('save', function (next) {
 	// Handle discount price changes
 	if (this.discountPrice) {
 		const percentage = (this.discountPrice / this.price) * 100
@@ -123,12 +124,9 @@ productSchema.pre('save' || /^findOneAnd/, function (next) {
 	}
 
 	// Handle inStock Boolean
-	this.inStock = this.quantity > 0
-	next()
-})
 
-//Set initial quantity
-productSchema.pre('save', function (next) {
+	this.inStock = this.quantity > 0
+
 	this.initialQuantity = this.quantity
 	next()
 })
@@ -152,6 +150,15 @@ productSchema.pre(/^find/, function (next) {
 
 // Show date of lastModified
 productSchema.pre(/^findOneAnd/, function (next) {
+	// Handle discount price changes
+	if (this.discountPrice) {
+		const percentage = (this.discountPrice / this.price) * 100
+		this.discountPercentage = 100 - Math.round(percentage)
+	}
+
+	this.inStock = this.quantity > 0
+
+	
 	this.lastModifiedAt = Date.now()
 	next()
 })

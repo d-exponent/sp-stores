@@ -35,14 +35,19 @@ const reviewSchema = new mongoose.Schema(
 	},
 	{
 		statics: {
-			async calculateRatinsStats(productId) {
+			async calculateRatingsStats(productId) {
+				const id =
+					typeof productId === 'string'
+						? new mongoose.Types.ObjectId(productId)
+						: productId
+
 				//calcultate stats for the reviews on a product and update the product
 				const ratingStats = await this.aggregate([
-					{ $match: { product: new mongoose.Types.ObjectId(productId) } },
+					{ $match: { product: id } },
 					{
 						$group: {
 							_id: '$product',
-							numOfRatings: { $sum: 1 },
+							numOfRatingsDoc: { $sum: 1 },
 							averageRating: { $avg: '$rating' },
 						},
 					},
@@ -50,11 +55,13 @@ const reviewSchema = new mongoose.Schema(
 
 				const hasNewStats = ratingStats.length > 0
 
-				await Product.findByIdAndUpdate(productId, {
-					ratingsAverage: hasNewStats ? ratingStats[0].averageRating : 4,
-					totalRatings: hasNewStats ? ratingStats[0].numOfRatings : 0,
-				})
+				const updatedBody = {
+					// Set to default values if aggregate returns a falsy value
+					totalRatings: hasNewStats ? ratingStats[0].numOfRatingsDoc : 0,
+					ratingsAverage: hasNewStats ? Math.round(ratingStats[0].averageRating) : 4,
+				}
 
+				await Product.findByIdAndUpdate(productId, updatedBody, { new: true })
 				//End of calculateRatinsStats
 			},
 		},
@@ -67,6 +74,10 @@ const reviewSchema = new mongoose.Schema(
 
 // reviewSchema.index({ customerEmail: 1, product: 1 }, { unique: true })
 
+reviewSchema.post('save', async function () {
+	await this.constructor.calculateRatingsStats(this.product)
+})
+
 reviewSchema.pre(/^find/, function (next) {
 	this.select('-__v')
 	next()
@@ -74,7 +85,13 @@ reviewSchema.pre(/^find/, function (next) {
 
 reviewSchema.pre(/^findOneAnd/, async function (next) {
 	this.modifiedAt = Date.now()
+
+	this.r = await this.findOne().clone()
 	next()
+})
+
+reviewSchema.post(/^findOneAnd/, async function () {
+	await this.r.constructor.calculateRatingsStats(this.r.product)
 })
 
 /**
