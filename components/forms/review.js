@@ -1,16 +1,16 @@
 import React, { useSession } from 'next-auth/react'
-import { useContext, useRef, forwardRef } from 'react'
-
-import Input from '../ui/input'
-import Button from '../ui/button'
+import { useContext, useRef } from 'react'
 
 import { withFetch } from '../../lib/auth-utils'
 import NotificationContext from '../../context/notification'
 
-const Review = (props, ref) => {
+import Input from '../ui/input'
+import Button from '../ui/button'
+
+const Review = (props) => {
 	const { showNotification } = useContext(NotificationContext)
 
-	const { data, status } = useSession()
+	const { data: session, status } = useSession()
 
 	const reviewRef = useRef(null)
 	const ratingRef = useRef(null)
@@ -18,62 +18,63 @@ const Review = (props, ref) => {
 	const handleSubmit = async (event) => {
 		event.preventDefault()
 
+		//TODO: Make review comments optional for both creating or updating a review
+
 		if (status !== 'authenticated') {
 			return showNotification('Login to write a review').error()
 		}
 
+		const enteredRating = ratingRef.current?.value * 1
+		const enteredComment = reviewRef.current?.value
+
+		if (!enteredRating) {
+			return showNotification('Please Enter a rating').error()
+		}
+
+		if (!enteredComment) {
+			return showNotification('Please Enter a review').error()
+		}
+
 		showNotification('Adding review').pending()
 
-		const enteredRating = ratingRef.current?.value * 1
-
-		if (!props.useUpdateReview && !enteredRating) {
-			return showNotification('Please enter a rating').error()
-		}
-
-		const enteredReview = reviewRef.current?.value
-
 		const review = {
-			customerEmail: data.user.email,
-			customerName: data.user.name,
+			customerEmail: session.user.email,
+			customerName: session.user.name,
 			product: props.productId,
-			review: enteredReview || '',
-			rating: +enteredRating || undefined,
+			review: enteredComment || '',
+			rating: +enteredRating,
 		}
 
-		
 		let url = '/api/review'
 		let method = 'POST'
-		
-		if (props.useUpdateReview) {
-			url = `${url}/${props.updateReviewId}?`
+
+		if (props.useUpdateAction) {
+			//Modify the Url
+			url = `${url}/${props.userReviewId}?`
 			method = 'PATCH'
-			
-			delete review.customerEmail 
-			delete review.customerName 
-			delete review.product 
+
+			// Remove redundant properties
+			delete review.customerEmail
+			delete review.customerName
+			delete review.product
 		}
-	
+
 		try {
-			const { response, serverRes } = await withFetch({
+			await withFetch({
 				url,
 				method,
 				data: review,
 			})
 
-			if (!response.ok) {
-				throw new Error(serverRes.message)
-			}
-
 			showNotification('Success!! ✔').success()
-			props.update()
 
 			reviewRef.current.value = ''
 			ratingRef.current.value = ''
+
+			props.hideForm()
 		} catch (err) {
-			console.warn(err)
-			const duplicateReviewServerMessage =
-				'This product already exits. Please try another!'
-			const isDuplicateMessage = err.message.trim() === duplicateReviewServerMessage
+			const isDuplicateMessage =
+				err.message.trim() === 'This product already exits. Please try another!'
 
 			const errorMessage = isDuplicateMessage
 				? 'You already reviewed this product'
@@ -84,7 +85,7 @@ const Review = (props, ref) => {
 	}
 
 	return (
-		<form onSubmit={handleSubmit} ref={ref}>
+		<form onSubmit={handleSubmit}>
 			<select ref={ratingRef}>
 				<option value='0'>--Rating--</option>
 				<option value='1'>1</option>
@@ -100,4 +101,4 @@ const Review = (props, ref) => {
 	)
 }
 
-export default forwardRef(Review)
+export default Review

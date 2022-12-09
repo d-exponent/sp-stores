@@ -72,7 +72,8 @@ const reviewSchema = new mongoose.Schema(
 	}
 )
 
-// reviewSchema.index({ customerEmail: 1, product: 1 }, { unique: true })
+reviewSchema.index({ customerEmail: 1, product: 1 }, { unique: true })
+
 
 reviewSchema.post('save', async function () {
 	await this.constructor.calculateRatingsStats(this.product)
@@ -93,10 +94,5 @@ reviewSchema.pre(/^findOneAnd/, async function (next) {
 reviewSchema.post(/^findOneAnd/, async function () {
 	await this.r.constructor.calculateRatingsStats(this.r.product)
 })
-
-/**
- * ERROR: For some reason we can't run calculateRatinsStats via middlewares
- * Workaroud will be implemented in the handler factory controllers
- */
 
 export default mongoose.models.Review || mongoose.model('Review', reviewSchema)

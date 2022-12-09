@@ -1,6 +1,9 @@
 import { useContext, useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
 
+import { withFetch } from '../lib/auth-utils'
+import ShoppingItemsContext from '../context/shopping-bag'
+
 import Price from './ui/price'
 import Carousel from './ui/carousel'
 import Button from './ui/button'
@@ -9,30 +12,15 @@ import Reviews from './cards/review'
 import ReviewForm from './forms/review'
 import Paystack from './ui/paystack'
 
-import { withFetch } from '../lib/auth-utils'
-import ShoppingItemsContext from '../context/shopping-bag'
 import classes from './css-modules/single-product.module.css'
-
-const getCarouselImages = (product) => {
-	const { imageCover, name, images } = product
-	//
-	const imagePath = '/images/products'
-	const coverImage = { src: `${imagePath}/${imageCover}`, alt: name }
-
-	const secondaryImages = images?.map((image, i) => ({
-		src: `${imagePath}/${image}`,
-		alt: `${name}-${i + 1}`,
-	}))
-
-	return secondaryImages ? [coverImage, ...secondaryImages] : [coverImage]
-}
 
 export default function SingleProductPage(props) {
 	const [product, setProduct] = useState(props.product)
+
 	const [showReviewForm, setShowReviewForm] = useState(false)
 	const [hasBoughtProduct, setHasBoughtProduct] = useState(false)
 	const [canUpdateReview, setCanUpdateReview] = useState(false)
-	const [userReviewId, setUserReviewId] = useState(null)
+	const [currentUserReveiwId, setCurrentUserReviewId] = useState(null)
 	const [render, setRender] = useState(false)
 
 	const { data: session, status } = useSession()
@@ -41,35 +29,30 @@ export default function SingleProductPage(props) {
 
 	const isAuthenticated = status === 'authenticated'
 
-	// GOAL: Resolve if user has already reviewed this product
+	//  Get the latest version of the current product on every render cycle
 	useEffect(() => {
-		if (product.reviews.length < 1 || !isAuthenticated) return
+		withFetch({ url: `/api/products/${product._id}` })
+			.then(({ serverRes }) => {
+				setProduct(serverRes.data)
+			})
+			.catch((err) => console.log(err.message))
+	}, [showReviewForm])
 
-		const userReview = product.reviews.find(
+	//  Find the current user's Review and extract the Id
+	useEffect(() => {
+		if (product.reviews?.length < 1 || !isAuthenticated) return
+
+		const userReview = product.reviews?.find(
 			(review) => review.customerEmail === session.user.email
 		)
 
 		if (!userReview) return
 
-		setUserReviewId(userReview._id)
+		setCurrentUserReviewId(userReview._id)
 		setCanUpdateReview(true)
-	}, [isAuthenticated, product.reviews, product.reviews?.length, session?.user.email])
+	}, [isAuthenticated, product.reviews?.length, session?.user.email])
 
-	// GOAL: Fetch product on every render
-	useEffect(() => {
-		const url = `/api/products/${product._id}`
-		withFetch({ url })
-			.then(({ response, serverRes }) => {
-				if (!response.ok) {
-					throw new Error(serverRes.message)
-				}
-
-				setProduct(serverRes.data)
-			})
-			.catch((err) => console.log(err.message))
-	}, [])
-
-	// GOAL: Only allow users who have purchased a product to write a review
+	//  Only allow users who have purchased the current product to write a review
 	useEffect(() => {
 		if (!isAuthenticated || hasBoughtProduct) return
 
@@ -78,23 +61,18 @@ export default function SingleProductPage(props) {
 		const url = `/api/orders?${query}`
 
 		withFetch({ url })
-			.then(({ response, serverRes }) => {
-				if (!response.ok) {
-					throw new Error(serverRes.message)
-				}
-
-				const usersOrders = serverRes.data
+			.then(({ serverRes: { data: usersOrders } }) => {
 				let hasPurchased = false
 				let index = 0
 
-				// Check if current product is in the User's Orders
+				// Check if the current product is in the current user's Orders
 				while (!hasPurchased && index < usersOrders.length) {
 					const { items } = usersOrders[index]
-					index++
 					hasPurchased = items.some((item) => item._id === product._id)
+					index++
 				}
 
-				// Allow user to review product if hasPurchased is true
+				// Allow current user to review the product if hasPurchased is true
 				hasPurchased && setHasBoughtProduct(true)
 			})
 			.catch((err) => setHasBoughtProduct(false))
@@ -102,32 +80,26 @@ export default function SingleProductPage(props) {
 
 	//HANDLERS
 	const handleAddtoBag = () => addToBag(product)
-	const handleToggleForm = () => {
-		setShowReviewForm((prevState) => !prevState)
-	}
 
-	const handleToggleRender = () => {
-		setRender((prevState) => !prevState)
-	}
+	const handleToggleForm = () => setShowReviewForm(!showReviewForm)
 
-	const handleUpdateUi = () => {
-		setShowReviewForm(false)
-		setHasBoughtProduct(false)
-	}
+	const handleToggleRender = () => setRender(!render)
+
+	const handleHideReviewForm = () => setShowReviewForm(false)
 
 	const carouselImages = getCarouselImages(product)
 	const price = product.discountPrice || product.price
 	const hasReviews = product.reviews?.length > 0
 	const ratingsText = hasReviews ? 'reviews and ratings' : 'ratings'
 
-	let showReviewFormBtnText = 'Write a review'
+	let showFormBtnText = 'Write a review'
 
 	if (canUpdateReview) {
-		showReviewFormBtnText = 'Update my review'
+		showFormBtnText = 'Update my review'
 	}
 
 	if ((canUpdateReview || hasBoughtProduct) && showReviewForm) {
-		showReviewFormBtnText = 'I change my mind'
+		showFormBtnText = 'I change my mind'
 	}
 
 	return (
@@ -155,16 +127,16 @@ export default function SingleProductPage(props) {
 					</div>
 				) : null}
 
-				{hasBoughtProduct ? (
+				{isAuthenticated && hasBoughtProduct ? (
 					<div>
-						<Button onClick={handleToggleForm} text={showReviewFormBtnText} />
+						<Button onClick={handleToggleForm} text={showFormBtnText} />
 
 						{showReviewForm ? (
 							<ReviewForm
 								productId={product._id}
-								update={handleUpdateUi}
-								useUpdateReview={canUpdateReview}
-								updateReviewId={userReviewId}
+								hideForm={handleHideReviewForm}
+								useUpdateAction={canUpdateReview}
+								userReviewId={currentUserReveiwId}
 							/>
 						) : null}
 					</div>
@@ -172,4 +144,18 @@ export default function SingleProductPage(props) {
 			</div>
 		</section>
 	)
+}
+
+const getCarouselImages = (product) => {
+	const { imageCover, name, images } = product
+	//
+	const imagePath = '/images/products'
+	const coverImage = { src: `${imagePath}/${imageCover}`, alt: name }
+
+	const secondaryImages = images?.map((image, i) => ({
+		src: `${imagePath}/${image}`,
+		alt: `${name}-${i + 1}`,
+	}))
+
+	return secondaryImages ? [coverImage, ...secondaryImages] : [coverImage]
 }

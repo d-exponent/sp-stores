@@ -5,7 +5,7 @@ const getModelFromArgs = (arr) => arr[0]
 
 const setIdOnQuery = (itemId) => (req, res, next) => {
 	req.query.id = req.query[itemId]
-	// delete req.query[itemId]
+	
 	next()
 }
 
