@@ -52,7 +52,10 @@ const productSchema = new mongoose.Schema(
 			type: Number,
 			select: false,
 		},
-		imageCover: String,
+		imageCover: {
+			type: String,
+			required: true,
+		},
 		images: [String],
 		inStock: {
 			type: Boolean,

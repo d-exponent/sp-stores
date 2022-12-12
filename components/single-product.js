@@ -23,7 +23,7 @@ export default function SingleProductPage(props) {
 	const [currentUserReveiwId, setCurrentUserReviewId] = useState(null)
 	const [render, setRender] = useState(false)
 
-	const { data: session, status } = useSession()
+	const { data, status } = useSession()
 
 	const { addToBag } = useContext(ShoppingItemsContext)
 
@@ -43,21 +43,21 @@ export default function SingleProductPage(props) {
 		if (product.reviews?.length < 1 || !isAuthenticated) return
 
 		const userReview = product.reviews?.find(
-			(review) => review.customerEmail === session.user.email
+			(review) => review.customerEmail === data.user.email
 		)
 
 		if (!userReview) return
 
 		setCurrentUserReviewId(userReview._id)
 		setCanUpdateReview(true)
-	}, [isAuthenticated, product.reviews?.length, session?.user.email])
+	}, [isAuthenticated, product.reviews?.length, data?.user.email])
 
 	//  Only allow users who have purchased the current product to write a review
 	useEffect(() => {
 		if (!isAuthenticated || hasBoughtProduct) return
 
 		//Fetch all orders for this user
-		let query = `customerEmail=${session.user.email}`
+		let query = `customerEmail=${data.user.email}`
 		const url = `/api/orders?${query}`
 
 		withFetch({ url })
@@ -76,7 +76,7 @@ export default function SingleProductPage(props) {
 				hasPurchased && setHasBoughtProduct(true)
 			})
 			.catch((err) => setHasBoughtProduct(false))
-	}, [isAuthenticated, hasBoughtProduct, product._id, session?.user.email])
+	}, [isAuthenticated, hasBoughtProduct, product._id, data?.user.email])
 
 	//HANDLERS
 	const handleAddtoBag = () => addToBag(product)
@@ -113,6 +113,15 @@ export default function SingleProductPage(props) {
 					<Button onClick={handleAddtoBag} text='Add to cart' />
 					<Paystack itemIds={[product._id]} amount={price} execute={handleToggleRender} />
 				</>
+			</div>
+
+			<div className={classes.details}>
+				<p>{product.quantity}</p>
+				<ul>
+					{product.sizes?.map((size) => (
+						<li key={size}>{size}</li>
+					))}
+				</ul>
 			</div>
 
 			<div className={classes.reviewsContainer}>
