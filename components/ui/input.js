@@ -71,7 +71,8 @@ const Input = (props) => {
 				value={value}
 				ref={props.reference}
 				placeholder={props.placeholder}
-				required={required === true}
+				required={required}
+				readOnly={props.readOnly}
 			/>
 		</div>
 	)

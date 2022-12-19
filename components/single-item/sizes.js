@@ -15,16 +15,15 @@ const Sizes = ({ product, getsize }) => {
 		<div className={classes.sizes}>
 			<h3>Available Sizes: </h3>
 			<ul>
-				{product.sizes?.map((size, index) => {
+				{product.sizes?.map(({ size }, index) => {
 					let style = classes.list
 
 					if (index === listIndex) {
 						style = style + ' ' + classes.clickedStyle
 					}
 
-				
 					return (
-						<li key={size} onClick={handleClick(size, index)} className={style}>
+						<li key={size + index} onClick={handleClick(size, index)} className={style}>
 							{size}
 						</li>
 					)

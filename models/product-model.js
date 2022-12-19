@@ -1,8 +1,23 @@
 import mongoose from 'mongoose'
 import slugify from 'slugify'
-import reviewModel from './review-model'
+import Review from './review-model'
 
-import { formatToCurrency } from '../lib/utils'
+const sizeSchema = new mongoose.Schema({
+	size: {
+		type: String,
+		lowercase: true,
+		required: [true, 'Please provide a size'],
+	},
+	quantity: {
+		type: Number,
+		validate: {
+			validator: function (value) {
+				return value > -1
+			},
+			message: '(value) must be at least 0',
+		},
+	},
+})
 
 const productSchema = new mongoose.Schema(
 	{
@@ -27,11 +42,6 @@ const productSchema = new mongoose.Schema(
 			required: [true, 'A product must have a color'],
 			lowercase: true,
 		},
-		description: {
-			required: [true, 'A product must have a description'],
-			type: String,
-			minLength: [20, 'A product description must have at least 20 characters'],
-		},
 		discountPercentage: Number,
 		discountPrice: {
 			type: Number,
@@ -39,24 +49,24 @@ const productSchema = new mongoose.Schema(
 				validator: function (value) {
 					return this.price > value && value > -1
 				},
-				message: 'A discount price must be less than the product price.',
+				message: 'A discount-price must be less than the price.',
 			},
 			default: 0,
 		},
 		quantity: {
 			type: Number,
 			default: 0,
-			required: [true, 'A product must have at least one item'],
+			// required: [true, 'A product must have at least one item'],
 		},
 		initialQuantity: {
 			type: Number,
 			select: false,
 		},
-		imageCover: {
-			type: String,
-			required: true,
-		},
-		images: [String],
+		// imageCover: {
+		// 	type: String,
+		// 	required: true,
+		// },
+		// images: [String],
 		inStock: {
 			type: Boolean,
 			default: true,
@@ -70,24 +80,18 @@ const productSchema = new mongoose.Schema(
 			type: Number,
 			default: 4,
 		},
-		salesCategory: String,
-		sizes: [
-			{
-				type: String,
-				lowercase: true,
-			},
-		],
+		sizes: [sizeSchema],
 		slug: {
 			type: String,
 			unique: true,
 		},
 		price: {
 			type: Number,
-			required: [true, 'A product must have a price'],
+			// required: [true, 'A product must have a price'],
 		},
 		productType: {
 			type: String,
-			required: [true, 'A product must belong to a type'],
+			// required: [true, 'A product must belong to a type'],
 			trim: true,
 			lowercase: true,
 		},
@@ -102,21 +106,21 @@ const productSchema = new mongoose.Schema(
 	}
 )
 
-productSchema.virtual('priceAsCurrency').get(function () {
-	return formatToCurrency(this.price)
-})
-
-productSchema.virtual('discountPriceAsCurrency').get(function () {
-	return formatToCurrency(this.discountPrice)
-})
-
 productSchema.virtual('reviews', {
-	ref: 'Review',
+	ref: Review,
 	foreignField: 'product',
 	localField: '_id',
 })
 
+productSchema.pre('save', function (next) {
+	const sizeQuantityArr = this.sizes.map((size) => size.quantity)
+	const totalQuantity = sizeQuantityArr.reduce((sum, quantity) => sum + quantity)
 
+	this.initialQuantity = totalQuantity
+	this.quantity = totalQuantity
+
+	next()
+})
 
 //Set initial quantity
 productSchema.pre('save', function (next) {
@@ -127,10 +131,8 @@ productSchema.pre('save', function (next) {
 	}
 
 	// Handle inStock Boolean
-
 	this.inStock = this.quantity > 0
 
-	this.initialQuantity = this.quantity
 	next()
 })
 
@@ -161,7 +163,6 @@ productSchema.pre(/^findOneAnd/, function (next) {
 
 	this.inStock = this.quantity > 0
 
-	
 	this.lastModifiedAt = Date.now()
 	next()
 })

@@ -4,7 +4,6 @@ import { useSession } from 'next-auth/react'
 import { withFetch } from '../lib/auth-utils'
 import ShoppingItemsContext from '../context/shopping-bag'
 import NotificationContext from '../context/notification'
-import { getCartItems } from '../lib/checkout-utils'
 
 import Price from './ui/price'
 import Carousel from './ui/carousel'
@@ -20,7 +19,7 @@ import classes from './css-modules/single-product.module.css'
 
 export default function SingleProductPage(props) {
 	const [product] = useState(props.product)
-	const [reviews, setReviews] = useState(product.reviews)
+	const [reviews, setReviews] = useState(product.reviews || null)
 
 	const price = product.discountPrice || product.price
 
@@ -218,7 +217,6 @@ export default function SingleProductPage(props) {
 	)
 }
 
-
 const checkForCartItemSize = (item) => {
 	if (!item.size) {
 		throw new Error(`Please pick a size😊`)
@@ -227,12 +225,17 @@ const checkForCartItemSize = (item) => {
 
 const getCarouselImages = (product) => {
 	const { imageCover, name, images } = product
-	//
-	const imagePath = '/images/products'
-	const coverImage = { src: `${imagePath}/${imageCover}`, alt: name }
+
+	// TODO: Change setup in production to relative paths
+	// const imagePath = '/images/products'
+	// const coverImage = { src: `${imagePath}/${imageCover}`, alt: name }
+	// const imagePath = '/images/products'
+	// const coverImage = { src: `${imagePath}/${imageCover}`, alt: name }
+	const coverImage = { src: imageCover, alt: name }
 
 	const secondaryImages = images?.map((image, i) => ({
-		src: `${imagePath}/${image}`,
+		// src: `${imagePath}/${image}`,
+		src: image,
 		alt: `${name}-${i + 1}`,
 	}))
 

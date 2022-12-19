@@ -18,15 +18,19 @@ export async function getStaticProps(context) {
 			.exec()
 
 		if (!result) {
+
 			throw new Error('Error')
 		}
 
 		const product = purify(result)
 
+	
+
 		return {
 			props: { product },
 		}
 	} catch (error) {
+		console.log('🧰🧰, ERROR: ', error.message)
 		return redirectToPage('/products')
 	}
 }
@@ -35,6 +39,8 @@ export async function getStaticPaths() {
 	await dbConnect()
 
 	const allProducts = await Product.find().exec()
+
+	
 
 	const pathsWithSlug = purify(allProducts).map((product) => ({
 		params: {

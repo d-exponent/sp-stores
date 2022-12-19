@@ -1,4 +1,4 @@
-import { filterProductUpload } from "../lib/controller-utils"
+import { setFeildDataType } from "../lib/controller-utils"
 import throwOperationalError from "../lib/app-error"
 
 
@@ -7,7 +7,7 @@ export const setProductFeilds = (req, res, next) => {
 		throwOperationalError('Please provide product information', 400)
 	}
 
-	const filtered = filterProductUpload(req.body)
+	const filtered = setFeildDataType(req.body)
 
 	if (req.files.imageCover) {
 		filtered.imageCover = req.files.imageCover

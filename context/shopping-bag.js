@@ -1,4 +1,5 @@
-import { createContext, useState, useEffect } from 'react'
+import { createContext, useState, useEffect, useContext } from 'react'
+import NotificationContext from './notification'
 
 const ShoppingItemsContext = createContext({
 	items: Array,
@@ -15,6 +16,8 @@ export const ShoppingItemsContextProvider = (props) => {
 	const localStorageKey = 'bagItems'
 	const [items, setItems] = useState([])
 	const [isItems, setIsItems] = useState(false)
+
+	const { showNotification } = useContext(NotificationContext)
 
 	useEffect(() => {
 		const storedItems = JSON.parse(localStorage.getItem(localStorageKey))
@@ -38,12 +41,13 @@ export const ShoppingItemsContextProvider = (props) => {
 			if (isInItems) {
 				const indexOfItem = getIndexOfItemSlug(slaveArr, item.slug)
 				slaveArr[indexOfItem] = item
-
 				return slaveArr
 			}
 
 			return [item, ...slaveArr]
 		})
+
+		showNotification('Added to cart successfully').success()
 	}
 
 	const deleteItemBySlug = (itemSlug) => {
@@ -54,7 +58,7 @@ export const ShoppingItemsContextProvider = (props) => {
 
 			if (slugIndex > -1) {
 				itemsArray.splice(slugIndex, 1)
-			
+
 				return itemsArray
 			}
 		})

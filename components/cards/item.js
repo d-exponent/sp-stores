@@ -7,6 +7,7 @@ import Price from '../ui/price'
 import Button from '../ui/button'
 
 import classes from './item.module.css'
+import { TbChevronsDownLeft } from 'react-icons/tb'
 
 const Item = (props) => {
 	const { push } = useRouter()
@@ -16,7 +17,11 @@ const Item = (props) => {
 	const { product, showToCollections, toBag } = props
 	const { category } = product
 
-	const handlePushItemDetail = () => push(`/products/${product.slug}`)
+	
+
+	const handlePushItemDetail = () => {
+		push(`/products/${product.slug}`)
+	}
 
 	const handlePushToCollection = () => push(`/${category}`)
 
@@ -32,7 +37,8 @@ const Item = (props) => {
 		>
 			<div>
 				<Image
-					src={`/images/products/${product.imageCover}`}
+					// src={`/images/products/${product.imageCover}`}
+					src={product.imageCover}
 					alt={product.name}
 					width={200}
 					height={200}
