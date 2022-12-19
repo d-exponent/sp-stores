@@ -1,5 +1,43 @@
 import mongoose from 'mongoose'
-import Product from '../models/product-model'
+// import Product from '../models/product-model'
+
+import { modelVirtualsConfiq } from '../lib/db-utils'
+
+const cartSchema = new mongoose.Schema({
+	productId: {
+		type: String,
+		required: [true, 'Please provide the product ID'],
+	},
+	productName: {
+		type: String,
+		required: [true, 'Please provide the product name'],
+	},
+	paidAmount: {
+		type: Number,
+		required: [true, 'Please provide the amount for this purchase'],
+	},
+	itemPrice: {
+		type: Number,
+		required: [true, 'Please provide the current price of this item'],
+	},
+	salesQuantity: {
+		type: Number,
+		required: [true, 'Please provide the quantity for this purchase'],
+	},
+	itemSize: {
+		type: String,
+		required: [true, 'Please provide the size of this product'],
+	},
+	brand: String,
+	coverImage: {
+		type: String,
+		required: [true, 'Please provide the cover image for this product'],
+	},
+	purchasedAt: {
+		type: Date,
+		default: Date.now,
+	},
+})
 
 const orderSchema = new mongoose.Schema(
 	{
@@ -12,14 +50,9 @@ const orderSchema = new mongoose.Schema(
 			type: String,
 			required: [true, 'An orders customer must have a name'],
 		},
-		items: {
+		cartItems: {
 			required: [true, 'An order must be made for at least one item'],
-			type: [
-				{
-					type: mongoose.Schema.ObjectId,
-					ref: 'Product',
-				},
-			],
+			type: [cartSchema],
 		},
 		currency: String,
 		createdAt: {
@@ -46,10 +79,7 @@ const orderSchema = new mongoose.Schema(
 			required: [true, 'Order must contain a payment status'],
 		},
 	},
-	{
-		toJSON: { virtuals: true },
-		toObject: { virtuals: true },
-	}
+	modelVirtualsConfiq
 )
 
 orderSchema.virtual('totalProducts').get(function () {

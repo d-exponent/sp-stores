@@ -1,7 +1,8 @@
 import classes from './input.module.css'
 
 const Input = (props) => {
-	const { type, name, label, accept, required, reference } = props
+	const { type, name, label, accept, required, reference, value, placeholder, readonly } =
+		props
 
 	if (type === 'textarea') {
 		return (
@@ -34,10 +35,12 @@ const Input = (props) => {
 	if (type === 'password') {
 		return (
 			<div className={classes.formGroup}>
-				<label className={classes.formLabel} htmlFor={name}>
-					<p>{label}</p>
-					{required && <span>*</span>}
-				</label>
+				{label ? (
+					<label className={classes.formLabel} htmlFor={name}>
+						<p>{label}</p>
+						{required && <span>*</span>}
+					</label>
+				) : null}
 
 				<input
 					className={classes.formControl}
@@ -45,8 +48,9 @@ const Input = (props) => {
 					id={name}
 					name={name}
 					ref={reference}
-					placeholder={props.placeholder}
+					placeholder={placeholder}
 					required={required === true}
+					readonly={readonly}
 				/>
 			</div>
 		)
@@ -64,6 +68,7 @@ const Input = (props) => {
 				type={type}
 				id={name}
 				name={name}
+				value={value}
 				ref={props.reference}
 				placeholder={props.placeholder}
 				required={required === true}

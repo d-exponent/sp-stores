@@ -3,6 +3,8 @@ import { useSession } from 'next-auth/react'
 
 import { withFetch } from '../lib/auth-utils'
 import ShoppingItemsContext from '../context/shopping-bag'
+import NotificationContext from '../context/notification'
+import { getCartItems } from '../lib/checkout-utils'
 
 import Price from './ui/price'
 import Carousel from './ui/carousel'
@@ -11,11 +13,18 @@ import Star from './ui/star'
 import Reviews from './cards/review'
 import ReviewForm from './forms/review'
 import Paystack from './ui/paystack'
+import Quantity from './single-item/quantity'
+import Sizes from './single-item/sizes'
 
 import classes from './css-modules/single-product.module.css'
 
 export default function SingleProductPage(props) {
-	const [product, setProduct] = useState(props.product)
+	const [product] = useState(props.product)
+	const [reviews, setReviews] = useState(product.reviews)
+
+	const price = product.discountPrice || product.price
+
+	const [cartItem, setCartDetails] = useState({ quantity: 1, amount: price, size: '' })
 
 	const [showReviewForm, setShowReviewForm] = useState(false)
 	const [hasBoughtProduct, setHasBoughtProduct] = useState(false)
@@ -26,31 +35,41 @@ export default function SingleProductPage(props) {
 	const { data, status } = useSession()
 
 	const { addToBag } = useContext(ShoppingItemsContext)
+	const { showNotification } = useContext(NotificationContext)
 
 	const isAuthenticated = status === 'authenticated'
 
-	//  Get the latest version of the current product on every render cycle
+	//  Update the reviews
 	useEffect(() => {
 		withFetch({ url: `/api/products/${product._id}` })
-			.then(({ serverRes }) => {
-				setProduct(serverRes.data)
+			.then(({ serverRes: { data } }) => {
+				setReviews(data.reviews)
 			})
 			.catch((err) => console.log(err.message))
-	}, [showReviewForm])
+	}, [product._id, showReviewForm])
+
+	// Get the amount of the cart item
+	useEffect(() => {
+		if (cartItem.quantity === 0) return
+
+		setCartDetails((prev) => ({ ...prev, amount: prev.quantity * price }))
+	}, [cartItem.quantity, price])
 
 	//  Find the current user's Review and extract the Id
 	useEffect(() => {
-		if (product.reviews?.length < 1 || !isAuthenticated) return
+		if (reviews?.length < 1 || !isAuthenticated) return
 
-		const userReview = product.reviews?.find(
-			(review) => review.customerEmail === data.user.email
-		)
+		const { user: email } = data
 
-		if (!userReview) return
+		if (!reviews) return
 
-		setCurrentUserReviewId(userReview._id)
-		setCanUpdateReview(true)
-	}, [isAuthenticated, product.reviews?.length, data?.user.email])
+		const userReview = reviews?.find((review) => review.customerEmail === email)
+
+		if (userReview) {
+			setCurrentUserReviewId(userReview._id)
+			setCanUpdateReview(true)
+		}
+	}, [isAuthenticated, reviews, data])
 
 	//  Only allow users who have purchased the current product to write a review
 	useEffect(() => {
@@ -78,8 +97,39 @@ export default function SingleProductPage(props) {
 			.catch((err) => setHasBoughtProduct(false))
 	}, [isAuthenticated, hasBoughtProduct, product._id, data?.user.email])
 
+	//Cart Utils
+	const increment = () => {
+		if (cartItem.quantity < product.quantity) {
+			setCartDetails((prevDetails) => ({
+				...prevDetails,
+				quantity: prevDetails.quantity + 1,
+			}))
+		}
+	}
+
+	const decrement = () => {
+		if (cartItem.quantity > 1) {
+			setCartDetails((prevDetails) => ({
+				...prevDetails,
+				quantity: prevDetails.quantity - 1,
+			}))
+		}
+	}
+
+	const getSize = (size) => {
+		setCartDetails((prevDetails) => ({ ...prevDetails, size }))
+	}
+
 	//HANDLERS
-	const handleAddtoBag = () => addToBag(product)
+	const handleAddtoBag = () => {
+		try {
+			checkForCartItemSize(cartItem)
+			addToBag({ ...product, cart: cartItem })
+			//
+		} catch (e) {
+			showNotification(e.message).error()
+		}
+	}
 
 	const handleToggleForm = () => setShowReviewForm(!showReviewForm)
 
@@ -88,8 +138,7 @@ export default function SingleProductPage(props) {
 	const handleHideReviewForm = () => setShowReviewForm(false)
 
 	const carouselImages = getCarouselImages(product)
-	const price = product.discountPrice || product.price
-	const hasReviews = product.reviews?.length > 0
+	const hasReviews = reviews?.length > 0
 	const ratingsText = hasReviews ? 'reviews and ratings' : 'ratings'
 
 	let showFormBtnText = 'Write a review'
@@ -101,6 +150,7 @@ export default function SingleProductPage(props) {
 	if ((canUpdateReview || hasBoughtProduct) && showReviewForm) {
 		showFormBtnText = 'I change my mind'
 	}
+	
 
 	return (
 		<section className={classes.container}>
@@ -108,20 +158,33 @@ export default function SingleProductPage(props) {
 			<h2>{product.name}</h2>
 
 			<Price product={product} />
+
+			<div className={classes.details}>
+				<p>{`Only ${product.quantity}units remaining. `}</p>
+
+				<Sizes product={product} getsize={getSize} />
+
+				<Quantity increment={increment} decrement={decrement} count={cartItem.quantity} />
+
+				<div className={classes.orderDetails}>
+					<h3>Order Details</h3>
+					<p>Quantity: {cartItem.quantity}</p>
+					<p>Amount: {cartItem.amount}</p>
+					<p>Size: {cartItem.size}</p>
+				</div>
+			</div>
+
 			<div className={`${classes.cta} grid`}>
 				<>
 					<Button onClick={handleAddtoBag} text='Add to cart' />
-					<Paystack itemIds={[product._id]} amount={price} execute={handleToggleRender} />
+					<Paystack
+						items={[{ ...product, cart: cartItem }]}
+						singleItem={true}
+						amount={price}
+						execute={handleToggleRender}
+						hasSize={cartItem.size !== ''}
+					/>
 				</>
-			</div>
-
-			<div className={classes.details}>
-				<p>{product.quantity}</p>
-				<ul>
-					{product.sizes?.map((size) => (
-						<li key={size}>{size}</li>
-					))}
-				</ul>
 			</div>
 
 			<div className={classes.reviewsContainer}>
@@ -132,7 +195,7 @@ export default function SingleProductPage(props) {
 				</div>
 				{hasReviews ? (
 					<div className={classes.reviews}>
-						<Reviews reviews={product.reviews} />
+						<Reviews reviews={reviews} />
 					</div>
 				) : null}
 
@@ -153,6 +216,13 @@ export default function SingleProductPage(props) {
 			</div>
 		</section>
 	)
+}
+
+
+const checkForCartItemSize = (item) => {
+	if (!item.size) {
+		throw new Error(`Please pick a size😊`)
+	}
 }
 
 const getCarouselImages = (product) => {

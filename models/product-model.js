@@ -37,7 +37,7 @@ const productSchema = new mongoose.Schema(
 			type: Number,
 			validate: {
 				validator: function (value) {
-					return this.price > value
+					return this.price > value && value > -1
 				},
 				message: 'A discount price must be less than the product price.',
 			},

@@ -6,6 +6,11 @@ const ShoppingItemsContext = createContext({
 	removeFromBag: function (itemSlug) {},
 })
 
+const getIndexOfItemSlug = (arr, match) => {
+	const slugArr = arr.map((item) => item.slug)
+	return slugArr.indexOf(match)
+}
+
 export const ShoppingItemsContextProvider = (props) => {
 	const localStorageKey = 'bagItems'
 	const [items, setItems] = useState([])
@@ -25,34 +30,38 @@ export const ShoppingItemsContextProvider = (props) => {
 		setIsItems(false)
 	}, [items])
 
-	async function addItemToBag(product) {
-		//check if item is already in items array
-		const isInItems = items.some((item) => item.slug === product.slug)
-		if (isInItems) return
+	const addItemToBag = (item) => {
+		setItems((prevItems) => {
+			const slaveArr = [...prevItems]
+			const isInItems = slaveArr.some(({ slug }) => slug === item.slug)
 
-		//Add product to state
-		setItems((prevItems) => [product, ...prevItems])
+			if (isInItems) {
+				const indexOfItem = getIndexOfItemSlug(slaveArr, item.slug)
+				slaveArr[indexOfItem] = item
+
+				return slaveArr
+			}
+
+			return [item, ...slaveArr]
+		})
 	}
 
-	function deleteItemBySlug(itemSlug) {
+	const deleteItemBySlug = (itemSlug) => {
 		setItems((prevItems) => {
 			const itemsArray = [...prevItems]
 
-			const itemsSlug = itemsArray.map((item) => item.slug)
-			const slugIndex = itemsSlug.indexOf(itemSlug)
+			const slugIndex = getIndexOfItemSlug(itemsArray, itemSlug)
 
-			//Remove the item only when it's found
 			if (slugIndex > -1) {
 				itemsArray.splice(slugIndex, 1)
+			
+				return itemsArray
 			}
-
-			//Return new copy to state
-			return itemsArray
 		})
 	}
 
 	const contextValue = {
-		items: items,
+		items,
 		isItems,
 		addToBag: addItemToBag,
 		removeFromBag: deleteItemBySlug,

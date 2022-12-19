@@ -40,6 +40,8 @@ const getAll = (...args) => {
 const getOne = (...args) => {
 	const Model = getModelFromArgs(args)
 
+	
+
 	const populate = args[1] ? args[1] : null
 
 	return async (req, res) => {

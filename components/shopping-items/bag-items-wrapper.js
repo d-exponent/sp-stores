@@ -3,9 +3,9 @@ import { useContext } from 'react'
 import { TbCurrencyNaira } from 'react-icons/tb'
 
 import { formatToCurrency } from '../../lib/utils'
-import { getCheckoutPrice, getItemsIds } from '../../lib/checkout-utils'
+import { getCheckoutPrice } from '../../lib/checkout-utils'
 import BagItems from './bag-items'
-import PaystackCustomerPay from '../ui/paystack'
+import Paystack from '../ui/paystack'
 import ShoppingBagContext from '../../context/shopping-bag'
 
 import classes from './css-modules/bag-items-wrapper.module.css'
@@ -35,8 +35,8 @@ const BagItemsWrapper = () => {
 					<span>{formattedTotalPrice}</span>
 				</div>
 				<div className={`${classes.cta} grid`}>
-					<PaystackCustomerPay
-						itemIds={getItemsIds(items)}
+					<Paystack
+						items={items}
 						amount={totalPrice}
 						text='Checkout'
 						execute={clearLocalStorage}

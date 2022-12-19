@@ -49,6 +49,20 @@
     justify-content: space-around;
 }
 
+.details{
+    margin-bottom: 2em;
+}
+
+.orderDetails p{
+    margin: .6em 0;
+}
+
+.details > p:nth-child(1){
+    margin-bottom: 1em;
+    color: var(--gray-2);
+    font-size: 1.4em;
+}
+
 .reviews {
     padding: 1.5em;
     box-shadow: var(--shadow-light);

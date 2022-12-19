@@ -3,10 +3,11 @@ import { useContext } from 'react'
 import { usePaystackPayment } from 'react-paystack'
 
 import { withFetch } from '../../lib/auth-utils'
+import { getCartItems, getCheckoutPrice } from '../../lib/checkout-utils'
 import NotificationContext from '../../context/notification'
 import Button from './button'
 
-const handleSuccess = (notify, funcOne, funcTwo) => {
+const handleSuccess = (notify, ...args) => {
 	return async ({ reference }) => {
 		// Validate the payment status and notify the user
 		const { response, serverRes } = await withFetch({
@@ -21,9 +22,8 @@ const handleSuccess = (notify, funcOne, funcTwo) => {
 
 		notify(message).success()
 
-		if (funcOne) {
-			console.log("Executing")
-			funcOne()
+		if (args.length > 0) {
+			args.forEach((arg) => arg())
 		}
 	}
 }
@@ -40,19 +40,21 @@ const Paystack = (props) => {
 	const isAuthenticated = status === 'authenticated'
 
 	const getPaymentOptions = () => {
-		if (!isAuthenticated) return {}
 
+		if (!isAuthenticated) return {}
+		
 		return {
 			publicKey: 'pk_test_9b85118dc69a219c04177eaa758df84da917cdd1',
 			email: data.user.email,
-			amount: props.amount * 100, //KOBO
+			amount: getCheckoutPrice(props.items) * 100, //KOBO
 			currency: 'NGN',
 			metadata: {
-				bag_items_ids: props.itemIds,
+				cartItems: getCartItems(props.items),
 				customer_names: data.user.name,
 			},
 		}
 	}
+
 
 	const initializePayment = usePaystackPayment(getPaymentOptions())
 
@@ -70,6 +72,12 @@ const Paystack = (props) => {
 	}
 
 	const handleClick = () => {
+
+		if (props.singleItem && !props.hasSize) {
+			showNotification('Please select a size for this product').error()
+			return
+		}
+
 		isAuthenticated ? handlePayment() : notifyToLogin()
 	}
 

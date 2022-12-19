@@ -1,0 +1,30 @@
+.sizes {
+    margin-block: 2em;
+}
+
+
+.sizes h3 {
+    margin-bottom: 1em;
+    font-size: 1rem;
+}
+
+.sizes>ul {
+    list-style-type: none;
+    display: flex;
+    gap: 1.5em;
+    flex-wrap: wrap;
+}
+
+.list {
+    font-size: 1.6em;
+    width: 50px;
+    padding-block: 10px;
+    display: grid;
+    place-content: center;
+    box-shadow: var(--shadow-light);
+}
+
+.clickedStyle{
+    background-color: var(--gray-2);
+    color: #fff;
+}
