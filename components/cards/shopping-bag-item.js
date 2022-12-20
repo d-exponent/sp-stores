@@ -18,9 +18,9 @@ const ShoppingBagItem = (props) => {
 	}
 
 	return (
-		<li className={`${classes.list} grid`} onClick={pushToProducts}>
+		<li className={`${classes.list} grid`}>
 			<h3>{props.name}</h3>
-			<div>
+			<div >
 				<Image
 					src={props.imagePath}
 					alt={props.name}
@@ -35,9 +35,9 @@ const ShoppingBagItem = (props) => {
 				<p>Total Amount: {cart.amount}</p>
 			</div>
 			<div className={`${classes.cta} flex`}>
-				{/* <div className={`${classes.alignCenter} flex`}>
-					<Price product={productPrices} />
-				</div> */}
+				<div className={`${classes.alignCenter} flex`}>
+					Single Price:  <Price product={productPrices} />
+				</div>
 				<div className={`${classes.ctaBtnWrapper} grid`}>
 					<Button onClick={props.handleCta} text='Remove' />
 				</div>

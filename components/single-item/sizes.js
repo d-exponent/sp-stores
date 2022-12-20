@@ -4,10 +4,10 @@ import classes from './sizes.module.css'
 const Sizes = ({ product, getsize }) => {
 	const [listIndex, setListIndex] = useState(null)
 
-	const handleClick = (size, index) => {
+	const handleClick = (size, quantity, index) => {
 		return () => {
 			setListIndex(index)
-			getsize(size)
+			getsize(size, quantity)
 		}
 	}
 
@@ -15,7 +15,7 @@ const Sizes = ({ product, getsize }) => {
 		<div className={classes.sizes}>
 			<h3>Available Sizes: </h3>
 			<ul>
-				{product.sizes?.map(({ size }, index) => {
+				{product.sizes?.map(({ size, quantity }, index) => {
 					let style = classes.list
 
 					if (index === listIndex) {
@@ -23,7 +23,11 @@ const Sizes = ({ product, getsize }) => {
 					}
 
 					return (
-						<li key={size + index} onClick={handleClick(size, index)} className={style}>
+						<li
+							key={size + index}
+							onClick={handleClick(size, quantity, index)}
+							className={style}
+						>
 							{size}
 						</li>
 					)

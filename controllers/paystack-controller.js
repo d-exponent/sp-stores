@@ -30,25 +30,21 @@ export const verifyPayment = async (req, res) => {
 		message: 'Your payment was successfull',
 	})
 
-	//Save order document
-	const { metadata } = data
-
-	const order = {
-		currency: data.currency,
-		cartItems: metadata.cartItems,
-		paystack_ref: data.reference,
-		paymentMethod: data.channel,
-		paystackFees: +data.fees / 100,
-		paidAt: data.paidAt,
-		paymentStatus: data.status,
-		totalAmount: +data.amount / 100,
-		customerEmail: data.customer.email,
-		customerName: metadata['customer_names'],
-		customerCode: data.customer.customer_code,
-	}
-
+	//Save new Order document
 	try {
-		console.log(await Order.create(order))
+		await Order.create({
+			currency: data.currency,
+			cartItems: data.metadata.cartItems,
+			paystack_ref: data.reference,
+			paymentMethod: data.channel,
+			paystackFees: +data.fees / 100,
+			paidAt: data.paidAt,
+			paymentStatus: data.status,
+			totalAmount: +data.amount / 100,
+			customerEmail: data.customer.email,
+			customerName: data.metadata['customer_names'],
+			customerCode: data.customer.customer_code,
+		})
 	} catch (e) {
 		console.log(e.message)
 	}

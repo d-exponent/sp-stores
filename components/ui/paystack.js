@@ -55,6 +55,7 @@ const Paystack = (props) => {
 		}
 	}
 
+
 	const initializePayment = usePaystackPayment(getPaymentOptions())
 
 	const handlePayment = async () => {

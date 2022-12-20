@@ -11,7 +11,7 @@ const Qunatity = (props) => {
 			<h4>👇 Click to increase or reduce purchase items</h4>
 			<div className={classes.cta}>
 				<Button text='-' onClick={decrement} />
-				<input value={count} readOnly />
+				<Input value={count} readOnly />
 				<Button text='+' onClick={increment} />
 			</div>
 		</div>

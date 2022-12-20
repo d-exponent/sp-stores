@@ -23,7 +23,7 @@ export default function SingleProductPage(props) {
 
 	const price = product.discountPrice || product.price
 
-	const [cartItem, setCartDetails] = useState({ quantity: 1, amount: price, size: '' })
+	const [cartItem, setCartItems] = useState({ quantity: 1, amount: price, size: '' })
 
 	const [showReviewForm, setShowReviewForm] = useState(false)
 	const [hasBoughtProduct, setHasBoughtProduct] = useState(false)
@@ -51,7 +51,7 @@ export default function SingleProductPage(props) {
 	useEffect(() => {
 		if (cartItem.quantity === 0) return
 
-		setCartDetails((prev) => ({ ...prev, amount: prev.quantity * price }))
+		setCartItems((prev) => ({ ...prev, amount: prev.quantity * price }))
 	}, [cartItem.quantity, price])
 
 	//  Find the current user's Review and extract the Id
@@ -98,8 +98,15 @@ export default function SingleProductPage(props) {
 
 	//Cart Utils
 	const increment = () => {
-		if (cartItem.quantity < product.quantity) {
-			setCartDetails((prevDetails) => ({
+		if (!cartItem.size) {
+			return showNotification('Please pick a size').error()
+		}
+
+		const sizeDetails = product.sizes.find(({ size }) => size === cartItem.size)
+		
+
+		if (cartItem.quantity < sizeDetails.quantity) {
+			setCartItems((prevDetails) => ({
 				...prevDetails,
 				quantity: prevDetails.quantity + 1,
 			}))
@@ -108,15 +115,15 @@ export default function SingleProductPage(props) {
 
 	const decrement = () => {
 		if (cartItem.quantity > 1) {
-			setCartDetails((prevDetails) => ({
+			setCartItems((prevDetails) => ({
 				...prevDetails,
 				quantity: prevDetails.quantity - 1,
 			}))
 		}
 	}
 
-	const getSize = (size) => {
-		setCartDetails((prevDetails) => ({ ...prevDetails, size }))
+	const getSize = (size, quantity) => {
+		setCartItems((prevDetails) => ({ ...prevDetails, size, quantity }))
 	}
 
 	//HANDLERS
@@ -149,7 +156,6 @@ export default function SingleProductPage(props) {
 	if ((canUpdateReview || hasBoughtProduct) && showReviewForm) {
 		showFormBtnText = 'I change my mind'
 	}
-	
 
 	return (
 		<section className={classes.container}>

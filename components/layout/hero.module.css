@@ -9,7 +9,7 @@
     background-position: center;
     background-blend-mode: multiply;
 
-    font-family: var(--inter-tight);
+    font-family: var(--poppins);
     margin-top: 1em;
     padding-inline: 1.3em;
     place-content: center;

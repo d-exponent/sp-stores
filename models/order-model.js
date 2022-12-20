@@ -87,10 +87,6 @@ orderSchema.virtual('totalProducts').get(function () {
 })
 
 orderSchema.pre(/^find/, function (next) {
-	this.populate({
-		path: 'items',
-		select: 'name brand category price discountPrice ',
-	})
 
 	this.select('-__v')
 	next()
