@@ -1,6 +1,5 @@
 require('dotenv').config()
 
-
 /**
  *
  * A simple script to make dummy products data on our dB
@@ -209,6 +208,33 @@ productSchema.virtual('reviews', {
 	localField: '_id',
 })
 
+//Ensure only unique sizes are saved in sorted Order
+productSchema.pre('save', function (next) {
+	const uniqueSizes = []
+
+	// Remove duplicate objects by size
+	const uniqueSizesObjects = this.sizes.filter(({ size }) => {
+		const isNotUnique = uniqueSizes.includes(size)
+
+		if (isNotUnique) return false
+
+		uniqueSizes.push(size)
+		return true
+	})
+
+	this.sizes = []
+
+	uniqueSizes
+		.sort((a, b) => a - b)
+		.forEach((size) => {
+			const sizeObject = uniqueSizesObjects.find((s) => s.size === size)
+
+			this.sizes.push(sizeObject)
+		})
+
+	next()
+})
+
 productSchema.pre('save', function (next) {
 	const sizeQuantityArr = this.sizes.map((size) => size.quantity)
 	const totalQuantity = sizeQuantityArr.reduce((sum, quantity) => sum + quantity)
@@ -237,7 +263,7 @@ productSchema.pre('save', function (next) {
 productSchema.pre('save', function (next) {
 	const nowInMillisecondsStr = Date.now().toString()
 	const dateStringLength = nowInMillisecondsStr.length
-	
+
 	const slugString = `${this.brand} ${
 		this.name
 	} ${nowInMillisecondsStr} ${generateRandomNumber(100)}`
