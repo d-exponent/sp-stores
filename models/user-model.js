@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 
 import { isValidEmail, capitalize } from '../lib/utils'
 import { bcryptHash, cryptoToken, cryptoHash } from '../lib/controller-utils'
+import { modelVirtualsConfiq } from '../lib/db-utils'
 
 const userSchema = new mongoose.Schema(
 	{
@@ -55,12 +56,8 @@ const userSchema = new mongoose.Schema(
 			type: Date,
 			default: Date.now,
 		},
-		
 	},
-	{
-		toJSON: { virtuals: true },
-		toObject: { virtuals: true },
-	}
+	modelVirtualsConfiq
 )
 
 userSchema.index({ email: 1, phoneNumber: -1 }, { unique: true })
@@ -91,7 +88,6 @@ userSchema.pre(/^find/, function (next) {
 	this.select('-__v')
 	next()
 })
-
 
 //Handle passsword reset token
 userSchema.methods.createResetToken = function () {

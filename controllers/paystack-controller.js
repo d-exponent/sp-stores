@@ -44,6 +44,7 @@ export const verifyPayment = async (req, res) => {
 			customerEmail: data.customer.email,
 			customerName: data.metadata['customer_names'],
 			customerCode: data.customer.customer_code,
+			transactionReference: reference,
 		})
 	} catch (e) {
 		console.log(e.message)

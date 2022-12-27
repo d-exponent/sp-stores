@@ -18,15 +18,14 @@ import Sizes from './single-item/sizes'
 import classes from './css-modules/single-product.module.css'
 
 export default function SingleProductPage(props) {
-	const [product] = useState(props.product)
-	const [reviews, setReviews] = useState(product.reviews || null)
+	const [product, setProduct] = useState(props.product)
 
 	const price = product.discountPrice || product.price
 
 	const [cartItem, setCartItems] = useState({ quantity: 1, amount: price, size: '' })
 
 	const [showReviewForm, setShowReviewForm] = useState(false)
-	const [hasBoughtProduct, setHasBoughtProduct] = useState(false)
+	const [canWriteReview, setCanWriteReview] = useState(false)
 	const [canUpdateReview, setCanUpdateReview] = useState(false)
 	const [currentUserReveiwId, setCurrentUserReviewId] = useState(null)
 	const [render, setRender] = useState(false)
@@ -37,12 +36,13 @@ export default function SingleProductPage(props) {
 	const { showNotification } = useContext(NotificationContext)
 
 	const isAuthenticated = status === 'authenticated'
+	
 
 	//  Update the reviews
 	useEffect(() => {
 		withFetch({ url: `/api/products/${product._id}` })
 			.then(({ serverRes: { data } }) => {
-				setReviews(data.reviews)
+				setProduct(data)
 			})
 			.catch((err) => console.log(err.message))
 	}, [product._id, showReviewForm])
@@ -56,45 +56,46 @@ export default function SingleProductPage(props) {
 
 	//  Find the current user's Review and extract the Id
 	useEffect(() => {
-		if (reviews?.length < 1 || !isAuthenticated) return
+		if (product.reviews?.length < 1 || !isAuthenticated) return
 
 		const { user: email } = data
 
-		if (!reviews) return
+		// if (!product.reviews) return
 
-		const userReview = reviews?.find((review) => review.customerEmail === email)
+		const userReview = product.reviews?.find((review) => review.customerEmail === email)
 
-		if (userReview) {
-			setCurrentUserReviewId(userReview._id)
-			setCanUpdateReview(true)
-		}
-	}, [isAuthenticated, reviews, data])
+		if (!userReview) return
+
+		setCurrentUserReviewId(userReview._id)
+		setCanUpdateReview(true)
+	}, [isAuthenticated, data, product.reviews])
 
 	//  Only allow users who have purchased the current product to write a review
 	useEffect(() => {
-		if (!isAuthenticated || hasBoughtProduct) return
+		if (!isAuthenticated || canWriteReview) return
 
 		//Fetch all orders for this user
-		let query = `customerEmail=${data.user.email}`
+		const query = `customerEmail=${data.user.email}`
 		const url = `/api/orders?${query}`
 
 		withFetch({ url })
 			.then(({ serverRes: { data: usersOrders } }) => {
-				let hasPurchased = false
+				const ordersLength = usersOrders.length
+				let hasBought = false
 				let index = 0
 
 				// Check if the current product is in the current user's Orders
-				while (!hasPurchased && index < usersOrders.length) {
-					const { items } = usersOrders[index]
-					hasPurchased = items.some((item) => item._id === product._id)
+				while (!hasBought && index < ordersLength) {
+					const { cartItems } = usersOrders[index]
+					hasBought = cartItems.some((item) => item.productId === product._id)
 					index++
 				}
 
-				// Allow current user to review the product if hasPurchased is true
-				hasPurchased && setHasBoughtProduct(true)
+				// Allow current user to review the product if hasBought is true
+				hasBought && setCanWriteReview(true)
 			})
-			.catch((err) => setHasBoughtProduct(false))
-	}, [isAuthenticated, hasBoughtProduct, product._id, data?.user.email])
+			.catch((err) => setCanWriteReview(false))
+	}, [isAuthenticated, canWriteReview, product._id, data?.user.email])
 
 	//Cart Utils
 	const increment = () => {
@@ -103,7 +104,6 @@ export default function SingleProductPage(props) {
 		}
 
 		const sizeDetails = product.sizes.find(({ size }) => size === cartItem.size)
-		
 
 		if (cartItem.quantity < sizeDetails.quantity) {
 			setCartItems((prevDetails) => ({
@@ -144,8 +144,7 @@ export default function SingleProductPage(props) {
 	const handleHideReviewForm = () => setShowReviewForm(false)
 
 	const carouselImages = getCarouselImages(product)
-	const hasReviews = reviews?.length > 0
-	const ratingsText = hasReviews ? 'reviews and ratings' : 'ratings'
+	const ratingsText = product.reviews?.length > 0 ? 'reviews and ratings' : 'ratings'
 
 	let showFormBtnText = 'Write a review'
 
@@ -153,7 +152,7 @@ export default function SingleProductPage(props) {
 		showFormBtnText = 'Update my review'
 	}
 
-	if ((canUpdateReview || hasBoughtProduct) && showReviewForm) {
+	if ((canUpdateReview || canWriteReview) && showReviewForm) {
 		showFormBtnText = 'I change my mind'
 	}
 
@@ -198,13 +197,13 @@ export default function SingleProductPage(props) {
 					{product.totalRatings ? <p>Total Ratings: {product.totalRatings}</p> : null}
 					<Star goldCount={product.ratingsAverage} />
 				</div>
-				{hasReviews ? (
+				{product.reviews?.length > 0 ? (
 					<div className={classes.reviews}>
-						<Reviews reviews={reviews} />
+						<Reviews reviews={product.reviews} />
 					</div>
 				) : null}
 
-				{isAuthenticated && hasBoughtProduct ? (
+				{isAuthenticated && canWriteReview ? (
 					<div>
 						<Button onClick={handleToggleForm} text={showFormBtnText} />
 

@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 
 import Product from './product-model'
 import { isValidEmail } from '../lib/utils'
+import { modelVirtualsConfiq } from '../lib/db-utils'
 
 const reviewSchema = new mongoose.Schema(
 	{
@@ -16,7 +17,7 @@ const reviewSchema = new mongoose.Schema(
 			type: String,
 			required: [true, 'A user creating a review must have a name'],
 		},
-		product: {
+		productId: {
 			type: mongoose.Schema.ObjectId,
 			ref: 'Product',
 			required: [true, 'A review must be for a product'],
@@ -66,14 +67,10 @@ const reviewSchema = new mongoose.Schema(
 			},
 		},
 	},
-	{
-		toJSON: { virtuals: true },
-		toObject: { virtuals: true },
-	}
+	modelVirtualsConfiq
 )
 
 reviewSchema.index({ customerEmail: 1, product: 1 }, { unique: true })
-
 
 reviewSchema.post('save', async function () {
 	await this.constructor.calculateRatingsStats(this.product)
@@ -95,4 +92,5 @@ reviewSchema.post(/^findOneAnd/, async function () {
 	await this.r.constructor.calculateRatingsStats(this.r.product)
 })
 
+ 
 export default mongoose.models.Review || mongoose.model('Review', reviewSchema)

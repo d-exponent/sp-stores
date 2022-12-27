@@ -40,7 +40,7 @@ const Review = (props) => {
 		const review = {
 			customerEmail: session.user.email,
 			customerName: session.user.name,
-			product: props.productId,
+			productId: props.productId,
 			review: enteredComment || '',
 			rating: +enteredRating,
 		}
@@ -56,7 +56,7 @@ const Review = (props) => {
 			// Remove redundant properties
 			delete review.customerEmail
 			delete review.customerName
-			delete review.product
+			delete review.productId
 		}
 
 		try {

@@ -78,16 +78,19 @@ const orderSchema = new mongoose.Schema(
 			type: String,
 			required: [true, 'Order must contain a payment status'],
 		},
+		transactionReference: {
+			type: String,
+			required: [true, 'Order must contain a payment status'],
+		},
 	},
 	modelVirtualsConfiq
 )
 
 orderSchema.virtual('totalProducts').get(function () {
-	return this.items.length
+	return this.cartItems.length
 })
 
 orderSchema.pre(/^find/, function (next) {
-
 	this.select('-__v')
 	next()
 })

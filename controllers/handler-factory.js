@@ -1,19 +1,19 @@
 import { sendResponse } from '../lib/controller-utils'
 import throwOperationalError from '../lib/app-error'
 
-const getModelFromArgs = (arr) => arr[0]
-
 const setIdOnQuery = (itemId) => (req, res, next) => {
 	req.query.id = req.query[itemId]
-	
+
 	next()
 }
 
-const getAll = (...args) => {
-	const Model = getModelFromArgs(args)
-
+const getAll = (Model, populateOption) => {
 	return async (req, res) => {
+
+	
+
 		const query = { ...req.query }
+		
 
 		Object.entries(query).forEach((entry) => {
 			const [key, value] = entry
@@ -23,79 +23,79 @@ const getAll = (...args) => {
 			}
 		})
 
-		const docs = await Model.find(query)
+		let allQueriedDocuments = Model.find(query)
 
-		if (docs.length < 1) {
+		if (populateOption) {
+			allQueriedDocuments = allQueriedDocuments.populate(populateOption)
+		}
+
+		const allDocuments = await allQueriedDocuments
+
+		if (allDocuments.length < 1) {
 			throwOperationalError('Could not find any documents', 404)
 		}
 
 		sendResponse(res, 200, {
 			success: true,
-			results: docs.length,
-			data: docs,
+			results: allDocuments.length,
+			data: allDocuments,
 		})
 	}
 }
 
-const getOne = (...args) => {
-	const Model = getModelFromArgs(args)
-
-	
-
-	const populate = args[1] ? args[1] : null
-
+const getOne = (Model, populateOption) => {
 	return async (req, res) => {
-		let doc
+		let query = Model.findById(req.query.id)
 
-		if (populate) {
-			doc = await Model.findById(req.query.id).populate(populate)
-		} else {
-			doc = await Model.findById(req.query.id)
+		if (populateOption) {
+			query = query.populate(populateOption)
 		}
 
-		if (!doc) {
+		const queriedDocument = await query
+
+		if (!queriedDocument) {
 			throwOperationalError('Could not find the document', 404)
 		}
 
 		sendResponse(res, 200, {
 			success: true,
-			data: doc,
+			data: queriedDocument,
 		})
 	}
 }
 
-const createOne = (...args) => {
-	const Model = getModelFromArgs(args)
-
+const createOne = (Model) => {
 	return async (req, res) => {
-		const doc = await Model.create(req.body)
+		const newDocument = await Model.create(req.body)
 
 		sendResponse(res, 201, {
 			success: true,
-			data: doc,
+			data: newDocument,
 		})
 	}
 }
 
-const updateOne = (...args) => {
-	const Model = getModelFromArgs(args)
-
+const updateOne = (Model) => {
 	return async (req, res) => {
-		const updatedItem = await Model.findByIdAndUpdate(req.query.id, req.body, {
+		const updateConfig = {
 			new: true,
 			runValidators: true,
-		})
+		}
+		
+		const updatedDocument = await Model.findByIdAndUpdate(
+			req.query.id,
+			req.body,
+			updateConfig
+		)
 
 		sendResponse(res, 200, {
 			success: true,
-			data: updatedItem,
+			data: updatedDocument,
 		})
 	}
 }
 
-const deleteOne = (...args) => {
-	const Model = getModelFromArgs(args)
-
+const deleteOne = (Model) => {
 	return async (req, res) => {
 		await Model.findByIdAndDelete(req.query.id)
 		res.status(204).send('Deleted')

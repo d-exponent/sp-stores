@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import slugify from 'slugify'
+import { modelVirtualsConfiq } from '../lib/db-utils'
 import Review from './review-model'
 
 const sizeSchema = new mongoose.Schema({
@@ -56,17 +57,16 @@ const productSchema = new mongoose.Schema(
 		quantity: {
 			type: Number,
 			default: 0,
-			// required: [true, 'A product must have at least one item'],
 		},
 		initialQuantity: {
 			type: Number,
 			select: false,
 		},
-		// imageCover: {
-		// 	type: String,
-		// 	required: true,
-		// },
-		// images: [String],
+		imageCover: {
+			type: String,
+			required: true,
+		},
+		images: [String],
 		inStock: {
 			type: Boolean,
 			default: true,
@@ -87,11 +87,11 @@ const productSchema = new mongoose.Schema(
 		},
 		price: {
 			type: Number,
-			// required: [true, 'A product must have a price'],
+			required: [true, 'A product must have a price'],
 		},
 		productType: {
 			type: String,
-			// required: [true, 'A product must belong to a type'],
+			required: [true, 'A product must belong to a type'],
 			trim: true,
 			lowercase: true,
 		},
@@ -100,14 +100,11 @@ const productSchema = new mongoose.Schema(
 			default: Date.now,
 		},
 	},
-	{
-		toJSON: { virtuals: true },
-		toObject: { virtuals: true },
-	}
+	modelVirtualsConfiq
 )
 
 productSchema.virtual('reviews', {
-	ref: Review,
+	ref: 'Review',
 	foreignField: 'product',
 	localField: '_id',
 })

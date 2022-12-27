@@ -2,6 +2,8 @@
 const nextConfig = {
 	reactStrictMode: true,
 	swcMinify: true,
+
+	// TODO: Remove after development
 	images: {
 		remotePatterns: [
 			{
