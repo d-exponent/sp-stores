@@ -10,20 +10,18 @@ const setIdOnQuery = (itemId) => (req, res, next) => {
 const getAll = (Model, populateOption) => {
 	return async (req, res) => {
 
-	
-
-		const query = { ...req.query }
+		// const query = { ...req.query }
 		
 
-		Object.entries(query).forEach((entry) => {
-			const [key, value] = entry
+		// Object.entries(query).forEach((entry) => {
+		// 	const [key, value] = entry
 
-			if (value === 'true') {
-				query[key] = true
-			}
-		})
+		// 	if (value === 'true') {
+		// 		query[key] = true
+		// 	}
+		// })
 
-		let allQueriedDocuments = Model.find(query)
+		let allQueriedDocuments = Model.find(req.query)
 
 		if (populateOption) {
 			allQueriedDocuments = allQueriedDocuments.populate(populateOption)
@@ -31,9 +29,9 @@ const getAll = (Model, populateOption) => {
 
 		const allDocuments = await allQueriedDocuments
 
-		if (allDocuments.length < 1) {
-			throwOperationalError('Could not find any documents', 404)
-		}
+		// if (allDocuments.length < 1) {
+		// 	throwOperationalError('Could not find any documents', 404)
+		// }
 
 		sendResponse(res, 200, {
 			success: true,

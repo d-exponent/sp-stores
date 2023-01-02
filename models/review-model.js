@@ -34,46 +34,40 @@ const reviewSchema = new mongoose.Schema(
 		},
 		modifiedAt: Date,
 	},
-	{
-		statics: {
-			async calculateRatingsStats(productId) {
-				const id =
-					typeof productId === 'string'
-						? new mongoose.Types.ObjectId(productId)
-						: productId
-
-				//calcultate stats for the reviews on a product and update the product
-				const ratingStats = await this.aggregate([
-					{ $match: { product: id } },
-					{
-						$group: {
-							_id: '$product',
-							numOfRatingsDoc: { $sum: 1 },
-							averageRating: { $avg: '$rating' },
-						},
-					},
-				])
-
-				const hasNewStats = ratingStats.length > 0
-
-				const updatedBody = {
-					// Set to default values if aggregate returns a falsy value
-					totalRatings: hasNewStats ? ratingStats[0].numOfRatingsDoc : 0,
-					ratingsAverage: hasNewStats ? Math.round(ratingStats[0].averageRating) : 4,
-				}
-
-				await Product.findByIdAndUpdate(productId, updatedBody, { new: true })
-				//End of calculateRatinsStats
-			},
-		},
-	},
 	modelVirtualsConfiq
 )
+
+reviewSchema.statics.calculateRatingsStats = async function (itemId) {
+	const id = typeof itemId === 'string' ? new mongoose.Types.ObjectId(itemId) : itemId
+
+	//calcultate stats for the reviews on a product and update the product
+	const ratingStats = await this.aggregate([
+		{ $match: { productId: id } },
+		{
+			$group: {
+				_id: '$productId',
+				numOfReviewDocuments: { $sum: 1 },
+				averageRating: { $avg: '$rating' },
+			},
+		},
+	])
+
+	const hasNewStats = ratingStats.length > 0
+
+	const updatedStats = {
+		// Set to default values if aggregate returns a falsy value
+		totalRatings: hasNewStats ? ratingStats[0].numOfReviewDocuments : 0,
+		ratingsAverage: hasNewStats ? Math.round(ratingStats[0].averageRating) : 4,
+	}
+
+	await Product.findByIdAndUpdate(itemId, updatedStats, { new: true })
+	//End of calculateRatinsStats
+}
 
 reviewSchema.index({ customerEmail: 1, product: 1 }, { unique: true })
 
 reviewSchema.post('save', async function () {
-	await this.constructor.calculateRatingsStats(this.product)
+	await this.constructor.calculateRatingsStats(this.productId)
 })
 
 reviewSchema.pre(/^find/, function (next) {
@@ -89,8 +83,7 @@ reviewSchema.pre(/^findOneAnd/, async function (next) {
 })
 
 reviewSchema.post(/^findOneAnd/, async function () {
-	await this.r.constructor.calculateRatingsStats(this.r.product)
+	await this.r.constructor.calculateRatingsStats(this.r.productId)
 })
 
- 
 export default mongoose.models.Review || mongoose.model('Review', reviewSchema)

@@ -105,8 +105,9 @@ const productSchema = new mongoose.Schema(
 
 productSchema.virtual('reviews', {
 	ref: 'Review',
-	foreignField: 'product',
+	foreignField: 'productId',
 	localField: '_id',
+	// model: Review,
 })
 
 //Ensure only unique sizes are saved in sorted Order

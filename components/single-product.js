@@ -21,14 +21,14 @@ export default function SingleProductPage(props) {
 	const [product, setProduct] = useState(props.product)
 
 	const price = product.discountPrice || product.price
+	const { reviews } = product
 
 	const [cartItem, setCartItems] = useState({ quantity: 1, amount: price, size: '' })
-
 	const [showReviewForm, setShowReviewForm] = useState(false)
-	const [canWriteReview, setCanWriteReview] = useState(false)
+	const [hasPurchasedProduct, setHasPurchasedProduct] = useState(false)
 	const [canUpdateReview, setCanUpdateReview] = useState(false)
-	const [currentUserReveiwId, setCurrentUserReviewId] = useState(null)
-	const [render, setRender] = useState(false)
+	const [userReviewId, setUserReviewId] = useState(null)
+	const [reRender, setReRender] = useState(false)
 
 	const { data, status } = useSession()
 
@@ -36,16 +36,13 @@ export default function SingleProductPage(props) {
 	const { showNotification } = useContext(NotificationContext)
 
 	const isAuthenticated = status === 'authenticated'
-	
 
-	//  Update the reviews
+	//  Update the product after a  successfull review
 	useEffect(() => {
-		withFetch({ url: `/api/products/${product._id}` })
-			.then(({ serverRes: { data } }) => {
-				setProduct(data)
-			})
+		withFetch({ url: `/api/products/${product.id}` })
+			.then(({ serverRes: { data: product } }) => setProduct(product))
 			.catch((err) => console.log(err.message))
-	}, [product._id, showReviewForm])
+	}, [product.id, reRender])
 
 	// Get the amount of the cart item
 	useEffect(() => {
@@ -56,46 +53,44 @@ export default function SingleProductPage(props) {
 
 	//  Find the current user's Review and extract the Id
 	useEffect(() => {
-		if (product.reviews?.length < 1 || !isAuthenticated) return
+		if (reviews.length < 1 || !isAuthenticated) return
 
 		const { user: email } = data
-
-		// if (!product.reviews) return
 
 		const userReview = product.reviews?.find((review) => review.customerEmail === email)
 
 		if (!userReview) return
 
-		setCurrentUserReviewId(userReview._id)
+		setUserReviewId(userReview._id)
 		setCanUpdateReview(true)
-	}, [isAuthenticated, data, product.reviews])
+	}, [isAuthenticated, data, product.reviews, reviews.length])
 
 	//  Only allow users who have purchased the current product to write a review
-	useEffect(() => {
-		if (!isAuthenticated || canWriteReview) return
+	// useEffect(() => {
+	// 	if (!isAuthenticated || hasPurchasedProduct) return
 
-		//Fetch all orders for this user
-		const query = `customerEmail=${data.user.email}`
-		const url = `/api/orders?${query}`
+	// 	//Fetch all orders for this user
+	// 	const query = `customerEmail=${data.user.email}`
+	// 	const url = `/api/orders?${query}`
 
-		withFetch({ url })
-			.then(({ serverRes: { data: usersOrders } }) => {
-				const ordersLength = usersOrders.length
-				let hasBought = false
-				let index = 0
+	// 	withFetch({ url })
+	// 		.then(({ serverRes: { data: usersOrders } }) => {
+	// 			const ordersLength = usersOrders.length
+	// 			let hasBought = false
+	// 			let index = 0
 
-				// Check if the current product is in the current user's Orders
-				while (!hasBought && index < ordersLength) {
-					const { cartItems } = usersOrders[index]
-					hasBought = cartItems.some((item) => item.productId === product._id)
-					index++
-				}
+	// 			// Check if the current product is in the user's Orders
+	// 			while (!hasBought && index < ordersLength) {
+	// 				const { cartItems } = usersOrders[index]
+	// 				hasBought = cartItems.some((item) => item.productId === product._id)
+	// 				index++
+	// 			}
 
-				// Allow current user to review the product if hasBought is true
-				hasBought && setCanWriteReview(true)
-			})
-			.catch((err) => setCanWriteReview(false))
-	}, [isAuthenticated, canWriteReview, product._id, data?.user.email])
+	// 			// Allow current user to review the product if hasBought is true
+	// 			hasBought && setHasPurchasedProduct(true)
+	// 		})
+	// 		.catch((err) => setHasPurchasedProduct(false))
+	// }, [isAuthenticated, hasPurchasedProduct, product._id, data?.user.email])
 
 	//Cart Utils
 	const increment = () => {
@@ -131,7 +126,6 @@ export default function SingleProductPage(props) {
 		try {
 			checkForCartItemSize(cartItem)
 			addToBag({ ...product, cart: cartItem })
-			//
 		} catch (e) {
 			showNotification(e.message).error()
 		}
@@ -139,9 +133,14 @@ export default function SingleProductPage(props) {
 
 	const handleToggleForm = () => setShowReviewForm(!showReviewForm)
 
-	const handleToggleRender = () => setRender(!render)
+	const handleToggleRender = () => setReRender(!reRender)
 
 	const handleHideReviewForm = () => setShowReviewForm(false)
+
+	const handleAfterSubmitReviewForm = () => {
+		handleHideReviewForm()
+		setReRender(!reRender)
+	}
 
 	const carouselImages = getCarouselImages(product)
 	const ratingsText = product.reviews?.length > 0 ? 'reviews and ratings' : 'ratings'
@@ -152,7 +151,7 @@ export default function SingleProductPage(props) {
 		showFormBtnText = 'Update my review'
 	}
 
-	if ((canUpdateReview || canWriteReview) && showReviewForm) {
+	if ((canUpdateReview || hasPurchasedProduct) && showReviewForm) {
 		showFormBtnText = 'I change my mind'
 	}
 
@@ -164,7 +163,7 @@ export default function SingleProductPage(props) {
 			<Price product={product} />
 
 			<div className={classes.details}>
-				<p>{`Only ${product.quantity}units remaining. `}</p>
+				<p>{`Only ${product.quantity} units left! `}</p>
 
 				<Sizes product={product} getsize={getSize} />
 
@@ -197,22 +196,22 @@ export default function SingleProductPage(props) {
 					{product.totalRatings ? <p>Total Ratings: {product.totalRatings}</p> : null}
 					<Star goldCount={product.ratingsAverage} />
 				</div>
-				{product.reviews?.length > 0 ? (
+				{reviews?.length > 0 ? (
 					<div className={classes.reviews}>
-						<Reviews reviews={product.reviews} />
+						<Reviews reviews={reviews} />
 					</div>
 				) : null}
 
-				{isAuthenticated && canWriteReview ? (
+				{isAuthenticated && hasPurchasedProduct ? (
 					<div>
 						<Button onClick={handleToggleForm} text={showFormBtnText} />
 
 						{showReviewForm ? (
 							<ReviewForm
-								productId={product._id}
-								hideForm={handleHideReviewForm}
+								productId={product.id}
+								afterSubmit={handleAfterSubmitReviewForm}
 								useUpdateAction={canUpdateReview}
-								userReviewId={currentUserReveiwId}
+								userReviewId={userReviewId}
 							/>
 						) : null}
 					</div>

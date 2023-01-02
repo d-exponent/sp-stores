@@ -59,6 +59,7 @@ const Review = (props) => {
 			delete review.productId
 		}
 
+
 		try {
 			await withFetch({
 				url,
@@ -66,12 +67,12 @@ const Review = (props) => {
 				data: review,
 			})
 
-			showNotification('Success!! ✔').success()
-
 			reviewRef.current.value = ''
 			ratingRef.current.value = ''
 
-			props.hideForm()
+			props.afterSubmit()
+			showNotification('Success!! ✔').success()
+			
 		} catch (err) {
 			const isDuplicateMessage =
 				err.message.trim() === 'This product already exits. Please try another!'
