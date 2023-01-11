@@ -1,7 +1,6 @@
 import mongoose from 'mongoose'
 import slugify from 'slugify'
 import { modelVirtualsConfiq } from '../lib/db-utils'
-import Review from './review-model'
 
 const sizeSchema = new mongoose.Schema({
 	size: {
@@ -103,11 +102,24 @@ const productSchema = new mongoose.Schema(
 	modelVirtualsConfiq
 )
 
+
+// HELPERS
+const setDiscountPercentage = (discountPrice, price) => {
+	if (!discountPrice) return undefined
+
+	const percentage = (discountPrice / price) * 100
+	const discountPercentage = 100 - Math.round(percentage)
+
+	return discountPercentage
+}
+
+const setInstock = (quantity) => quantity > 0
+
+// MIDDLEWARE AND VIRTUALS
 productSchema.virtual('reviews', {
 	ref: 'Review',
 	foreignField: 'productId',
 	localField: '_id',
-	// model: Review,
 })
 
 //Ensure only unique sizes are saved in sorted Order
@@ -147,16 +159,12 @@ productSchema.pre('save', function (next) {
 	next()
 })
 
+
 //Set initial quantity
 productSchema.pre('save', function (next) {
-	// Handle discount price changes
-	if (this.discountPrice) {
-		const percentage = (this.discountPrice / this.price) * 100
-		this.discountPercentage = 100 - Math.round(percentage)
-	}
+	this.discountPercentage = setDiscountPercentage(this.discountPrice, this.price)
 
-	// Handle inStock Boolean
-	this.inStock = this.quantity > 0
+	this.inStock = setInstock(this.quantity)
 
 	next()
 })
@@ -180,13 +188,9 @@ productSchema.pre(/^find/, function (next) {
 
 // Show date of lastModified
 productSchema.pre(/^findOneAnd/, function (next) {
-	// Handle discount price changes
-	if (this.discountPrice) {
-		const percentage = (this.discountPrice / this.price) * 100
-		this.discountPercentage = 100 - Math.round(percentage)
-	}
+	this.discountPercentage = setDiscountPercentage(this.discountPrice, this.price)
 
-	this.inStock = this.quantity > 0
+	this.inStock = setInstock(this.quantity)
 
 	this.lastModifiedAt = Date.now()
 	next()
