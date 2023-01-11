@@ -28,7 +28,7 @@ export default function SingleProductPage(props) {
 	const [hasPurchasedProduct, setHasPurchasedProduct] = useState(false)
 	const [canUpdateReview, setCanUpdateReview] = useState(false)
 	const [userReviewId, setUserReviewId] = useState(null)
-	const [reRender, setReRender] = useState(false)
+	const [render, setRender] = useState(false)
 
 	const { data, status } = useSession()
 
@@ -42,7 +42,7 @@ export default function SingleProductPage(props) {
 		withFetch({ url: `/api/products/${product.id}` })
 			.then(({ serverRes: { data: product } }) => setProduct(product))
 			.catch((err) => console.log(err.message))
-	}, [product.id, reRender])
+	}, [product.id, render])
 
 	// Get the amount of the cart item
 	useEffect(() => {
@@ -53,7 +53,7 @@ export default function SingleProductPage(props) {
 
 	//  Find the current user's Review and extract the Id
 	useEffect(() => {
-		if (reviews.length < 1 || !isAuthenticated) return
+		if (reviews?.length < 1 || !isAuthenticated) return
 
 		const { user: email } = data
 
@@ -63,34 +63,35 @@ export default function SingleProductPage(props) {
 
 		setUserReviewId(userReview._id)
 		setCanUpdateReview(true)
-	}, [isAuthenticated, data, product.reviews, reviews.length])
+	}, [isAuthenticated, data, product.reviews, reviews?.length, render])
 
 	//  Only allow users who have purchased the current product to write a review
-	// useEffect(() => {
-	// 	if (!isAuthenticated || hasPurchasedProduct) return
+	useEffect(() => {
+			// console.log('Testing Rendering 🧰🧰🧰🧰')
+		if (!isAuthenticated || hasPurchasedProduct) return
 
-	// 	//Fetch all orders for this user
-	// 	const query = `customerEmail=${data.user.email}`
-	// 	const url = `/api/orders?${query}`
+		//Fetch all orders for this user
+		const query = `customerEmail=${data.user.email}`
+		const url = `/api/orders?${query}`
 
-	// 	withFetch({ url })
-	// 		.then(({ serverRes: { data: usersOrders } }) => {
-	// 			const ordersLength = usersOrders.length
-	// 			let hasBought = false
-	// 			let index = 0
+		withFetch({ url })
+			.then(({ serverRes: { data: userOrders } }) => {
+				const ordersLength = userOrders.length
+				let hasBought = false
+				let index = 0
 
-	// 			// Check if the current product is in the user's Orders
-	// 			while (!hasBought && index < ordersLength) {
-	// 				const { cartItems } = usersOrders[index]
-	// 				hasBought = cartItems.some((item) => item.productId === product._id)
-	// 				index++
-	// 			}
+				// Check if the current product is in the user's Orders
+				while (!hasBought && index < ordersLength) {
+					const { cartItems } = userOrders[index]
+					hasBought = cartItems.some((item) => item.productId === product._id)
+					index++
+				}
 
-	// 			// Allow current user to review the product if hasBought is true
-	// 			hasBought && setHasPurchasedProduct(true)
-	// 		})
-	// 		.catch((err) => setHasPurchasedProduct(false))
-	// }, [isAuthenticated, hasPurchasedProduct, product._id, data?.user.email])
+				// Allow current user to review the product if hasBought is true
+				hasBought && setHasPurchasedProduct(true)
+			})
+			.catch((err) => setHasPurchasedProduct(false))
+	}, [isAuthenticated, hasPurchasedProduct, product._id, data?.user.email])
 
 	//Cart Utils
 	const increment = () => {
@@ -131,19 +132,19 @@ export default function SingleProductPage(props) {
 		}
 	}
 
-	const handleToggleForm = () => setShowReviewForm(!showReviewForm)
+	const toggleShowReviewForm = () => setShowReviewForm((prev) => !prev)
 
-	const handleToggleRender = () => setReRender(!reRender)
+	const toggleRender = () => setRender((prev) => !prev)
 
-	const handleHideReviewForm = () => setShowReviewForm(false)
+	const hideReviewForm = () => setShowReviewForm(false)
 
 	const handleAfterSubmitReviewForm = () => {
-		handleHideReviewForm()
-		setReRender(!reRender)
+		hideReviewForm()
+		toggleRender()
 	}
 
 	const carouselImages = getCarouselImages(product)
-	const ratingsText = product.reviews?.length > 0 ? 'reviews and ratings' : 'ratings'
+	const ratingsText = reviews?.length > 0 ? 'reviews and ratings' : 'ratings'
 
 	let showFormBtnText = 'Write a review'
 
@@ -157,7 +158,7 @@ export default function SingleProductPage(props) {
 
 	return (
 		<section className={classes.container}>
-			<Carousel images={carouselImages} interval={3500} />
+			<Carousel images={carouselImages} interval={3000} />
 			<h2>{product.name}</h2>
 
 			<Price product={product} />
@@ -184,7 +185,7 @@ export default function SingleProductPage(props) {
 						items={[{ ...product, cart: cartItem }]}
 						singleItem={true}
 						amount={price}
-						execute={handleToggleRender}
+						execute={toggleRender}
 						hasSize={cartItem.size !== ''}
 					/>
 				</>
@@ -204,7 +205,7 @@ export default function SingleProductPage(props) {
 
 				{isAuthenticated && hasPurchasedProduct ? (
 					<div>
-						<Button onClick={handleToggleForm} text={showFormBtnText} />
+						<Button onClick={toggleShowReviewForm} text={showFormBtnText} />
 
 						{showReviewForm ? (
 							<ReviewForm

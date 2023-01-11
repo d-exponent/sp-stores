@@ -1,6 +1,12 @@
-import handler from '../../../../controllers/app-controller'
 import { resetPassword } from '../../../../controllers/auth-controller'
+import { sendMethodNotAllowedResponse } from '../../../../lib/controller-utils'
 
-handler.patch(resetPassword)
+const handler = async (req, res) => {
+	if (req.method === 'PATCH') {
+		await catchAsync(req, res, resetPassword)
+	}
+
+	sendMethodNotAllowedResponse(res, req.method)
+}
 
 export default handler

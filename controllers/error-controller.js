@@ -36,7 +36,7 @@ function sendProdError(res, err) {
 	sendResponse(res, 500, jsonRes)
 }
 
-function handleError(err, req, res, next) {
+function handleError(err, res) {
 	let error = {
 		name: err.name,
 		errors: err.errors,

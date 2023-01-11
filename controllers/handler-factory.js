@@ -1,27 +1,34 @@
+import catchAsync from '../middlewares/catch-async'
 import { sendResponse } from '../lib/controller-utils'
-import throwOperationalError from '../lib/app-error'
 
-const setIdOnQuery = (itemId) => (req, res, next) => {
-	req.query.id = req.query[itemId]
-
-	next()
+const setIdOnQuery = (req, routeQueryId) => {
+	req.query.id = req.query[routeQueryId]
+	return req
 }
 
-const getAll = (Model, populateOption) => {
-	return async (req, res) => {
+const setTrueFromStringToBoolean = (query) => {
+	if (!query) return {}
 
-		// const query = { ...req.query }
-		
+	let entries = Object.entries(query)
 
-		// Object.entries(query).forEach((entry) => {
-		// 	const [key, value] = entry
+	if (entries.length === 0) return {}
 
-		// 	if (value === 'true') {
-		// 		query[key] = true
-		// 	}
-		// })
+	entries.forEach((entry) => {
+		const [key, value] = entry
 
-		let allQueriedDocuments = Model.find(req.query)
+		if (value === 'true') {
+			query[key] = true
+		}
+	})
+
+	return Object.fromEntries(entries)
+}
+
+const getAll = async (req, res, Model, populateOption) => {
+	const innerHandler = async (req, res) => {
+		const query = setTrueFromStringToBoolean(req.query)
+
+		let allQueriedDocuments = Model.find(query)
 
 		if (populateOption) {
 			allQueriedDocuments = allQueriedDocuments.populate(populateOption)
@@ -29,20 +36,18 @@ const getAll = (Model, populateOption) => {
 
 		const allDocuments = await allQueriedDocuments
 
-		// if (allDocuments.length < 1) {
-		// 	throwOperationalError('Could not find any documents', 404)
-		// }
-
 		sendResponse(res, 200, {
 			success: true,
 			results: allDocuments.length,
 			data: allDocuments,
 		})
 	}
+
+	await catchAsync(req, res, innerHandler)
 }
 
-const getOne = (Model, populateOption) => {
-	return async (req, res) => {
+const getOne = async (req, res, Model, populateOption) => {
+	const innerHandler = async (req, res) => {
 		let query = Model.findById(req.query.id)
 
 		if (populateOption) {
@@ -51,19 +56,17 @@ const getOne = (Model, populateOption) => {
 
 		const queriedDocument = await query
 
-		if (!queriedDocument) {
-			throwOperationalError('Could not find the document', 404)
-		}
-
 		sendResponse(res, 200, {
 			success: true,
 			data: queriedDocument,
 		})
 	}
+
+	await catchAsync(req, res, innerHandler)
 }
 
-const createOne = (Model) => {
-	return async (req, res) => {
+const createOne = async (req, res, Model) => {
+	const innerHandler = async (req, res) => {
 		const newDocument = await Model.create(req.body)
 
 		sendResponse(res, 201, {
@@ -71,15 +74,17 @@ const createOne = (Model) => {
 			data: newDocument,
 		})
 	}
+
+	await catchAsync(req, res, innerHandler)
 }
 
-const updateOne = (Model) => {
-	return async (req, res) => {
+const updateOne = async (req, res, Model) => {
+	const innerHandler = async (req, res) => {
 		const updateConfig = {
 			new: true,
 			runValidators: true,
 		}
-		
+
 		const updatedDocument = await Model.findByIdAndUpdate(
 			req.query.id,
 			req.body,
@@ -91,13 +96,17 @@ const updateOne = (Model) => {
 			data: updatedDocument,
 		})
 	}
+
+	await catchAsync(req, res, innerHandler)
 }
 
-const deleteOne = (Model) => {
-	return async (req, res) => {
+const deleteOne = async (req, res, Model) => {
+	const innerHandler = async (req, res) => {
 		await Model.findByIdAndDelete(req.query.id)
 		res.status(204).send('Deleted')
 	}
+	
+	await catchAsync(req, res, innerHandler)
 }
 
 const factory = {
@@ -107,6 +116,7 @@ const factory = {
 	getAll,
 	createOne,
 	setId: setIdOnQuery,
+	setTrueToBoolean: setTrueFromStringToBoolean,
 }
 
 export default factory

@@ -1,2 +1,1 @@
-import handler from '../../../../controllers/app-controller'
-// TODO: Resolve at me endpoint
+// TODO: Configure the at me endpoint

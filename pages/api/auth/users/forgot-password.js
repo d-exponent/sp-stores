@@ -1,6 +1,13 @@
-import handler from '../../../../controllers/app-controller'
 import { forgotPassword } from '../../../../controllers/auth-controller'
+import { sendMethodNotAllowedResponse } from '../../../../lib/controller-utils'
+import catchAsync from '../../../../middlewares/catch-async'
 
-handler.post(forgotPassword)
+const handler = async (req, res) => {
+	if (req.method !== 'POST') {
+		return sendMethodNotAllowedResponse(res, req.method)
+	}
+
+	await catchAsync(req, res, forgotPassword)
+}
 
 export default handler

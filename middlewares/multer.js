@@ -1,6 +1,5 @@
 import multer from 'multer'
 
-//Store in memory as a buffer
 const multerStorage = multer.memoryStorage()
 
 const multerFilter = function (req, file, cb) {

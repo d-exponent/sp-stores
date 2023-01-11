@@ -27,7 +27,7 @@ export const verifyPayment = async (req, res) => {
 
 	sendResponse(res, 200, {
 		success: true,
-		message: 'Your payment was successfull',
+		message: 'The payment was successfull',
 	})
 
 	//Save new Order document

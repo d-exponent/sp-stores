@@ -22,7 +22,9 @@ const handleSuccess = (notify, ...args) => {
 
 		notify(message).success()
 
+		// Execute arguments
 		if (args.length > 0) {
+			console.log("Has Args🧰")
 			args.forEach((arg) => arg())
 		}
 	}
@@ -54,8 +56,10 @@ const Paystack = (props) => {
 			},
 		}
 	}
-
+	
 	const initializePayment = usePaystackPayment(getPaymentOptions())
+
+	
 
 	const handlePayment = async () => {
 		showNotification('Processing your payment').pending()

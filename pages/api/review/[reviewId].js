@@ -1,11 +1,30 @@
-import handler from '../../../controllers/app-controller'
 import Review from '../../../models/review-model'
 import factory from '../../../controllers/handler-factory'
+import { sendMethodNotAllowedResponse } from '../../../lib/controller-utils'
 
-handler
-	.use(factory.setId('reviewId'))
-	.get(factory.getOne(Review))
-	.patch(factory.updateOne(Review))
-	.delete(factory.deleteOne(Review))
+
+const handler = async (req, res) => {
+	req = factory.setId(req, 'reviewId')
+
+	const { method } = req
+
+	switch (method) {
+		case 'GET':
+			await factory.getOne(req, res, Review)
+			break
+
+		case 'PATCH':
+			await factory.updateOne(req, res, Review)
+			break
+
+		case 'DELETE':
+			await factory.deleteOne(req, res, Review)
+			break
+
+		default:
+			sendMethodNotAllowedResponse(res, method)
+			break
+	}
+}
 
 export default handler

@@ -9,16 +9,21 @@ import {
 	bcryptHash,
 	cryptoHash,
 } from '../lib/controller-utils'
+import { logByEnviroment } from '../lib/utils'
 
 export const createUser = async (req, res) => {
 	const { password, confirmPassword } = req.body
 
+	if (!password || !confirmPassword) {
+		throwOperationalError('Please peovide you password and confirm password', 400)
+	}
+
 	if (password.length < 8) {
-		throwOperationalError('The password must be at least 8 characters', 400)
+		throwOperationalError('Password must contain at least 8 characters!', 400)
 	}
 
 	if (password !== confirmPassword) {
-		throwOperationalError('Passwords are not the same.', 400)
+		throwOperationalError('Passwords do not match.', 400)
 	}
 
 	const newUser = await User.create(req.body)
@@ -28,7 +33,10 @@ export const createUser = async (req, res) => {
 	const url = `${protocol}://${host}`
 
 	await new Email(newUser, url).sendWelcome()
-	sendResponse(res, 201, { success: true, message: 'Account created successfully' })
+	sendResponse(res, 201, {
+		success: true,
+		message: 'Your account was created successfully',
+	})
 }
 
 export const updatePassword = async (req, res) => {
@@ -57,19 +65,24 @@ export const updatePassword = async (req, res) => {
 	const user = await User.findOne({ email }).select('+password')
 
 	if (!user) {
-		throwOperationalError('This account is in our records', 404)
+		throwOperationalError('This account is not in our records', 404)
 	}
 
 	const isValidPassword = await bcryptCompare(currentPassword, user.password)
+
 	if (!isValidPassword) {
 		throwOperationalError('Invalid password', 401)
 	}
 
 	user.password = await bcryptHash(newPassword)
 	user.passwordModifiedAt = Date.now()
-	await user.save()
 
-	sendResponse(res, 200, { success: true, message: 'Password is updated sucessfully' })
+	await user.save()
+	
+	sendResponse(res, 200, {
+		success: true,
+		message: 'The Password has been updated sucessfully',
+	})
 }
 
 export const forgotPassword = async (req, res) => {
@@ -80,6 +93,7 @@ export const forgotPassword = async (req, res) => {
 	}
 
 	const user = await User.findOne({ email })
+
 	if (!user) {
 		throwOperationalError('Not Found! Confrim your email address and try again', 404)
 	}
@@ -89,19 +103,21 @@ export const forgotPassword = async (req, res) => {
 	const host = getHost(req)
 	const resetUrl = `${protocol}://${host}/auth/reset-password?token=${resetToken}`
 
-	const resetEmail = new Email(user, resetUrl).sendPasswordResetLink()
-	const saved = user.save({ validateBeforeSave: false })
+	const resetEmailLink = new Email(user, resetUrl).sendPasswordResetLink()
+	const updatedUserDocument = user.save({ validateBeforeSave: false })
+
 	try {
-		await Promise.all([resetEmail, saved])
+		await Promise.all([resetEmailLink, updatedUserDocument])
 
 		sendResponse(res, 200, {
 			success: true,
-			message: 'A reset link has been sent to your email address. Expires in 5 minutes. ',
+			message:
+				'A reset link has been sent to your email address. The Link expires in 5 minutes. ',
 		})
 	} catch (error) {
 		user.passwordResetToken = undefined
 		user.passwordResetTokenExpiresAt = undefined
-		user.save((err) => console.log(err.message))
+		user.save((err) => logByEnviroment('prod', err.message))
 
 		return sendResponse(res, 500, {
 			success: false,

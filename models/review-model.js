@@ -40,7 +40,6 @@ const reviewSchema = new mongoose.Schema(
 reviewSchema.statics.calculateRatingsStats = async function (itemId) {
 	const id = typeof itemId === 'string' ? new mongoose.Types.ObjectId(itemId) : itemId
 
-	//calcultate stats for the reviews on a product and update the product
 	const ratingStats = await this.aggregate([
 		{ $match: { productId: id } },
 		{
@@ -55,13 +54,12 @@ reviewSchema.statics.calculateRatingsStats = async function (itemId) {
 	const hasNewStats = ratingStats.length > 0
 
 	const updatedStats = {
-		// Set to default values if aggregate returns a falsy value
 		totalRatings: hasNewStats ? ratingStats[0].numOfReviewDocuments : 0,
 		ratingsAverage: hasNewStats ? Math.round(ratingStats[0].averageRating) : 4,
 	}
 
+	// Update the product
 	await Product.findByIdAndUpdate(itemId, updatedStats, { new: true })
-	//End of calculateRatinsStats
 }
 
 reviewSchema.index({ customerEmail: 1, product: 1 }, { unique: true })
