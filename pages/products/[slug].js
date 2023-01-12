@@ -1,33 +1,29 @@
 import Product from '../../models/product-model'
 import SingleProduct from '../../components/single-product'
+
 import { dbConnect } from '../../lib/db-utils'
 import { purify } from '../../lib/utils'
 import { redirectToPage } from '../../lib/controller-utils'
 
-const ProductPage = (props) => {
-	return <SingleProduct {...props} />
-}
+const ProductPage = (props) => <SingleProduct {...props} />
 
-export async function getStaticProps(context) {
+export const getStaticProps = async (context) => {
 	const { slug } = context.params
 
 	try {
 		await dbConnect()
-		const result = await Product.findOne({ slug }).populate('reviews').exec()
 
-		if (!result) throw new Error('Error')
+		const result = await Product.findOne({ slug }).populate('reviews')
 
-		const product = purify(result)
+		if (!result) throw ''
 
-		return {
-			props: { product },
-		}
+		return { props: { product: purify(result) } }
 	} catch (error) {
-		return redirectToPage('/products')
+		return redirectToPage()
 	}
 }
 
-export async function getStaticPaths() {
+export const getStaticPaths = async () => {
 	await dbConnect()
 
 	const allProducts = await Product.find().exec()

@@ -7,23 +7,20 @@ import Price from '../ui/price'
 import Button from '../ui/button'
 
 import classes from './item.module.css'
-import { TbChevronsDownLeft } from 'react-icons/tb'
 
 const Item = (props) => {
-	const { push } = useRouter()
+	const router = useRouter()
 
 	const { addToBag } = useContext(ShoppingBagContext)
 
 	const { product, showToCollections, toBag } = props
 	const { category } = product
 
-	
-
-	const handlePushItemDetail = () => {
-		push(`/products/${product.slug}`)
+	const handlePushItemToDetailPage = () => {
+		router.push(`/products/${product.slug}`)
 	}
 
-	const handlePushToCollection = () => push(`/${category}`)
+	const handlePushToCollection = () => router.push(`/${category}`)
 
 	const handlePushToBag = () => addToBag(product)
 
@@ -33,7 +30,7 @@ const Item = (props) => {
 	return (
 		<figure
 			className={`${classes.container} ${props.useBoxShadow} grid`}
-			onClick={handlePushItemDetail}
+			onClick={handlePushItemToDetailPage}
 		>
 			<div>
 				<Image

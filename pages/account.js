@@ -4,9 +4,7 @@ import { unstable_getServerSession } from 'next-auth/next'
 import { nextAuthConfig } from './api/auth/[...nextauth]'
 import { purify } from '../lib/utils'
 
-const AccountPage = () => {
-	return <UserProfile />
-}
+const AccountPage = () => <UserProfile />
 
 export async function getServerSideProps(context) {
 	const session = await unstable_getServerSession(

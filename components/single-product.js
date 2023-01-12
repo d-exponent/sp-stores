@@ -67,7 +67,7 @@ export default function SingleProductPage(props) {
 
 	//  Only allow users who have purchased the current product to write a review
 	useEffect(() => {
-			// console.log('Testing Rendering 🧰🧰🧰🧰')
+		// console.log('Testing Rendering 🧰🧰🧰🧰')
 		if (!isAuthenticated || hasPurchasedProduct) return
 
 		//Fetch all orders for this user

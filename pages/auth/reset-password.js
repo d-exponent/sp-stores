@@ -3,9 +3,7 @@ import { unstable_getServerSession } from 'next-auth/next'
 import { nextAuthConfig } from '../api/auth/[...nextauth]'
 import ResetPassword from '../../components/credentials/reset-password'
 
-const ResetPassowrdPage = () => {
-	return <ResetPassword />
-}
+const ResetPassowrdPage = () => <ResetPassword />
 
 export async function getServerSideProps(context) {
 	const session = await unstable_getServerSession(

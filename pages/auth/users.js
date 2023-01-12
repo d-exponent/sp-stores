@@ -2,9 +2,7 @@ import Authentication from '../../components/credentials/authentication'
 import { unstable_getServerSession } from 'next-auth/next'
 import { nextAuthConfig } from '../api/auth/[...nextauth]'
 
-const AuthPage = () => {
-	return <Authentication />
-}
+const AuthPage = () => <Authentication />
 
 export async function getServerSideProps(context) {
 	const session = await unstable_getServerSession(

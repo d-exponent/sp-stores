@@ -3,9 +3,7 @@ import { unstable_getServerSession } from 'next-auth/next'
 import ForgotPassword from '../../components/credentials/forgot-password'
 import { nextAuthConfig } from '../api/auth/[...nextauth]'
 
-const ForgotPasswordPage = () => {
-	return <ForgotPassword />
-}
+const ForgotPasswordPage = () => <ForgotPassword />
 
 export async function getServerSideProps(context) {
 	const session = await unstable_getServerSession(

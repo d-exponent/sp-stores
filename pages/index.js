@@ -1,12 +1,12 @@
 import Home from '../components/home'
 import Product from '../models/product-model'
+
+import { revalidateTimer } from '../lib/props-utils'
 import { getAllCollectionDirectoryData } from '../lib/collection-utils'
 import { dbConnect } from '../lib/db-utils'
 import { purify } from '../lib/utils'
 
-export default function HomePage(props) {
-	return <Home {...props} />
-}
+const HomePage = (props) => <Home {...props} />
 
 export const getStaticProps = async () => {
 	//Get markdown data for  collections
@@ -30,7 +30,7 @@ export const getStaticProps = async () => {
 				collections: collectionMetaData,
 				groups: purify(groupedByCategory),
 			},
-			revalidate: 60,
+			revalidate: revalidateTimer,
 		}
 	} catch (e) {
 		return {
@@ -40,3 +40,5 @@ export const getStaticProps = async () => {
 		}
 	}
 }
+
+export default HomePage

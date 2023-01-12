@@ -7,11 +7,7 @@ import {
 } from '../lib/collection-utils'
 import { dbConnect } from '../lib/db-utils'
 
-
-const CollectionPage = (props) => {
-	return <SingleCollection {...props} />
-}
-
+const CollectionPage = (props) => <SingleCollection {...props} />
 
 export async function getStaticProps(context) {
 	const { cname } = context.params

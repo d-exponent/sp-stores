@@ -24,9 +24,17 @@ const handleSuccess = (notify, ...args) => {
 
 		// Execute arguments
 		if (args.length > 0) {
-			console.log("Has Args🧰")
 			args.forEach((arg) => arg())
 		}
+
+		const thankYouUtterance = new SpeechSynthesisUtterance()
+		const voices = speechSynthesis.getVoices()
+
+		thankYouUtterance.voice = voices[7]
+		thankYouUtterance.pitch = 0
+		thankYouUtterance.text = 'Thank you for shopping with Sarah-p-collections'
+		
+		speechSynthesis.speak(thankYouUtterance)
 	}
 }
 
@@ -42,9 +50,8 @@ const Paystack = (props) => {
 	const isAuthenticated = status === 'authenticated'
 
 	const getPaymentOptions = () => {
-
 		if (!isAuthenticated) return {}
-		
+
 		return {
 			publicKey: 'pk_test_9b85118dc69a219c04177eaa758df84da917cdd1',
 			email: data.user.email,
@@ -56,10 +63,8 @@ const Paystack = (props) => {
 			},
 		}
 	}
-	
-	const initializePayment = usePaystackPayment(getPaymentOptions())
 
-	
+	const initializePayment = usePaystackPayment(getPaymentOptions())
 
 	const handlePayment = async () => {
 		showNotification('Processing your payment').pending()
@@ -75,7 +80,6 @@ const Paystack = (props) => {
 	}
 
 	const handleClick = () => {
-
 		if (props.singleItem && !props.hasSize) {
 			showNotification('Please select a size for this product').error()
 			return

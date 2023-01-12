@@ -1,7 +1,5 @@
 import Upload from '../../components/products/uploads/upload'
 
-const RegisterProductPage = () => {
-	return <Upload />
-}
+const RegisterProductPage = () => <Upload />
 
 export default RegisterProductPage

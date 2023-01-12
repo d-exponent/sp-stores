@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import slugify from 'slugify'
+import Review from './review-model'
 import { modelVirtualsConfiq } from '../lib/db-utils'
 
 const sizeSchema = new mongoose.Schema({
@@ -186,7 +187,6 @@ productSchema.pre(/^find/, function (next) {
 	next()
 })
 
-// Show date of lastModified
 productSchema.pre(/^findOneAnd/, function (next) {
 	this.discountPercentage = setDiscountPercentage(this.discountPrice, this.price)
 
