@@ -12,10 +12,8 @@ const sizeSchema = new mongoose.Schema({
 	quantity: {
 		type: Number,
 		validate: {
-			validator: function (value) {
-				return value > -1
-			},
-			message: '(value) must be at least 0',
+			validator: (value) => value > -1,
+			message: (props) => `${props.value} must be at least zero`,
 		},
 	},
 })
@@ -35,7 +33,10 @@ const productSchema = new mongoose.Schema(
 		},
 		category: {
 			type: String,
-			enum: ['clothing', 'footwares', 'accessories'],
+			enum: {
+				values: ['clothing', 'footwares', 'accessories'],
+				message: (props) => `${props.value} is not a valid product category`,
+			},
 			required: [true, 'A product must have a category'],
 		},
 		color: {
@@ -103,7 +104,6 @@ const productSchema = new mongoose.Schema(
 	modelVirtualsConfiq
 )
 
-
 // HELPERS
 const setDiscountPercentage = (discountPrice, price) => {
 	if (!discountPrice) return undefined
@@ -123,7 +123,7 @@ productSchema.virtual('reviews', {
 	localField: '_id',
 })
 
-//Ensure only unique sizes are saved in sorted Order
+//Ensure only unique sizes are saved and in sorted Order
 productSchema.pre('save', function (next) {
 	const uniqueSizes = []
 
@@ -159,7 +159,6 @@ productSchema.pre('save', function (next) {
 
 	next()
 })
-
 
 //Set initial quantity
 productSchema.pre('save', function (next) {
