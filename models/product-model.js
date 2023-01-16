@@ -129,9 +129,9 @@ productSchema.pre('save', function (next) {
 
 	// Remove duplicate objects by size
 	const uniqueSizesObjects = this.sizes.filter(({ size }) => {
-		const isUnique = uniqueSizes.includes(size)
+		const isInUniqueSizes = uniqueSizes.includes(size)
 
-		if (isUnique) return false
+		if (isInUniqueSizes) return false
 
 		uniqueSizes.push(size)
 		return true
@@ -151,8 +151,9 @@ productSchema.pre('save', function (next) {
 })
 
 productSchema.pre('save', function (next) {
-	const sizeQuantityArr = this.sizes.map((size) => size.quantity)
-	const totalQuantity = sizeQuantityArr.reduce((sum, quantity) => sum + quantity)
+	const totalQuantity = this.sizes
+		.map((size) => size.quantity)
+		.reduce((sum, quantity) => sum + quantity)
 
 	this.initialQuantity = totalQuantity
 	this.quantity = totalQuantity

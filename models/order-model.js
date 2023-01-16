@@ -3,7 +3,8 @@ import mongoose from 'mongoose'
 
 import { modelVirtualsConfiq } from '../lib/db-utils'
 
-const cartSchema = new mongoose.Schema({
+
+const cartItem = {
 	productId: {
 		type: String,
 		required: [true, 'Please provide the product ID'],
@@ -37,7 +38,7 @@ const cartSchema = new mongoose.Schema({
 		type: Date,
 		default: Date.now,
 	},
-})
+}
 
 const orderSchema = new mongoose.Schema(
 	{
@@ -52,7 +53,7 @@ const orderSchema = new mongoose.Schema(
 		},
 		cartItems: {
 			required: [true, 'An order must be made for at least one item'],
-			type: [cartSchema],
+			type: [cartItem],
 		},
 		currency: String,
 		createdAt: {
