@@ -3,20 +3,23 @@ import slugify from 'slugify'
 import Review from './review-model'
 import { modelVirtualsConfiq } from '../lib/db-utils'
 
-const sizeSchema = new mongoose.Schema({
-	size: {
-		type: String,
-		lowercase: true,
-		required: [true, 'Please provide a size'],
-	},
-	quantity: {
-		type: Number,
-		validate: {
-			validator: (value) => value > -1,
-			message: (props) => `${props.value} must be at least zero`,
+const sizeSchema = new mongoose.Schema(
+	{
+		size: {
+			type: String,
+			lowercase: true,
+			required: [true, 'Please provide a size'],
+		},
+		quantity: {
+			type: Number,
+			validate: {
+				validator: (value) => value > -1,
+				message: (props) => `${props.value} must be at least zero`,
+			},
 		},
 	},
-})
+	{ _id: false }
+)
 
 const productSchema = new mongoose.Schema(
 	{
