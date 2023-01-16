@@ -1,8 +1,7 @@
 import mongoose from 'mongoose'
-// import Product from '../models/product-model'
+import Product from '../models/product-model'
 
 import { modelVirtualsConfiq } from '../lib/db-utils'
-
 
 const cartItem = {
 	productId: {
@@ -52,7 +51,7 @@ const orderSchema = new mongoose.Schema(
 			required: [true, 'An orders customer must have a name'],
 		},
 		cartItems: {
-			required: [true, 'An order must be made for at least one item'],
+			required: [true, 'An order must be made for at least one cart item'],
 			type: [cartItem],
 		},
 		currency: String,
@@ -94,6 +93,25 @@ orderSchema.virtual('totalProducts').get(function () {
 orderSchema.pre(/^find/, function (next) {
 	this.select('-__v')
 	next()
+})
+
+orderSchema.post('save', function () {
+
+	this.cartItems.forEach(async (item) => {
+		const purchasedItem = await Product.findById(item.productId)
+
+		const newSizes = purchasedItem.sizes.map((size) => {
+			if (size.size === item.itemSize) {
+				const updatedQuantity = size.quantity - item.salesQuantity
+				size.quantity = updatedQuantity < 0 ? 0 : updatedQuantity
+			}
+
+			return size
+		})
+
+		await Product.findByIdAndUpdate(item.productId, { $set: { sizes: newSizes } })
+	})
+	
 })
 
 export default mongoose.models.Order || mongoose.model('Order', orderSchema)

@@ -16,21 +16,23 @@ const Sizes = ({ product, getsize }) => {
 			<h3>Available Sizes: </h3>
 			<ul>
 				{product.sizes?.map(({ size, quantity }, index) => {
-					let style = classes.list
+					if (quantity > 0) {
+						let style = classes.list
 
-					if (index === listIndex) {
-						style = style + ' ' + classes.clickedStyle
+						if (index === listIndex) {
+							style = style + ' ' + classes.clickedStyle
+						}
+
+						return (
+							<li
+								key={size + index}
+								onClick={handleClick(size, quantity, index)}
+								className={style}
+							>
+								{size}
+							</li>
+						)
 					}
-
-					return (
-						<li
-							key={size + index}
-							onClick={handleClick(size, quantity, index)}
-							className={style}
-						>
-							{size}
-						</li>
-					)
 				})}
 			</ul>
 		</div>
