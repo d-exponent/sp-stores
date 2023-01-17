@@ -27,14 +27,6 @@ const handleSuccess = (notify, toExecute) => {
 			toExecute.forEach((execute) => execute())
 		}
 
-		const thankYouUtterance = new SpeechSynthesisUtterance()
-		const voices = speechSynthesis.getVoices()
-
-		thankYouUtterance.voice = voices[7]
-		thankYouUtterance.pitch = 0
-		thankYouUtterance.text = 'Thank you for shopping with Sarah-p-collections'
-
-		speechSynthesis.speak(thankYouUtterance)
 	}
 }
 
