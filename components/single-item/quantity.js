@@ -8,7 +8,7 @@ const Qunatity = (props) => {
 
 	return (
 		<div className={classes.container}>
-			<h4>👇 Click to increase or reduce purchase items</h4>
+			<h4>👇 Select how many you want to purchase</h4>
 			<div className={classes.cta}>
 				<Button text='-' onClick={decrement} />
 				<Input value={count} readOnly />

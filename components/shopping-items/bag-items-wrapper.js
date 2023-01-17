@@ -39,7 +39,7 @@ const BagItemsWrapper = () => {
 						items={items}
 						amount={totalPrice}
 						text='Checkout'
-						execute={clearLocalStorage}
+						execute={[clearLocalStorage]}
 					/>
 				</div>
 			</div>

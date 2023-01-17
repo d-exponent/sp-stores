@@ -22,17 +22,11 @@ export const verifyPayment = async (req, res) => {
 	} = response
 
 	if (data.status !== 'success') {
-		throwOperationalError('Payment was declined', 400)
+		throwOperationalError('Payment was unsucessful', 400)
 	}
 
-	sendResponse(res, 200, {
-		success: true,
-		message: 'The payment was successfull',
-	})
-
-	//Save new Order document
 	try {
-		await Order.create({
+		const newOrder = await Order.create({
 			currency: data.currency,
 			cartItems: data.metadata.cartItems,
 			paystack_ref: data.reference,
@@ -46,7 +40,19 @@ export const verifyPayment = async (req, res) => {
 			customerCode: data.customer.customer_code,
 			transactionReference: reference,
 		})
+
+		await newOrder.updateCartItems()
+
+		sendResponse(res, 200, {
+			success: true,
+			message: 'Your purchase is successfull',
+		})
+
 	} catch (e) {
-		console.log(e.message)
+		
+		const message =
+			'There was an issue processing your payment. Contact customer care for any refund issues.'
+
+		sendResponse(res, 500, { success: false, message })
 	}
 }

@@ -1,7 +1,24 @@
+//        HELPERS
+const setDiscountPercentage = (discountPrice, price) => {
+	if (!discountPrice) return undefined
+
+	const percentage = (discountPrice / price) * 100
+	const discountPercentage = 100 - Math.round(percentage)
+
+	return discountPercentage
+}
+
+const setInstock = (quantity) => {
+	if (!quantity) return false
+
+	return quantity > 0
+}
+
 import mongoose from 'mongoose'
 import slugify from 'slugify'
 import Review from './review-model'
 import { modelVirtualsConfiq } from '../lib/db-utils'
+import { getQuantityFromSizes } from '../lib/model-util'
 
 const sizeSchema = new mongoose.Schema(
 	{
@@ -13,8 +30,8 @@ const sizeSchema = new mongoose.Schema(
 		quantity: {
 			type: Number,
 			validate: {
-				validator: (value) => value > -1,
-				message: (props) => `${props.value} must be at least zero`,
+				validator: (value) => value > 0,
+				message: (props) => `${props.value} must be at least one (1)`,
 			},
 		},
 	},
@@ -107,26 +124,40 @@ const productSchema = new mongoose.Schema(
 	modelVirtualsConfiq
 )
 
-// HELPERS
-const setDiscountPercentage = (discountPrice, price) => {
-	if (!discountPrice) return undefined
+productSchema.methods.replaceSizes = async function (sizesArr) {
+	const filteredSizes =
+		sizesArr?.length > 0 && sizesArr.filter((size) => size.quantity > 0)
 
-	const percentage = (discountPrice / price) * 100
-	const discountPercentage = 100 - Math.round(percentage)
+	this.sizes = filteredSizes || []
 
-	return discountPercentage
+	this.quantity = getQuantityFromSizes(filteredSizes)
+
+	this.inStock = setInstock(this.quantity)
+
+	this.lastModifiedAt = Date.now()
 }
 
-const setInstock = (quantity) => quantity > 0
-
-// MIDDLEWARE AND VIRTUALS
+//   VIRTUALS
 productSchema.virtual('reviews', {
 	ref: 'Review',
 	foreignField: 'productId',
 	localField: '_id',
 })
 
-//Ensure only unique sizes are saved and in sorted Order
+// DOCUMENT MIDDLEWARE
+
+// Generate slug
+productSchema.pre('save', function (next) {
+	const nowInMillisecondsStr = Date.now().toString()
+	const dateStringLength = nowInMillisecondsStr.length
+	const lastFiveChar = nowInMillisecondsStr.slice(dateStringLength - 5)
+
+	const slugString = `${this.brand} ${this.name} ${lastFiveChar}`
+	this.slug = slugify(slugString, { lower: true })
+	next()
+})
+
+//Ensure only unique sizes are saved in sorted Order
 productSchema.pre('save', function (next) {
 	const uniqueSizes = []
 
@@ -153,49 +184,36 @@ productSchema.pre('save', function (next) {
 	next()
 })
 
+// Ensure there are no size objects with quantity values equals zero
 productSchema.pre('save', function (next) {
-	const totalQuantity = this.sizes
-		.map((size) => size.quantity)
-		.reduce((sum, quantity) => sum + quantity)
+	this.sizes = this.sizes.filter((size) => size.quantity > 0)
+	next()
+})
 
-	this.initialQuantity = totalQuantity
-	this.quantity = totalQuantity
+// Set the Initial-Quantity and Quantity feilds values
+productSchema.pre('save', function (next) {
+	if (this.isNew) {
+		this.initialQuantity = getQuantityFromSizes(this.sizes)
+		this.quantity = this.initialQuantity
+	}
 
 	next()
 })
 
-//Set initial quantity
+//Set the instock and discount Percentage feilds values
 productSchema.pre('save', function (next) {
 	this.discountPercentage = setDiscountPercentage(this.discountPrice, this.price)
 
-	this.inStock = setInstock(this.quantity)
+	this.inStock = this.quantity > 0
 
 	next()
 })
 
-// AUTO GENERATE SLUG ON SAVE
-productSchema.pre('save', function (next) {
-	const nowInMillisecondsStr = Date.now().toString()
-	const dateStringLength = nowInMillisecondsStr.length
-	const lastFiveChar = nowInMillisecondsStr.slice(dateStringLength - 5)
-
-	const slugString = `${this.brand} ${this.name} ${lastFiveChar}`
-	this.slug = slugify(slugString, { lower: true })
-	next()
-})
+// QUERY MIDDLEWARES
 
 // Remove __v feild from queries
 productSchema.pre(/^find/, function (next) {
 	this.select('-__v')
-	next()
-})
-
-productSchema.pre(/^findOneAnd/, function (next) {
-	this.discountPercentage = setDiscountPercentage(this.discountPrice, this.price)
-
-	this.inStock = setInstock(this.quantity)
-
-	this.lastModifiedAt = Date.now()
 	next()
 })
 

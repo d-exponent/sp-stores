@@ -23,7 +23,7 @@ export default function SingleProductPage(props) {
 	const price = product.discountPrice || product.price
 	const { reviews } = product
 
-	const [cartItem, setCartItems] = useState({ quantity: 1, amount: price, size: '' })
+	const [cartItem, setCartItems] = useState({ quantity: 0, amount: price, size: '' })
 	const [showReviewForm, setShowReviewForm] = useState(false)
 	const [hasPurchasedProduct, setHasPurchasedProduct] = useState(false)
 	const [canUpdateReview, setCanUpdateReview] = useState(false)
@@ -39,10 +39,13 @@ export default function SingleProductPage(props) {
 
 	//  Update the product after a  successfull review
 	useEffect(() => {
-		withFetch({ url: `/api/products/${product.id}` })
-			.then(({ serverRes: { data: product } }) => setProduct(product))
+		withFetch({ url: `/api/products/${product._id}` })
+			.then(({ serverRes: { data } }) => {
+			
+				setProduct((prevData) => ({ ...prevData, ...data }))
+			})
 			.catch((err) => console.log(err.message))
-	}, [product.id, render])
+	}, [product._id, render])
 
 	// Get the amount of the cart item
 	useEffect(() => {
@@ -134,7 +137,13 @@ export default function SingleProductPage(props) {
 
 	const toggleShowReviewForm = () => setShowReviewForm((prev) => !prev)
 
-	const toggleRender = () => setRender((prev) => !prev)
+	const toggleRender = () => {
+		setRender((prev) => !prev)
+	}
+
+	const handleRenderAfterPurchase = () => {
+		setTimeout(toggleRender, 2000)
+	}
 
 	const hideReviewForm = () => setShowReviewForm(false)
 
@@ -144,6 +153,7 @@ export default function SingleProductPage(props) {
 	}
 
 	const carouselImages = getCarouselImages(product)
+
 	const ratingsText = reviews?.length > 0 ? 'reviews and ratings' : 'ratings'
 
 	let showFormBtnText = 'Write a review'
@@ -160,22 +170,32 @@ export default function SingleProductPage(props) {
 		<section className={classes.container}>
 			<Carousel images={carouselImages} interval={3000} />
 			<h2>{product.name}</h2>
-
+			
 			<Price product={product} />
 
 			<div className={classes.details}>
 				<p>{`Only ${product.quantity} units left! `}</p>
 
-				<Sizes product={product} getsize={getSize} />
+				{product.sizes.length > 0 ? (
+					<Sizes sizes={product.sizes} getsize={getSize} />
+				) : null}
 
-				<Quantity increment={increment} decrement={decrement} count={cartItem.quantity} />
+				{product.sizes.length > 0 ? (
+					<Quantity
+						increment={increment}
+						decrement={decrement}
+						count={cartItem.quantity}
+					/>
+				) : null}
 
-				<div className={classes.orderDetails}>
-					<h3>Order Details</h3>
-					<p>Quantity: {cartItem.quantity}</p>
-					<p>Amount: {cartItem.amount}</p>
-					<p>Size: {cartItem.size}</p>
-				</div>
+				{product.sizes.length > 0 ? (
+					<div className={classes.orderDetails}>
+						<h3>Order Details</h3>
+						<p>Quantity: {cartItem.quantity}</p>
+						<p>Amount: {cartItem.amount}</p>
+						<p>Size: {cartItem.size}</p>
+					</div>
+				) : null}
 			</div>
 
 			<div className={`${classes.cta} grid`}>
@@ -185,7 +205,7 @@ export default function SingleProductPage(props) {
 						items={[{ ...product, cart: cartItem }]}
 						singleItem={true}
 						amount={price}
-						execute={toggleRender}
+						execute={[handleRenderAfterPurchase]}
 						hasSize={cartItem.size !== ''}
 					/>
 				</>

@@ -2,42 +2,46 @@ import mongoose from 'mongoose'
 import Product from '../models/product-model'
 
 import { modelVirtualsConfiq } from '../lib/db-utils'
+import { getQuantityFromSizes } from '../lib/model-util'
 
-const cartItem = {
-	productId: {
-		type: String,
-		required: [true, 'Please provide the product ID'],
+const cartItem = new mongoose.Schema(
+	{
+		productId: {
+			type: String,
+			required: [true, 'Please provide the product ID'],
+		},
+		productName: {
+			type: String,
+			required: [true, 'Please provide the product name'],
+		},
+		paidAmount: {
+			type: Number,
+			required: [true, 'Please provide the amount for this purchase'],
+		},
+		itemPrice: {
+			type: Number,
+			required: [true, 'Please provide the current price of this item'],
+		},
+		salesQuantity: {
+			type: Number,
+			required: [true, 'Please provide the quantity for this purchase'],
+		},
+		itemSize: {
+			type: String,
+			required: [true, 'Please provide the size of this product'],
+		},
+		brand: String,
+		coverImage: {
+			type: String,
+			required: [true, 'Please provide the cover image for this product'],
+		},
+		purchasedAt: {
+			type: Date,
+			default: Date.now,
+		},
 	},
-	productName: {
-		type: String,
-		required: [true, 'Please provide the product name'],
-	},
-	paidAmount: {
-		type: Number,
-		required: [true, 'Please provide the amount for this purchase'],
-	},
-	itemPrice: {
-		type: Number,
-		required: [true, 'Please provide the current price of this item'],
-	},
-	salesQuantity: {
-		type: Number,
-		required: [true, 'Please provide the quantity for this purchase'],
-	},
-	itemSize: {
-		type: String,
-		required: [true, 'Please provide the size of this product'],
-	},
-	brand: String,
-	coverImage: {
-		type: String,
-		required: [true, 'Please provide the cover image for this product'],
-	},
-	purchasedAt: {
-		type: Date,
-		default: Date.now,
-	},
-}
+	{ _id: false }
+)
 
 const orderSchema = new mongoose.Schema(
 	{
@@ -86,17 +90,8 @@ const orderSchema = new mongoose.Schema(
 	modelVirtualsConfiq
 )
 
-orderSchema.virtual('totalProducts').get(function () {
-	return this.cartItems.length
-})
-
-orderSchema.pre(/^find/, function (next) {
-	this.select('-__v')
-	next()
-})
-
-orderSchema.post('save', function () {
-
+orderSchema.methods.updateCartItems = async function () {
+	
 	this.cartItems.forEach(async (item) => {
 		const purchasedItem = await Product.findById(item.productId)
 
@@ -109,9 +104,19 @@ orderSchema.post('save', function () {
 			return size
 		})
 
-		await Product.findByIdAndUpdate(item.productId, { $set: { sizes: newSizes } })
+		purchasedItem.replaceSizes(newSizes)
+
+		await purchasedItem.save()
 	})
-	
+}
+
+orderSchema.virtual('totalProducts').get(function () {
+	return this.cartItems.length
+})
+
+orderSchema.pre(/^find/, function (next) {
+	this.select('-__v')
+	next()
 })
 
 export default mongoose.models.Order || mongoose.model('Order', orderSchema)

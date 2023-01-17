@@ -7,7 +7,7 @@ import { getCartItems, getCheckoutPrice } from '../../lib/checkout-utils'
 import NotificationContext from '../../context/notification'
 import Button from './button'
 
-const handleSuccess = (notify, ...args) => {
+const handleSuccess = (notify, toExecute) => {
 	return async ({ reference }) => {
 		// Validate the payment status and notify the user
 		const { response, serverRes } = await withFetch({
@@ -23,8 +23,8 @@ const handleSuccess = (notify, ...args) => {
 		notify(message).success()
 
 		// Execute arguments
-		if (args.length > 0) {
-			args.forEach((arg) => arg())
+		if (toExecute.length > 0) {
+			toExecute.forEach((execute) => execute())
 		}
 
 		const thankYouUtterance = new SpeechSynthesisUtterance()
@@ -33,14 +33,12 @@ const handleSuccess = (notify, ...args) => {
 		thankYouUtterance.voice = voices[7]
 		thankYouUtterance.pitch = 0
 		thankYouUtterance.text = 'Thank you for shopping with Sarah-p-collections'
-		
+
 		speechSynthesis.speak(thankYouUtterance)
 	}
 }
 
-const handleClose = (fn, message) => {
-	return () => fn(message).error()
-}
+const handleClose = (fn, message) => () => fn(message).error()
 
 const Paystack = (props) => {
 	const { showNotification } = useContext(NotificationContext)
@@ -75,17 +73,15 @@ const Paystack = (props) => {
 		)
 	}
 
-	const notifyToLogin = () => {
-		showNotification('Please login to make payment').error()
-	}
-
 	const handleClick = () => {
 		if (props.singleItem && !props.hasSize) {
 			showNotification('Please select a size for this product').error()
 			return
 		}
 
-		isAuthenticated ? handlePayment() : notifyToLogin()
+		isAuthenticated
+			? handlePayment()
+			: showNotification('Please login to make payment').error()
 	}
 
 	const btnText = props.text || 'Buy Now'
