@@ -6,7 +6,7 @@ import EmptyItemsWrapper from './empty-items-wrapper'
 
 import classes from './css-modules/shopping-bag-items.module.css'
 
-const ShoppingBagItems = () => {
+export default function ShoppingBagItems() {
 	const { isItems } = useContext(ShoppingItemsContext)
 
 	return (
@@ -16,5 +16,3 @@ const ShoppingBagItems = () => {
 		</section>
 	)
 }
-
-export default ShoppingBagItems

@@ -1,6 +1,6 @@
 import classes from './hero.module.css'
 
-const Hero = () => {
+export default function Hero() {
 	return (
 		<div className={`${classes.hero} grid`}>
 			<h1 className={classes.title}>SP-Collections</h1>
@@ -8,5 +8,3 @@ const Hero = () => {
 		</div>
 	)
 }
-
-export default Hero

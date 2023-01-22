@@ -9,8 +9,13 @@ const SideNavContext = createContext({
 export const SideNavContextProvider = (props) => {
 	const [isShowSideNav, setIsShowSIdeNav] = useState(false)
 
-	const showPane = () => setIsShowSIdeNav(true)
-	const hidePane = () => setIsShowSIdeNav(false)
+	const showPane = function () {
+		setIsShowSIdeNav(true)
+	}
+	
+	const hidePane = function () {
+		setIsShowSIdeNav(false)
+	}
 
 	const contextValue = {
 		isShowSideNav,

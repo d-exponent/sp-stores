@@ -2,11 +2,11 @@ import CollectionItemsGrid from './collections/collection-items-grid'
 
 import classes from './css-modules/all-products.module.css'
 
-const AllProducts = ({ products }) => {
+export default function AllProducts (props)  {
 	return (
 		<section className={classes.container}>
-			{products ? (
-				<CollectionItemsGrid items={products} />
+			{props.products ? (
+				<CollectionItemsGrid items={props.products} />
 			) : (
 				<div className={`${classes.empty} grid-center`}>
 					<h1>There are no products at this time</h1>
@@ -16,4 +16,4 @@ const AllProducts = ({ products }) => {
 	)
 }
 
-export default AllProducts
+ 

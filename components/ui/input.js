@@ -1,7 +1,7 @@
 import classes from './input.module.css'
 
-const Input = (props) => {
-	const { type, name, label, accept, required, reference, value, placeholder, readonly } =
+export default function Input(props) {
+	const { type, name, label, accept, required, reference, value, placeholder, readOnly } =
 		props
 
 	if (type === 'textarea') {
@@ -50,7 +50,7 @@ const Input = (props) => {
 					ref={reference}
 					placeholder={placeholder}
 					required={required === true}
-					readonly={readonly}
+					readOnly={readOnly}
 				/>
 			</div>
 		)
@@ -77,5 +77,3 @@ const Input = (props) => {
 		</div>
 	)
 }
-
-export default Input

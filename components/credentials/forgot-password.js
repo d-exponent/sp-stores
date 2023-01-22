@@ -8,12 +8,12 @@ import { withFetch } from '../../lib/auth-utils'
 
 import classes from './forgot-passoword.module.css'
 
-const ForgotPassword = () => {
+export default function ForgotPassword() {
 	const emailInputRef = useRef()
 
 	const { showNotification } = useContext(NotificationContext)
 
-	async function submitHandler(event) {
+	const handleSubmit = async function (event) {
 		event.preventDefault()
 
 		showNotification('Processing..').pending()
@@ -43,7 +43,7 @@ const ForgotPassword = () => {
 
 	return (
 		<section className={`${classes.container} grid`}>
-			<form onSubmit={submitHandler}>
+			<form onSubmit={handleSubmit}>
 				<Input
 					type='email'
 					required={true}
@@ -61,5 +61,3 @@ const ForgotPassword = () => {
 		</section>
 	)
 }
-
-export default ForgotPassword

@@ -5,11 +5,11 @@ import { useContext } from 'react'
 import NotificationContext from '../../context/notification'
 import Button from './button'
 
-const LogoutButton = (props) => {
+export default function LogoutButton (props)  {
 	const router = useRouter()
 	const { showNotification } = useContext(NotificationContext)
 
-	async function handleSignOut() {
+	const handleSignOut = async function () {
 
 		showNotification('Logging out...').pending()
 		
@@ -28,4 +28,3 @@ const LogoutButton = (props) => {
 	return <Button onClick={handleSignOut} text={props.text || 'Logout'} />
 }
 
-export default LogoutButton

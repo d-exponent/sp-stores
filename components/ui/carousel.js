@@ -5,7 +5,7 @@ import 'react-responsive-carousel/lib/styles/carousel.min.css' // requires a loa
 import { Carousel as Slider } from 'react-responsive-carousel'
 import classes from './carousel.module.css'
 
-const Carousel = (props) => {
+export default function Carousel(props) {
 	// TODO: Uptimimize Carousel Component
 	return (
 		<Slider
@@ -47,5 +47,3 @@ const Carousel = (props) => {
 		</Slider>
 	)
 }
-
-export default Carousel

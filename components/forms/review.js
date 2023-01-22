@@ -7,7 +7,7 @@ import NotificationContext from '../../context/notification'
 import Input from '../ui/input'
 import Button from '../ui/button'
 
-const Review = (props) => {
+export default function Review(props) {
 	const { showNotification } = useContext(NotificationContext)
 
 	const { data: session, status } = useSession()
@@ -15,7 +15,7 @@ const Review = (props) => {
 	const reviewRef = useRef(null)
 	const ratingRef = useRef(null)
 
-	const handleSubmit = async (event) => {
+	const handleSubmit = async function (event) {
 		event.preventDefault()
 
 		//TODO: Make review comments optional for both creating or updating a review
@@ -59,7 +59,6 @@ const Review = (props) => {
 			delete review.productId
 		}
 
-
 		try {
 			await withFetch({
 				url,
@@ -72,7 +71,6 @@ const Review = (props) => {
 
 			props.afterSubmit()
 			showNotification('Success!! ✔').success()
-			
 		} catch (err) {
 			const isDuplicateMessage =
 				err.message.trim() === 'This product already exits. Please try another!'
@@ -101,5 +99,3 @@ const Review = (props) => {
 		</form>
 	)
 }
-
-export default Review

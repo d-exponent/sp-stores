@@ -7,7 +7,7 @@ import SideNavigationPanel from './side-nav'
 import Hamburger from './hamburger-menu'
 import classes from './header.module.css'
 
-const Header = () => {
+export default function Header() {
 	const { isShowSideNav } = useContext(SideNavContext)
 	return (
 		<header className={`${classes.header} flex`}>
@@ -20,5 +20,3 @@ const Header = () => {
 		</header>
 	)
 }
-
-export default Header

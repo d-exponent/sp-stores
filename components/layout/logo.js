@@ -1,10 +1,7 @@
-
 import Link from 'next/link'
 import classes from './logo.module.css'
 
-const Logo = () => {
-
-
+export default function Logo() {
 	return (
 		<div className={classes.headerLogo}>
 			<Link href='/'>
@@ -13,5 +10,3 @@ const Logo = () => {
 		</div>
 	)
 }
-
-export default Logo

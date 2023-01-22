@@ -7,7 +7,7 @@ import Header from './header'
 import Footer from './footer'
 import Notification from '../ui/notification'
 
-const Layout = (props) => {
+export default function Layout(props) {
 	const { notificationContent, showNotification } = useContext(NotificationContext)
 
 	const hideNotificationHandler = () => {
@@ -32,5 +32,3 @@ const Layout = (props) => {
 		</SideNavContextProvider>
 	)
 }
-
-export default Layout

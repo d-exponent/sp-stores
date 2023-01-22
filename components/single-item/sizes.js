@@ -1,11 +1,10 @@
-import { useState } from 'react'
 import classes from './sizes.module.css'
 
-const Sizes = (props) => {
+export default function Sizes(props) {
 	const { sizes, getsize, selectedSizeIndexInSizes, setSelectedSizeIndexInSizes } = props
 
-	const handleClick = (size, quantity, index) => {
-		return () => {
+	const handleClick = function (size, quantity, index) {
+		return function () {
 			setSelectedSizeIndexInSizes(index)
 			getsize(size, quantity)
 		}
@@ -38,5 +37,3 @@ const Sizes = (props) => {
 		</div>
 	)
 }
-
-export default Sizes

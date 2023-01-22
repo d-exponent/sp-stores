@@ -3,7 +3,7 @@ import Input from '../ui/input'
 
 import classes from './quantity.module.css'
 
-const Qunatity = (props) => {
+export default function Qunatity(props) {
 	const { increment, decrement, count } = props
 
 	return (
@@ -17,5 +17,3 @@ const Qunatity = (props) => {
 		</div>
 	)
 }
-
-export default Qunatity

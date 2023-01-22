@@ -1,6 +1,6 @@
 import classes from './third-form.module.css'
 
-const ThirdForm = (props) => {
+export default function ThirdForm(props) {
 	return (
 		<form onSubmit={props.onSubmit} className={classes.form}>
 			{props.sizeArray.length > 0 && (
@@ -23,5 +23,3 @@ const ThirdForm = (props) => {
 		</form>
 	)
 }
-
-export default ThirdForm

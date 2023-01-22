@@ -8,10 +8,11 @@ import NotificationContext from '../../context/notification'
 import { handleSignIn, withFetch } from '../../lib/auth-utils'
 import classes from './authentication.module.css'
 
-const getErrorMessage = (error) =>
-	error.message || "It's not you, it's us. Please try again! 😭"
+const getErrorMessage = function (error) {
+	return error.message || "It's not you, it's us. Please try again! 😭"
+}
 
-const Authentication = () => {
+export default function Authentication() {
 	const [disableLoginBtn, setDisableLoginBtn] = useState(false)
 	const [disableRegisterBtn, setDisableRegisterBtn] = useState(false)
 
@@ -32,9 +33,11 @@ const Authentication = () => {
 	const ctaText = isLogin ? 'Not' : 'Already'
 	const ctaSpan = isLogin ? ' Register' : ' Login'
 
-	const toggleLogin = () => setIsLogin((prevLogin) => !prevLogin)
+	const toggleLogin = function () {
+		setIsLogin((prevLogin) => !prevLogin)
+	}
 
-	function handleChange(event) {
+	const handleChange = function (event) {
 		const { name, value } = event.target
 
 		let formDataValue = value.toLowerCase().trim()
@@ -46,7 +49,7 @@ const Authentication = () => {
 		if (!isLogin) setRegisterForm({ ...registerForm, [name]: formDataValue })
 	}
 
-	async function handleSubmit(event) {
+	const handleSubmit = async function (event) {
 		event.preventDefault()
 		// Login form
 		if (isLogin) {
@@ -113,7 +116,6 @@ const Authentication = () => {
 	return (
 		<section className='pd-top-30'>
 			<div className={`${classes.container} box-shadow-light`}>
-			
 				<div>
 					<p>
 						{ctaText} a member?
@@ -149,5 +151,3 @@ const Authentication = () => {
 		</section>
 	)
 }
-
-export default Authentication

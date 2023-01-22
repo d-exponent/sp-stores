@@ -3,11 +3,11 @@ import { useRouter } from 'next/router'
 import CollectionItemsGrid from './collection-items-grid'
 import Button from '../ui/button'
 
-const CollectionGroup = ({ groups }) => {
+export default function CollectionGroup ({ groups })  {
 	const router = useRouter()
 
-	const handleToCollection = (groupName) => {
-		return () => {
+	const handleToCollection = function (groupName) {
+		return function () {
 			router.push(`/${groupName}`)
 		}
 	}
@@ -32,4 +32,3 @@ const CollectionGroup = ({ groups }) => {
 	)
 }
 
-export default CollectionGroup

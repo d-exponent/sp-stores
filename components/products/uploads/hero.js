@@ -1,4 +1,4 @@
-const Hero = () => {
+export default function Hero() {
 	return (
 		<div>
 			<h1>Upload product information to cloud storage </h1>
@@ -11,5 +11,3 @@ const Hero = () => {
 		</div>
 	)
 }
-
-export default Hero

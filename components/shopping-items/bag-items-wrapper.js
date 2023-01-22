@@ -10,13 +10,13 @@ import ShoppingBagContext from '../../context/shopping-bag'
 
 import classes from './css-modules/bag-items-wrapper.module.css'
 
-const BagItemsWrapper = () => {
+export default function BagItemsWrapper() {
 	const { items } = useContext(ShoppingBagContext)
 
 	const totalPrice = getCheckoutPrice(items)
 	const formattedTotalPrice = formatToCurrency(totalPrice)
 
-	const clearLocalStorage = () => {
+	const clearLocalStorage = function () {
 		window.localStorage.clear()
 		Router.reload(window.location.pathname)
 	}
@@ -46,5 +46,3 @@ const BagItemsWrapper = () => {
 		</div>
 	)
 }
-
-export default BagItemsWrapper

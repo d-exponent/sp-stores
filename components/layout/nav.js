@@ -9,7 +9,7 @@ import Button from '../ui/button'
 import { HiOutlineShoppingBag } from 'react-icons/hi'
 import classes from './nav.module.css'
 
-const Nav = () => {
+export default function Nav() {
 	const [itemsCount, setItemsCount] = useState('')
 	const { items } = useContext(ShoppingItemsContext)
 
@@ -26,7 +26,7 @@ const Nav = () => {
 		bagLogoClasses = `${classes.navLogo} ${classes.bagIcon}`
 	}
 
-	function handlePushToAuthPage() {
+	const handlePushToAuthPage = function () {
 		let callbackPath = router.asPath
 
 		if (router.query.callback) {
@@ -73,5 +73,3 @@ const Nav = () => {
 		</nav>
 	)
 }
-
-export default Nav

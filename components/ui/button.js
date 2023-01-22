@@ -1,6 +1,6 @@
 import classes from './button.module.css'
 
-const Button = (props) => {
+export default function Button(props) {
 	if (props.renderChildren && props.onClick) {
 		return <button onClick={props.onClick}>{props.children}</button>
 	}
@@ -19,5 +19,3 @@ const Button = (props) => {
 
 	return <button className={classes.btn}>{props.text}</button>
 }
-
-export default Button

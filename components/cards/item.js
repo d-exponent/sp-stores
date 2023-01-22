@@ -8,7 +8,7 @@ import Button from '../ui/button'
 
 import classes from './item.module.css'
 
-const Item = (props) => {
+export default function Item(props) {
 	const router = useRouter()
 
 	const { addToBag } = useContext(ShoppingBagContext)
@@ -16,13 +16,17 @@ const Item = (props) => {
 	const { product, showToCollections, toBag } = props
 	const { category } = product
 
-	const handlePushItemToDetailPage = () => {
+	const handlePushItemToDetailPage = function () {
 		router.push(`/products/${product.slug}`)
 	}
 
-	const handlePushToCollection = () => router.push(`/${category}`)
+	const handlePushToCollection = function () {
+		router.push(`/${category}`)
+	}
 
-	const handlePushToBag = () => addToBag(product)
+	const handlePushToBag = function () {
+		addToBag(product)
+	}
 
 	const displayCollectionBtnText =
 		category === 'clothing' || 'Clothing' ? 'Clothes' : category
@@ -61,5 +65,3 @@ const Item = (props) => {
 		</figure>
 	)
 }
-
-export default Item

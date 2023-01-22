@@ -86,6 +86,7 @@ export const updatePassword = async (req, res) => {
 }
 
 export const forgotPassword = async (req, res) => {
+	
 	const { email } = req.body
 
 	if (!email) {
@@ -134,29 +135,31 @@ export const resetPassword = async (req, res) => {
 	}
 
 	if (newPassword !== confirmPassword) {
-		throwOperationalError('New password and confrim password do not match', 400)
+		throwOperationalError('Password do not match', 400)
 	}
 
 	if (newPassword.length < 8) {
-		throwOperationalError('Password must be at least of 8 characters', 400)
+		throwOperationalError('Password must be at least of 8 characters long', 400)
 	}
 
 	const hashedToken = cryptoHash(resetToken)
 	const user = await User.findOne({ passwordResetToken: hashedToken }).select('+password')
 
 	if (!user) {
-		throwOperationalError('Invalid Inputs. Try again !', 500)
+		throwOperationalError('Invalid Inputs. Try again !', 400)
 	}
 
 	const currentTime = Date.now()
+
 	if (currentTime > user.passwordResetTokenExpiresAt) {
-		throwOperationalError('Your reset timer has expired', 400)
+		throwOperationalError('The link has expired.', 400)
 	}
 
 	user.password = await bcryptHash(newPassword)
 	user.passwordResetToken = undefined
 	user.passwordResetTokenExpiresAt = undefined
 	user.passwordModifiedAt = currentTime
+
 	await user.save()
 
 	sendResponse(res, 200, {

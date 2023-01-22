@@ -7,7 +7,7 @@ import NotificationContext from '../../context/notification'
 import { withFetch } from '../../lib/auth-utils'
 import classes from './reset-password.module.css'
 
-const ResetPassword = () => {
+export default function ResetPassword() {
 	const router = useRouter()
 
 	const { showNotification } = useContext(NotificationContext)
@@ -15,7 +15,7 @@ const ResetPassword = () => {
 	const newPasswordRef = useRef(null)
 	const passwordConfirmRef = useRef(null)
 
-	async function handleFormSubmit(event) {
+	const handleSubmit = async function (event) {
 		event.preventDefault()
 
 		if (!router.query.token) {
@@ -35,6 +35,7 @@ const ResetPassword = () => {
 			resetToken: router.query.token,
 		}
 
+	
 		try {
 			const { response, serverRes } = await withFetch({
 				url: '/api/auth/users/reset-password',
@@ -57,7 +58,6 @@ const ResetPassword = () => {
 
 			newPasswordRef.current.value = ''
 			passwordConfirmRef.current.value = ''
-			
 		} catch (error) {
 			showNotification(error.message).error()
 		}
@@ -65,7 +65,7 @@ const ResetPassword = () => {
 
 	return (
 		<section className={classes.container}>
-			<form onSubmit={handleFormSubmit}>
+			<form onSubmit={handleSubmit}>
 				<Input
 					type='password'
 					label='Password'
@@ -82,10 +82,8 @@ const ResetPassword = () => {
 					reference={passwordConfirmRef}
 					placeholder='Confirm password'
 				/>
-				<Button text='Reset'/>
+				<Button text='Reset' />
 			</form>
 		</section>
 	)
 }
-
-export default ResetPassword

@@ -7,7 +7,7 @@ import SecondForm from '../forms/create-product/second-form'
 import ThirdForm from '../forms/create-product/third-form'
 import classes from './upload.module.css'
 
-const UploadProductForm = () => {
+export default function UploadProductForm() {
 	const SUBMIT_BTN_VALUE = 'upload product'
 
 	const [numOfProductImagesInputsEl, setNumOfProductImagesInputsEl] = useState(0)
@@ -18,7 +18,7 @@ const UploadProductForm = () => {
 	const productImagesNumElRef = useRef(null)
 	const productSizesRef = useRef(null)
 
-	function handleSubmit(event) {
+	const handleSubmit = function (event) {
 		event.preventDefault()
 
 		const form = event.target
@@ -41,13 +41,13 @@ const UploadProductForm = () => {
 				setProductUploadFormBtnValue('Error uploading product')
 				const timer = setTimeout(() => {
 					setProductUploadFormBtnValue(SUBMIT_BTN_VALUE)
-	
+
 					clearTimeout(timer)
 				}, 3000)
 			})
 	}
 
-	function handleProductImages(event) {
+	const handleProductImages = function (event) {
 		event.preventDefault()
 		const numOfProductImages = +productImagesNumElRef.current.value
 		setNumOfProductImagesInputsEl(numOfProductImages)
@@ -62,7 +62,7 @@ const UploadProductForm = () => {
 		})
 	}
 
-	function handleSizesSubmit(event) {
+	const handleSizesSubmit = function (event) {
 		event.preventDefault()
 		const { value } = productSizesRef.current
 
@@ -101,5 +101,3 @@ const UploadProductForm = () => {
 		</section>
 	)
 }
-
-export default UploadProductForm

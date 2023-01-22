@@ -63,7 +63,8 @@ const orderSchema = new mongoose.Schema(
 			type: Date,
 			default: Date.now,
 		},
-		customerCode: String,
+		paystackCustomerCode: String,
+		paystackCustomerId: Number,
 		totalAmount: {
 			type: Number,
 			required: [true, 'An order must have a total amount of purchase'],
@@ -74,17 +75,17 @@ const orderSchema = new mongoose.Schema(
 			type: Number,
 			required: [true, 'Paystack fees must be included in the order'],
 		},
-		paymentMethod: {
+		paystackPaymentMethod: {
 			type: String,
 			required: [true, 'An order must have a payment method'],
 		},
-		paymentStatus: {
+		paystackPaymentStatus: {
 			type: String,
 			required: [true, 'Order must contain a payment status'],
 		},
-		transactionReference: {
+		paystackTransactionReference: {
 			type: String,
-			required: [true, 'Order must contain a payment status'],
+			required: [true, 'Order must contain a payment reference'],
 		},
 	},
 	modelVirtualsConfiq

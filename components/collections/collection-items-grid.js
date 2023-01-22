@@ -1,7 +1,7 @@
 import ItemCard from '../cards/item'
 import classes from './collections-items-grid.module.css'
 
-const CollectionItemsGrid = (props) => {
+export default function CollectionItemsGrid(props) {
 	return (
 		<div className={`${classes.container} grid`}>
 			{props.items.map((item) => (
@@ -16,5 +16,3 @@ const CollectionItemsGrid = (props) => {
 		</div>
 	)
 }
-
-export default CollectionItemsGrid

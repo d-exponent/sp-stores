@@ -1,7 +1,7 @@
 import Star from '../ui/star'
 import classes from './review.module.css'
 
-const Reviews = ({ reviews, currentUserReviewId }) => {
+export default function Reviews({ reviews, currentUserReviewId }) {
 	return (
 		<ul>
 			{reviews.map(({ _id, customerName, rating, review }) => (
@@ -16,5 +16,3 @@ const Reviews = ({ reviews, currentUserReviewId }) => {
 		</ul>
 	)
 }
-
-export default Reviews

@@ -5,7 +5,7 @@ import ShoppingItemsContext from '../../context/shopping-bag'
 
 import classes from './css-modules/bag-items.module.css'
 
-const BagItems = () => {
+export default function BagItems() {
 	const { items, removeFromBag } = useContext(ShoppingItemsContext)
 
 	return (
@@ -21,5 +21,3 @@ const BagItems = () => {
 		</ul>
 	)
 }
-
-export default BagItems

@@ -8,7 +8,7 @@ import Button from '../ui/button'
 import Auth from './auth'
 import classes from './css-modules/profile.module.css'
 
-const UserProfile = () => {
+export default function UserProfile() {
 	const [updatePassword, setUpdatePassword] = useState(false)
 
 	const { showNotification } = useContext(NotificationContext)
@@ -20,10 +20,13 @@ const UserProfile = () => {
 
 	const updatePasswordTogglerText = updatePassword ? 'Hide ' : 'Update Password'
 
-	const showUpdatePasswordToggler = () => setUpdatePassword((prev) => !prev)
+	const showUpdatePasswordToggler = function () {
+		setUpdatePassword((prev) => !prev)
+	}
 
-	async function formSubmitHandler(event) {
+	const formSubmitHandler = async function (event) {
 		event.preventDefault()
+		
 		showNotification('Updating your password').pending()
 
 		const enteredCurrentPassword = currentPasswordRef.current.value
@@ -104,5 +107,3 @@ const UserProfile = () => {
 		</div>
 	)
 }
-
-export default UserProfile

@@ -1,7 +1,7 @@
 import Input from '../../../ui/input'
 import classes from './second-form.module.css'
 
-const SecondForm = (props) => {
+export default function SecondForm(props) {
 	return (
 		<form className={classes.form} onSubmit={props.onSubmit}>
 			<Input
@@ -14,5 +14,3 @@ const SecondForm = (props) => {
 		</form>
 	)
 }
-
-export default SecondForm

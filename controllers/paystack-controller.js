@@ -21,6 +21,7 @@ export const verifyPayment = async (req, res) => {
 		data: { data },
 	} = response
 
+
 	if (data.status !== 'success') {
 		throwOperationalError('Payment was unsucessful', 400)
 	}
@@ -29,16 +30,16 @@ export const verifyPayment = async (req, res) => {
 		const newOrder = await Order.create({
 			currency: data.currency,
 			cartItems: data.metadata.cartItems,
-			paystack_ref: data.reference,
-			paymentMethod: data.channel,
+			paystackPaymentMethod: data.channel,
 			paystackFees: +data.fees / 100,
 			paidAt: data.paidAt,
-			paymentStatus: data.status,
+			paystackPaymentStatus: data.status,
 			totalAmount: +data.amount / 100,
 			customerEmail: data.customer.email,
 			customerName: data.metadata['customer_names'],
-			customerCode: data.customer.customer_code,
-			transactionReference: reference,
+			paystackCustomerCode: data.customer.customer_code,
+			paystackCustomerId: data.customer.id,
+			paystackTransactionReference: reference,
 		})
 
 		await newOrder.updateCartItemsSizes()

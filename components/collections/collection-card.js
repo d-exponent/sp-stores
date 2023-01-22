@@ -1,13 +1,13 @@
 import { useRouter } from 'next/router'
 import Image from 'next/image'
 
-const CollectionCard = (props) => {
+export default function CollectionCard(props) {
 	const router = useRouter()
 
 	const collectionPath = `/${props.slug}`
 	const imageSource = `/images/collections/${props.slug}/${props.slug}.jpg`
 
-	function handleClick() {
+	const handleClick = function () {
 		router.push(collectionPath)
 	}
 
@@ -26,5 +26,3 @@ const CollectionCard = (props) => {
 		</div>
 	)
 }
-
-export default CollectionCard

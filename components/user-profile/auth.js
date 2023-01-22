@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-const Auth = (props) => {
+export default function Auth (props)  {
 	return (
 		<div>
 			<h2>{props.title}</h2>
@@ -15,4 +15,4 @@ const Auth = (props) => {
 	)
 }
 
-export default Auth
+ 

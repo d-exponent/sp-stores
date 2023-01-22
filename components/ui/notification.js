@@ -3,7 +3,7 @@ import { useContext } from 'react'
 import classes from './notification.module.css'
 import NotificationContext from '../../context/notification'
 
-const Notification = (props) => {
+export default function Notification(props) {
 	const { showNotification } = useContext(NotificationContext)
 
 	const status = {
@@ -12,7 +12,9 @@ const Notification = (props) => {
 		error: classes.error,
 	}
 
-	const hideNotificationHandler = () => showNotification().hide()
+	const hideNotificationHandler = function () {
+		showNotification().hide()
+	}
 
 	return ReactDOM.createPortal(
 		<div
@@ -24,5 +26,3 @@ const Notification = (props) => {
 		document.getElementById('notifications')
 	)
 }
-
-export default Notification

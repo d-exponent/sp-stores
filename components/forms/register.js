@@ -1,4 +1,4 @@
-const Register = (props) => {
+export default function Register (props)  {
 	return (
 		<form onSubmit={props.handleSubmit}>
 			<input
@@ -54,4 +54,3 @@ const Register = (props) => {
 	)
 }
 
-export default Register

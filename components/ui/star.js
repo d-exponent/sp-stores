@@ -1,7 +1,7 @@
 import { AiFillStar } from 'react-icons/ai'
 import classes from './star.module.css'
 
-const Star = ({ goldCount }) => {
+export default function Star ({ goldCount })  {
 	const countArray = new Array(5).fill(0)
 
 	const stars = countArray.map((star, i) => {
@@ -27,4 +27,3 @@ const Star = ({ goldCount }) => {
 	return <span>{stars}</span>
 }
 
-export default Star

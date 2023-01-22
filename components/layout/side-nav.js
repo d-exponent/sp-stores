@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom'
 import SideNavContext from '../../context/side-nav'
 import classes from './side-nav.module.css'
 
-const MobileNavPane = () => {
+export default function MobileNavPane() {
 	const { hideSideNav } = useContext(SideNavContext)
 
 	return ReactDOM.createPortal(
@@ -17,5 +17,3 @@ const MobileNavPane = () => {
 		document.getElementById('side-nav')
 	)
 }
-
-export default MobileNavPane

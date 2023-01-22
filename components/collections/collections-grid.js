@@ -1,6 +1,6 @@
 import CollectionCard from './collection-card'
 
-const CollectionGrid = ({ collections }) => {
+export default function CollectionGrid({ collections }) {
 	return (
 		<div>
 			<h1>Explore our collections</h1>
@@ -12,5 +12,3 @@ const CollectionGrid = ({ collections }) => {
 		</div>
 	)
 }
-
-export default CollectionGrid

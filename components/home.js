@@ -5,8 +5,9 @@ import CollectionsGrid from './collections/collections-grid'
 import CollectionGroup from './collections/collection-group'
 import classes from './css-modules/home.module.css'
 
-const Home = (props) => {
+export default function Home (props)  {
 	const { collections, groups } = props
+	
 	return (
 		<div className={classes.container}>
 			<Hero />
@@ -20,4 +21,3 @@ const Home = (props) => {
 	)
 }
 
-export default Home

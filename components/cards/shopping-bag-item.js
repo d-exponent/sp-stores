@@ -7,20 +7,20 @@ import Button from '../ui/button'
 
 import classes from './shopping-bag-item.module.css'
 
-const ShoppingBagItem = (props) => {
+export default function ShoppingBagItem(props) {
 	const router = useRouter()
 
 	const { discountPrice, price, cart, slug } = props
 	const productPrices = { discountPrice, price }
 
-	const pushToProducts = () => {
+	const pushToProducts = function () {
 		router.push(`/products/${slug}`)
 	}
 
 	return (
 		<li className={`${classes.list} grid`}>
 			<h3>{props.name}</h3>
-			<div >
+			<div>
 				<Image
 					src={props.imagePath}
 					alt={props.name}
@@ -36,7 +36,7 @@ const ShoppingBagItem = (props) => {
 			</div>
 			<div className={`${classes.cta} flex`}>
 				<div className={`${classes.alignCenter} flex`}>
-					Single Price:  <Price product={productPrices} />
+					Single Price: <Price product={productPrices} />
 				</div>
 				<div className={`${classes.ctaBtnWrapper} grid`}>
 					<Button onClick={props.handleCta} text='Remove' />
@@ -45,5 +45,3 @@ const ShoppingBagItem = (props) => {
 		</li>
 	)
 }
-
-export default ShoppingBagItem

@@ -7,7 +7,7 @@ const ShoppingItemsContext = createContext({
 	removeFromBag: function (itemSlug) {},
 })
 
-const getIndexOfItemSlug = (arr, match) => {
+const getIndexOfItemSlug = function (arr, match) {
 	const slugArr = arr.map((item) => item.slug)
 	return slugArr.indexOf(match)
 }
@@ -24,7 +24,6 @@ export const ShoppingItemsContextProvider = (props) => {
 		if (storedItems) setItems(storedItems)
 	}, [])
 
-	
 	useEffect(() => {
 		if (items.length) {
 			localStorage.setItem(localStorageKey, JSON.stringify(items))
@@ -34,7 +33,7 @@ export const ShoppingItemsContextProvider = (props) => {
 		setIsItems(false)
 	}, [items])
 
-	const addItemToBag = (item) => {
+	const addItemToBag = function (item) {
 		setItems((prevItems) => {
 			const slaveArr = [...prevItems]
 			const isInItems = slaveArr.some(({ slug }) => slug === item.slug)
@@ -51,7 +50,7 @@ export const ShoppingItemsContextProvider = (props) => {
 		showNotification('Added to cart successfully').success()
 	}
 
-	const deleteItemBySlug = (itemSlug) => {
+	const deleteItemBySlug = function (itemSlug)  {
 		setItems((prevItems) => {
 			const itemsArray = [...prevItems]
 

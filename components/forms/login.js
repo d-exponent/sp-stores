@@ -1,4 +1,4 @@
-const Login = (props) => {
+export default function Login(props) {
 	return (
 		<form onSubmit={props.handleSubmit}>
 			<input
@@ -21,5 +21,3 @@ const Login = (props) => {
 		</form>
 	)
 }
-
-export default Login

@@ -4,7 +4,7 @@ import Input from '../../../ui/input'
 import Button from '../../../ui/button'
 import classes from './first-form.module.css'
 
-const FirstForm = (props) => {
+export default function FirstForm(props) {
 	return (
 		<form action='/api/products' className={classes.form} onSubmit={props.onSubmit}>
 			<Fragment>
@@ -23,7 +23,6 @@ const FirstForm = (props) => {
 				<option value='footwares'>Footware</option>
 				<option value='accessories'>Accessory</option>
 			</select>
-
 
 			<div>
 				<Input label='Product Description 👇 ' name='description' type='textarea' />
@@ -44,5 +43,3 @@ const FirstForm = (props) => {
 		</form>
 	)
 }
-
-export default FirstForm

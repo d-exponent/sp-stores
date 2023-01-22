@@ -101,7 +101,7 @@ export default function SingleProductPage(props) {
 	}, [isAuthenticated, hasPurchasedProduct, product._id, data?.user.email])
 
 	//Cart Utils
-	const increment = () => {
+	const increment = function () {
 		if (!cartItem.size) {
 			return showNotification('Please pick a size').error()
 		}
@@ -116,7 +116,7 @@ export default function SingleProductPage(props) {
 		}
 	}
 
-	const decrement = () => {
+	const decrement = function () {
 		if (cartItem.quantity > 1) {
 			setCartItems((prevDetails) => ({
 				...prevDetails,
@@ -125,14 +125,16 @@ export default function SingleProductPage(props) {
 		}
 	}
 
-	const getSize = (size, quantity) => {
+	const getSize = function (size, quantity) {
 		setCartItems((prevDetails) => ({ ...prevDetails, size, quantity }))
 	}
 
-	const resetCart = () => setCartItems({ quantity: 0, amount: price, size: '' })
+	const resetCart = function () {
+		setCartItems({ quantity: 0, amount: price, size: '' })
+	}
 
 	//HANDLERS
-	const handleAddtoBag = () => {
+	const handleAddtoBag = function () {
 		try {
 			checkForCartItemSize(cartItem)
 			addToBag({ ...product, cart: cartItem })
@@ -141,24 +143,29 @@ export default function SingleProductPage(props) {
 		}
 	}
 
-	const toggleShowReviewForm = () => setShowReviewForm((prev) => !prev)
+	const toggleShowReviewForm = function () {
+		setShowReviewForm((prev) => !prev)
+	}
 
-	const toggleRender = () => {
+	const toggleRender = function () {
 		setRender((prev) => !prev)
 	}
 
-	const handleRenderAfterPurchase = () => {
+	const handleRenderAfterPurchase = function () {
 		setTimeout(toggleRender, 2000)
 	}
 
-	const handleAfterSubmitReviewForm = () => {
+	const handleAfterSubmitReviewForm = function () {
 		setShowReviewForm(false)
 		toggleRender()
 	}
 
-	const resetSizeIndex = () => setSelectedSizeIndexInSizes(null)
+	const resetSizeIndex = function () {
+		setSelectedSizeIndexInSizes(null)
+	}
 
 	const carouselImages = getCarouselImages(product)
+
 	const paystackExecuteAfterPaymentSuccess = [
 		resetCart,
 		resetSizeIndex,
@@ -263,13 +270,13 @@ export default function SingleProductPage(props) {
 	)
 }
 
-const checkForCartItemSize = (item) => {
+const checkForCartItemSize = function (item) {
 	if (!item.size) {
 		throw new Error(`Please pick a size😊`)
 	}
 }
 
-const getCarouselImages = (product) => {
+const getCarouselImages = function (product) {
 	const { imageCover, name, images } = product
 
 	// TODO: Change setup in production to relative paths

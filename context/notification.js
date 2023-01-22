@@ -17,7 +17,7 @@ export const NotificationContextProvider = (props) => {
 		return () => clearTimeout(timer)
 	}, [content])
 
-	function showNotifcationHandler(message) {
+	const showNotifcationHandler = function (message) {
 		return new Notification(message, setContent)
 	}
 

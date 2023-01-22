@@ -5,7 +5,7 @@ import { NotificationContextProvider } from '../context/notification'
 import Layout from '../components/layout/layout'
 import '../styles/globals.css'
 
-function MyApp({ Component, pageProps: { session, ...pageProps } }) {
+export default function MyApp({ Component, pageProps: { session, ...pageProps } }) {
 	return (
 		<SessionProvider session={session}>
 			<NotificationContextProvider>
@@ -32,4 +32,4 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
 	)
 }
 
-export default MyApp
+ 
