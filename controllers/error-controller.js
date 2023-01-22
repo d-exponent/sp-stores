@@ -2,7 +2,9 @@ import { sendResponse } from '../lib/controller-utils'
 import { AppError } from '../lib/app-error'
 import { purify } from '../lib/utils'
 
+
 function handleMongooseDuplicateError(err) {
+
 	const keyValueKeys = Object.keys(err.keyValue)
 	const targetKey = keyValueKeys[0]
 
@@ -17,9 +19,11 @@ function handleMongooseDuplicateError(err) {
 }
 
 function handleMongooseValidationError(err) {
+
 	const messages = Object.values(err.errors).map((message) => message.message)
 	const title = messages.length === 1 ? 'Invalid input' : 'Invalid inputs'
 	const message = `${title}: ${messages.join(', ')}!`
+
 	return new AppError(message, 400)
 }
 
@@ -33,6 +37,7 @@ function sendProdError(res, err) {
 
 	//Show generic message for non-operational errors
 	jsonRes.message = 'Something went wrong'
+	
 	sendResponse(res, 500, jsonRes)
 }
 

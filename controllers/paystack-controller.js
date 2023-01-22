@@ -41,18 +41,19 @@ export const verifyPayment = async (req, res) => {
 			transactionReference: reference,
 		})
 
-		await newOrder.updateCartItems()
+		await newOrder.updateCartItemsSizes()
 
 		sendResponse(res, 200, {
 			success: true,
 			message: 'Your purchase is successfull',
 		})
-
-	} catch (e) {
 		
-		const message =
-			'There was an issue processing your payment. Contact customer care for any refund issues.'
+	} catch (e) {
 
-		sendResponse(res, 500, { success: false, message })
+		sendResponse(res, 500, {
+			success: false,
+			message:
+				'There was an issue processing your payment. Contact customer care for any refund issues.',
+		})
 	}
 }

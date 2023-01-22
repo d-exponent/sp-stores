@@ -135,6 +135,8 @@ productSchema.methods.replaceSizes = async function (sizesArr) {
 	this.inStock = setInstock(this.quantity)
 
 	this.lastModifiedAt = Date.now()
+
+	await this.save()
 }
 
 //   VIRTUALS

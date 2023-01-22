@@ -58,9 +58,9 @@ export default function SingleProductPage(props) {
 	useEffect(() => {
 		if (reviews?.length < 1 || !isAuthenticated) return
 
-		const { user: email } = data
+		const { user: {email} } = data
 
-		const userReview = product.reviews?.find((review) => review.customerEmail === email)
+		const userReview = product.reviews?.some((review) => review.customerEmail === email)
 
 		if (!userReview) return
 

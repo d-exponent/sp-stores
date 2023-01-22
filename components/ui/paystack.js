@@ -7,7 +7,7 @@ import { getCartItems, getCheckoutPrice } from '../../lib/checkout-utils'
 import NotificationContext from '../../context/notification'
 import Button from './button'
 
-const handleSuccess = (notify, toExecute) => {
+const handlePaymentSuccess = (notify, callToActions) => {
 	return async ({ reference }) => {
 		// Validate the payment status and notify the user
 		const { response, serverRes } = await withFetch({
@@ -23,14 +23,13 @@ const handleSuccess = (notify, toExecute) => {
 		notify(message).success()
 
 		// Execute arguments
-		if (toExecute.length > 0) {
-			toExecute.forEach((execute) => execute())
+		if (callToActions.length > 0) {
+			callToActions.forEach((callToAction) => callToAction())
 		}
-
 	}
 }
 
-const handleClose = (fn, message) => () => fn(message).error()
+const handlePaymentCancel = (fn, message) => () => fn(message).error()
 
 const Paystack = (props) => {
 	const { showNotification } = useContext(NotificationContext)
@@ -56,15 +55,6 @@ const Paystack = (props) => {
 
 	const initializePayment = usePaystackPayment(getPaymentOptions())
 
-	const handlePayment = async () => {
-		showNotification('Processing your payment').pending()
-
-		initializePayment(
-			handleSuccess(showNotification, props.execute),
-			handleClose(showNotification, 'Payment was terminated')
-		)
-	}
-
 	const handleClick = () => {
 		if (props.singleItem && !props.hasSize) {
 			showNotification('Please select a size for this product').error()
@@ -74,6 +64,15 @@ const Paystack = (props) => {
 		isAuthenticated
 			? handlePayment()
 			: showNotification('Please login to make payment').error()
+	}
+
+	const handlePayment = async () => {
+		showNotification('Processing your payment').pending()
+
+		initializePayment(
+			handlePaymentSuccess(showNotification, props.execute),
+			handlePaymentCancel(showNotification, 'Payment was terminated')
+		)
 	}
 
 	const btnText = props.text || 'Buy Now'

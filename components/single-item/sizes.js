@@ -3,6 +3,7 @@ import classes from './sizes.module.css'
 
 const Sizes = ({ sizes, getsize }) => {
 	const [listIndex, setListIndex] = useState(null)
+	const [] = useState(0)
 
 	const handleClick = (size, quantity, index) => {
 		return () => {
@@ -10,6 +11,7 @@ const Sizes = ({ sizes, getsize }) => {
 			getsize(size, quantity)
 		}
 	}
+	
 
 	return (
 		<div className={classes.sizes}>

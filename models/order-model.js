@@ -90,8 +90,7 @@ const orderSchema = new mongoose.Schema(
 	modelVirtualsConfiq
 )
 
-orderSchema.methods.updateCartItems = async function () {
-	
+orderSchema.methods.updateCartItemsSizes = async function () {
 	this.cartItems.forEach(async (item) => {
 		const purchasedItem = await Product.findById(item.productId)
 
@@ -104,9 +103,7 @@ orderSchema.methods.updateCartItems = async function () {
 			return size
 		})
 
-		purchasedItem.replaceSizes(newSizes)
-
-		await purchasedItem.save()
+		await purchasedItem.replaceSizes(newSizes)
 	})
 }
 
