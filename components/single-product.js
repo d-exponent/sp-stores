@@ -11,7 +11,7 @@ import Button from './ui/button'
 import Star from './ui/star'
 import Reviews from './cards/review'
 import ReviewForm from './forms/review'
-import Paystack from './ui/paystack'
+import Paystack from './features/payments/paystack'
 import Quantity from './single-item/quantity'
 import Sizes from './single-item/sizes'
 
@@ -24,11 +24,14 @@ export default function SingleProductPage(props) {
 	const { reviews } = product
 
 	const [cartItem, setCartItems] = useState({ quantity: 0, amount: price, size: '' })
+
 	const [showReviewForm, setShowReviewForm] = useState(false)
 	const [hasPurchasedProduct, setHasPurchasedProduct] = useState(false)
 	const [canUpdateReview, setCanUpdateReview] = useState(false)
-	const [userReviewId, setUserReviewId] = useState(null)
 	const [render, setRender] = useState(false)
+
+	const [userReviewId, setUserReviewId] = useState(null)
+	const [selectedSizeIndexInSizes, setSelectedSizeIndexInSizes] = useState(null)
 
 	const { data, status } = useSession()
 
@@ -41,7 +44,6 @@ export default function SingleProductPage(props) {
 	useEffect(() => {
 		withFetch({ url: `/api/products/${product._id}` })
 			.then(({ serverRes: { data } }) => {
-			
 				setProduct((prevData) => ({ ...prevData, ...data }))
 			})
 			.catch((err) => console.log(err.message))
@@ -58,7 +60,9 @@ export default function SingleProductPage(props) {
 	useEffect(() => {
 		if (reviews?.length < 1 || !isAuthenticated) return
 
-		const { user: {email} } = data
+		const {
+			user: { email },
+		} = data
 
 		const userReview = product.reviews?.some((review) => review.customerEmail === email)
 
@@ -125,6 +129,8 @@ export default function SingleProductPage(props) {
 		setCartItems((prevDetails) => ({ ...prevDetails, size, quantity }))
 	}
 
+	const resetCart = () => setCartItems({ quantity: 0, amount: price, size: '' })
+
 	//HANDLERS
 	const handleAddtoBag = () => {
 		try {
@@ -145,14 +151,22 @@ export default function SingleProductPage(props) {
 		setTimeout(toggleRender, 2000)
 	}
 
-	const hideReviewForm = () => setShowReviewForm(false)
-
 	const handleAfterSubmitReviewForm = () => {
-		hideReviewForm()
+		setShowReviewForm(false)
 		toggleRender()
 	}
 
+	const resetSizeIndex = () => setSelectedSizeIndexInSizes(null)
+
 	const carouselImages = getCarouselImages(product)
+	const paystackExecuteAfterPaymentSuccess = [
+		resetCart,
+		resetSizeIndex,
+		handleRenderAfterPurchase,
+	]
+
+	const hasSizes = product.sizes?.length > 0
+	const hasPickedSize = hasSizes && cartItem.size !== ''
 
 	const ratingsText = reviews?.length > 0 ? 'reviews and ratings' : 'ratings'
 
@@ -170,17 +184,22 @@ export default function SingleProductPage(props) {
 		<section className={classes.container}>
 			<Carousel images={carouselImages} interval={3000} />
 			<h2>{product.name}</h2>
-			
+
 			<Price product={product} />
 
 			<div className={classes.details}>
 				<p>{`Only ${product.quantity} units left! `}</p>
 
-				{product.sizes.length > 0 ? (
-					<Sizes sizes={product.sizes} getsize={getSize} />
+				{hasSizes ? (
+					<Sizes
+						sizes={product.sizes}
+						getsize={getSize}
+						selectedSizeIndexInSizes={selectedSizeIndexInSizes}
+						setSelectedSizeIndexInSizes={setSelectedSizeIndexInSizes}
+					/>
 				) : null}
 
-				{product.sizes.length > 0 ? (
+				{hasPickedSize ? (
 					<Quantity
 						increment={increment}
 						decrement={decrement}
@@ -188,7 +207,7 @@ export default function SingleProductPage(props) {
 					/>
 				) : null}
 
-				{product.sizes.length > 0 ? (
+				{hasPickedSize ? (
 					<div className={classes.orderDetails}>
 						<h3>Order Details</h3>
 						<p>Quantity: {cartItem.quantity}</p>
@@ -205,7 +224,7 @@ export default function SingleProductPage(props) {
 						items={[{ ...product, cart: cartItem }]}
 						singleItem={true}
 						amount={price}
-						execute={[handleRenderAfterPurchase]}
+						execute={paystackExecuteAfterPaymentSuccess}
 						hasSize={cartItem.size !== ''}
 					/>
 				</>
@@ -213,10 +232,12 @@ export default function SingleProductPage(props) {
 
 			<div className={classes.reviewsContainer}>
 				<h3>{ratingsText}</h3>
+
 				<div className={classes.stats}>
 					{product.totalRatings ? <p>Total Ratings: {product.totalRatings}</p> : null}
 					<Star goldCount={product.ratingsAverage} />
 				</div>
+
 				{reviews?.length > 0 ? (
 					<div className={classes.reviews}>
 						<Reviews reviews={reviews} />

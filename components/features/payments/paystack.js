@@ -2,10 +2,10 @@ import { useSession } from 'next-auth/react'
 import { useContext } from 'react'
 import { usePaystackPayment } from 'react-paystack'
 
-import { withFetch } from '../../lib/auth-utils'
-import { getCartItems, getCheckoutPrice } from '../../lib/checkout-utils'
-import NotificationContext from '../../context/notification'
-import Button from './button'
+import { withFetch } from '../../../lib/auth-utils'
+import { getCartItems, getCheckoutPrice } from '../../../lib/checkout-utils'
+import NotificationContext from '../../../context/notification'
+import Button from '../../ui/button'
 
 const handlePaymentSuccess = (notify, callToActions) => {
 	return async ({ reference }) => {

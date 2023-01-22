@@ -24,6 +24,7 @@ export const ShoppingItemsContextProvider = (props) => {
 		if (storedItems) setItems(storedItems)
 	}, [])
 
+	
 	useEffect(() => {
 		if (items.length) {
 			localStorage.setItem(localStorageKey, JSON.stringify(items))
