@@ -7,6 +7,11 @@ import NotificationContext from '../../context/notification'
 import { withFetch } from '../../lib/auth-utils'
 import classes from './reset-password.module.css'
 
+
+const missingAuthMessage =
+	'MISSING AUTHENTICATION. Please check your email and click the link to reset your password'
+
+
 export default function ResetPassword() {
 	const router = useRouter()
 
@@ -18,10 +23,10 @@ export default function ResetPassword() {
 	const handleSubmit = async function (event) {
 		event.preventDefault()
 
-		if (!router.query.token) {
-			return showNotification(
-				'MISSING AUTHENTICATION. Please check your email and click the link to reset your password'
-			).error()
+		const resetTokenInUrl = router.query?.token
+
+		if (!resetTokenInUrl) {
+			return showNotification(missingAuthMessage).error()
 		}
 
 		showNotification('Resetting Password...').pending()
@@ -51,13 +56,15 @@ export default function ResetPassword() {
 			setTimeout(() => {
 				showNotification('Login into your account').success()
 				router.replace('/auth/users')
-			}, 4000)
+			}, 2000)
 
 			const successMessage = serverRes.message || 'Password reset successfully'
+
 			showNotification(successMessage).success()
 
 			newPasswordRef.current.value = ''
 			passwordConfirmRef.current.value = ''
+
 		} catch (error) {
 			showNotification(error.message).error()
 		}
@@ -65,7 +72,9 @@ export default function ResetPassword() {
 
 	return (
 		<section className={classes.container}>
+
 			<form onSubmit={handleSubmit}>
+
 				<Input
 					type='password'
 					label='Password'
@@ -74,6 +83,7 @@ export default function ResetPassword() {
 					reference={newPasswordRef}
 					placeholder='New password'
 				/>
+
 				<Input
 					type='password'
 					label='Verify Password'
@@ -82,8 +92,11 @@ export default function ResetPassword() {
 					reference={passwordConfirmRef}
 					placeholder='Confirm password'
 				/>
+
 				<Button text='Reset' />
+
 			</form>
+
 		</section>
 	)
 }

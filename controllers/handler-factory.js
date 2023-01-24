@@ -1,12 +1,15 @@
 import catchAsync from '../middlewares/catch-async'
 import { sendResponse } from '../lib/controller-utils'
 
+
 const setIdOnQuery = (req, routeQueryId) => {
+
 	req.query.id = req.query[routeQueryId]
 	return req
 }
 
 const setTrueFromStringToBoolean = (query) => {
+
 	if (!query) return {}
 
 	let entries = Object.entries(query)
@@ -25,6 +28,7 @@ const setTrueFromStringToBoolean = (query) => {
 }
 
 const getAll = async (req, res, Model, populateOption) => {
+
 	const innerHandler = async (req, res) => {
 		const query = setTrueFromStringToBoolean(req.query)
 
@@ -47,6 +51,7 @@ const getAll = async (req, res, Model, populateOption) => {
 }
 
 const getOne = async (req, res, Model, populateOption) => {
+
 	const innerHandler = async (req, res) => {
 		let query = Model.findById(req.query.id)
 
@@ -66,6 +71,7 @@ const getOne = async (req, res, Model, populateOption) => {
 }
 
 const createOne = async (req, res, Model) => {
+
 	const innerHandler = async (req, res) => {
 		const newDocument = await Model.create(req.body)
 
@@ -79,10 +85,11 @@ const createOne = async (req, res, Model) => {
 }
 
 const updateOne = async (req, res, Model) => {
+
 	const innerHandler = async (req, res) => {
 		const updateConfig = {
 			new: true,
-			runValidators: true,
+			runValidators: true
 		}
 
 		const updatedDocument = await Model.findByIdAndUpdate(
@@ -101,6 +108,7 @@ const updateOne = async (req, res, Model) => {
 }
 
 const deleteOne = async (req, res, Model) => {
+	
 	const innerHandler = async (req, res) => {
 		await Model.findByIdAndDelete(req.query.id)
 		res.status(204).send('Deleted')
