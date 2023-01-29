@@ -41,7 +41,7 @@ function sendProdError(res, err) {
 	sendResponse(res, 500, jsonRes)
 }
 
-function handleError(err, res) {
+export default function handleErrorResponse(err, res) {
 	let error = {
 		name: err.name,
 		errors: err.errors,
@@ -72,4 +72,4 @@ function handleError(err, res) {
 	sendProdError(res, error)
 }
 
-export default handleError
+ 

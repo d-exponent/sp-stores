@@ -11,7 +11,6 @@ import { removeCommas } from '../../../lib/utils'
 import imageUploadHandler from '../../../middlewares/multer'
 import imageResizeHandler from '../../../middlewares/sharp'
 
-
 // UTILITY FUNCTION
 const setFeildsDataType = (upload) => {
 	const allowedFeilds = [
@@ -62,7 +61,7 @@ const setFeildsDataType = (upload) => {
 	return filterd
 }
 
-//  MIDDLEWARES  
+//  MIDDLEWARES
 
 const handleNoMatch = (req, res) => {
 	sendMethodNotAllowedResponse(res, req.method)
@@ -72,6 +71,12 @@ const connectDb = async (req, res, next) => {
 	await dbConnect()
 	next()
 }
+
+;(async () => {
+	try {
+		await dbConnect()
+	} catch (e) {}
+})()
 
 const setProductFeilds = (req, res, next) => {
 	if (!req.body) {
@@ -113,7 +118,7 @@ const createProduct = async (req, res) => {
 	})
 }
 
-// HANDLER CONFIGURATION      
+// HANDLER CONFIGURATION
 
 const handler = nextConnect({
 	onNoMatch: handleNoMatch,
