@@ -2,7 +2,6 @@ import mongoose from 'mongoose'
 import Product from '../models/product-model'
 
 import { modelVirtualsConfiq } from '../lib/db-utils'
-import { getQuantityFromSizes } from '../lib/model-util'
 
 const cartItem = new mongoose.Schema(
 	{
@@ -31,6 +30,7 @@ const cartItem = new mongoose.Schema(
 			required: [true, 'Please provide the size of this product'],
 		},
 		brand: String,
+		newQuantityForSize: Number,
 		coverImage: {
 			type: String,
 			required: [true, 'Please provide the cover image for this product'],
@@ -92,20 +92,20 @@ const orderSchema = new mongoose.Schema(
 )
 
 orderSchema.methods.updateCartItemsSizes = async function () {
-	this.cartItems.forEach(async (item) => {
-		const purchasedItem = await Product.findById(item.productId)
+	
+	await Promise.all(
+		this.cartItems.map(async (cartItem) => {
+			const { productId, itemSize, newQuantityForSize } = cartItem
 
-		const newSizes = purchasedItem.sizes.map((size) => {
-			if (size.size === item.itemSize) {
-				const updatedQuantity = size.quantity - item.salesQuantity
-				size.quantity = updatedQuantity < 0 ? 0 : updatedQuantity
-			}
+			const updatedProductItem = await Product.findOneAndUpdate(
+				{ _id: productId, 'sizes.size': itemSize },
+				{ $set: { 'sizes.$.quantity': newQuantityForSize } },
+				{ new: true }
+			)
 
-			return size
+			return updatedProductItem.save()
 		})
-
-		await purchasedItem.replaceSizes(newSizes)
-	})
+	)
 }
 
 orderSchema.virtual('totalProducts').get(function () {

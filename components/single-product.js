@@ -151,9 +151,6 @@ export default function SingleProductPage(props) {
 		setRender((prev) => !prev)
 	}
 
-	const handleRenderAfterPurchase = function () {
-		setTimeout(toggleRender, 2000)
-	}
 
 	const handleAfterSubmitReviewForm = function () {
 		setShowReviewForm(false)
@@ -166,12 +163,7 @@ export default function SingleProductPage(props) {
 
 	const carouselImages = getCarouselImages(product)
 
-	const paystackExecuteAfterPaymentSuccess = [
-		resetCart,
-		resetSizeIndex,
-		handleRenderAfterPurchase,
-	]
-
+	
 	const hasSizes = product.sizes?.length > 0
 	const hasPickedSize = hasSizes && cartItem.size !== ''
 
@@ -187,14 +179,19 @@ export default function SingleProductPage(props) {
 		showFormBtnText = 'I change my mind'
 	}
 
+
+
 	return (
 		<section className={classes.container}>
+
 			<Carousel images={carouselImages} interval={3000} />
+
 			<h2>{product.name}</h2>
 
 			<Price product={product} />
 
 			<div className={classes.details}>
+
 				<p>{`Only ${product.quantity} units left! `}</p>
 
 				{hasSizes ? (
@@ -222,6 +219,7 @@ export default function SingleProductPage(props) {
 						<p>Size: {cartItem.size}</p>
 					</div>
 				) : null}
+				
 			</div>
 
 			<div className={`${classes.cta} grid`}>
@@ -231,13 +229,14 @@ export default function SingleProductPage(props) {
 						items={[{ ...product, cart: cartItem }]}
 						singleItem={true}
 						amount={price}
-						execute={paystackExecuteAfterPaymentSuccess}
+						execute={[resetCart, resetSizeIndex, toggleRender]}
 						hasSize={cartItem.size !== ''}
 					/>
 				</>
 			</div>
 
 			<div className={classes.reviewsContainer}>
+
 				<h3>{ratingsText}</h3>
 
 				<div className={classes.stats}>
@@ -246,12 +245,15 @@ export default function SingleProductPage(props) {
 				</div>
 
 				{reviews?.length > 0 ? (
+
 					<div className={classes.reviews}>
 						<Reviews reviews={reviews} />
 					</div>
+
 				) : null}
 
 				{isAuthenticated && hasPurchasedProduct ? (
+
 					<div>
 						<Button onClick={toggleShowReviewForm} text={showFormBtnText} />
 
@@ -264,7 +266,9 @@ export default function SingleProductPage(props) {
 							/>
 						) : null}
 					</div>
+
 				) : null}
+
 			</div>
 		</section>
 	)

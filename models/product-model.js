@@ -1,4 +1,9 @@
 //        HELPERS
+import mongoose from 'mongoose'
+import slugify from 'slugify'
+import Review from './review-model'
+import { modelVirtualsConfiq } from '../lib/db-utils'
+
 const setDiscountPercentage = (discountPrice, price) => {
 	if (!discountPrice) return undefined
 
@@ -8,17 +13,21 @@ const setDiscountPercentage = (discountPrice, price) => {
 	return discountPercentage
 }
 
-const setInstock = (quantity) => {
-	if (!quantity) return false
+export const getQuantityFromSizes = (sizes) => {
+	if (!sizes || !Array.isArray(sizes) || sizes.length < 1) {
+		throw new TypeError('sizes must be an array')
+	}
 
-	return quantity > 0
+	if (sizes.some((s) => !s.quantity || !s.size)) {
+		throw new TypeError(
+			'sizes must be an array of objects containing a size and a quantity feild'
+		)
+	}
+
+	return sizes.map((size) => size.quantity).reduce((sum, total) => sum + total)
 }
 
-import mongoose from 'mongoose'
-import slugify from 'slugify'
-import Review from './review-model'
-import { modelVirtualsConfiq } from '../lib/db-utils'
-import { getQuantityFromSizes } from '../lib/model-util'
+export const setInStock = (quantitiy) => quantitiy > 0
 
 const sizeSchema = new mongoose.Schema(
 	{
@@ -27,13 +36,7 @@ const sizeSchema = new mongoose.Schema(
 			lowercase: true,
 			required: [true, 'Please provide a size'],
 		},
-		quantity: {
-			type: Number,
-			validate: {
-				validator: (value) => value > 0,
-				message: (props) => `${props.value} must be at least one (1)`,
-			},
-		},
+		quantity: Number,
 	},
 	{ _id: false }
 )
@@ -120,24 +123,10 @@ const productSchema = new mongoose.Schema(
 			type: Date,
 			default: Date.now,
 		},
+		didRUnPreSaveOnUpdate: Boolean,
 	},
 	modelVirtualsConfiq
 )
-
-productSchema.methods.replaceSizes = async function (sizesArr) {
-	const filteredSizes =
-		sizesArr?.length > 0 && sizesArr.filter((size) => size.quantity > 0)
-
-	this.sizes = filteredSizes || []
-
-	this.quantity = getQuantityFromSizes(filteredSizes)
-
-	this.inStock = setInstock(this.quantity)
-
-	this.lastModifiedAt = Date.now()
-
-	await this.save()
-}
 
 //   VIRTUALS
 productSchema.virtual('reviews', {
@@ -148,72 +137,74 @@ productSchema.virtual('reviews', {
 
 // DOCUMENT MIDDLEWARE
 
+//Set discount Percentage
+productSchema.pre('save', function (next) {
+	this.discountPercentage = setDiscountPercentage(this.discountPrice, this.price)
+	next()
+})
+
 // Generate slug
 productSchema.pre('save', function (next) {
-	const nowInMillisecondsStr = Date.now().toString()
-	const dateStringLength = nowInMillisecondsStr.length
-	const lastFiveChar = nowInMillisecondsStr.slice(dateStringLength - 5)
+	if (this.isNew) {
+		const nowInMillisecondsStr = Date.now().toString()
+		const dateStringLength = nowInMillisecondsStr.length
+		const lastFiveChar = nowInMillisecondsStr.slice(dateStringLength - 5)
 
-	const slugString = `${this.brand} ${this.name} ${lastFiveChar}`
-	this.slug = slugify(slugString, { lower: true })
+		const slugString = `${this.brand} ${this.name} ${lastFiveChar}`
+		this.slug = slugify(slugString, { lower: true })
+	}
 	next()
 })
 
 //Ensure only unique sizes are saved in sorted Order
 productSchema.pre('save', function (next) {
-	const uniqueSizes = []
+	if (this.isNew) {
+		const uniqueSizes = []
 
-	// Remove duplicate objects by size
-	const uniqueSizesObjects = this.sizes.filter(({ size }) => {
-		const isInUniqueSizes = uniqueSizes.includes(size)
+		// Remove duplicate
+		const uniqueSizesObjects = this.sizes.filter(({ size }) => {
+			const isInUniqueSizes = uniqueSizes.includes(size)
 
-		if (isInUniqueSizes) return false
+			if (isInUniqueSizes) return false
 
-		uniqueSizes.push(size)
-		return true
-	})
-
-	this.sizes = []
-
-	uniqueSizes
-		.sort((a, b) => a - b)
-		.forEach((size) => {
-			const sizeObject = uniqueSizesObjects.find((s) => s.size === size)
-
-			this.sizes.push(sizeObject)
+			uniqueSizes.push(size)
+			return true
 		})
 
-	next()
-})
+		this.sizes = []
 
-// Ensure there are no size objects with quantity values equals zero
-productSchema.pre('save', function (next) {
-	this.sizes = this.sizes.filter((size) => size.quantity > 0)
-	next()
-})
-
-// Set the Initial-Quantity and Quantity feilds values
-productSchema.pre('save', function (next) {
-	if (this.isNew) {
-		this.initialQuantity = getQuantityFromSizes(this.sizes)
-		this.quantity = this.initialQuantity
+		//SORT
+		uniqueSizes
+			.sort((a, b) => a - b)
+			.forEach((size) => {
+				const sizeObject = uniqueSizesObjects.find((s) => s.size === size)
+				this.sizes.push(sizeObject)
+			})
 	}
 
 	next()
 })
 
-//Set the instock and discount Percentage feilds values
+// Filter out sizes with no quanity, set sizes dependent feilds
 productSchema.pre('save', function (next) {
-	this.discountPercentage = setDiscountPercentage(this.discountPrice, this.price)
+	
+	this.sizes = this.sizes.filter((s) => s.quantity > 0 && s.size !== '')
 
-	this.inStock = this.quantity > 0
+	this.quantity = getQuantityFromSizes(this.sizes)
+	this.inStock = setInStock(this.quantity)
 
 	next()
 })
 
-// QUERY MIDDLEWARES
+productSchema.pre('save', function (next) {
+	if (this.isNew) {
+		this.initialQuantity = this.quantity
+	}
 
-// Remove __v feild from queries
+	next()
+})
+
+// QUERY MIDDLEWARE
 productSchema.pre(/^find/, function (next) {
 	this.select('-__v')
 	next()

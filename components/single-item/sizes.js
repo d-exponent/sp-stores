@@ -10,6 +10,7 @@ export default function Sizes(props) {
 		}
 	}
 
+
 	return (
 		<div className={classes.sizes}>
 			<h3>Available Sizes: </h3>
