@@ -115,9 +115,13 @@
 }
 
 .reviewsContainer form {
-
     display: grid;
     gap: .7em;
+}
+
+.reviewsContainer form > button{
+    background-color: var(--blue-2);
+    color: var(--off-white);
 }
 
 .reviewsContainer select {
@@ -132,14 +136,14 @@
     line-height: 1.4;
 }
 
-.reviewsContainer>div:last-child button:first-child {
+.reviewsContainer>div:last-child > button {
     padding: 0;
     background-color: transparent;
     color: var(--blue-1);
     border-bottom: 1px solid var(--blue-1);
     font-family: var(--open-sans);
     font-weight: 700;
-    margin-bottom: 2em;
+    margin: 2em 0;
     text-transform: capitalize;
 }
 

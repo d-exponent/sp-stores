@@ -42,16 +42,13 @@ export default function SingleProductPage(props) {
 
 	//  Update the product after a  successfull review
 	useEffect(() => {
-		const controller = new AbortController()
 
-		withFetch({ url: `/api/products/${product._id}`, signal: controller.signal })
+		withFetch({ url: `/api/products/${product._id}`})
 			.then(({ serverRes: { data } }) => {
 				setProduct((prevData) => ({ ...prevData, ...data }))
 			})
 			.catch((err) => console.log(err.message))
 
-		return controller.abort()
-		
 	}, [product._id, render])
 
 	// Get the amount of the cart item
@@ -257,6 +254,7 @@ export default function SingleProductPage(props) {
 				)}
 
 				{isAuthenticated && hasPurchasedProduct && (
+
 					<div>
 						{showReviewForm && (
 							<ReviewForm
