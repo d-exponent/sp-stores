@@ -5,7 +5,7 @@ import Review from './review-model'
 import { modelVirtualsConfiq } from '../lib/db-utils'
 
 const setDiscountPercentage = (discountPrice, price) => {
-	if (!discountPrice) return undefined
+	if (!discountPrice) return 0
 
 	const percentage = (discountPrice / price) * 100
 	const discountPercentage = 100 - Math.round(percentage)
@@ -14,8 +14,13 @@ const setDiscountPercentage = (discountPrice, price) => {
 }
 
 export const getQuantityFromSizes = (sizes) => {
-	if (!sizes || !Array.isArray(sizes) || sizes.length < 1) {
+
+	if (!sizes || !Array.isArray(sizes)) {
 		throw new TypeError('sizes must be an array')
+	}
+
+	if (sizes.length === 0) {
+		return 0
 	}
 
 	if (sizes.some((s) => !s.quantity || !s.size)) {
@@ -158,6 +163,7 @@ productSchema.pre('save', function (next) {
 
 //Ensure only unique sizes are saved in sorted Order
 productSchema.pre('save', function (next) {
+
 	if (this.isNew) {
 		const uniqueSizes = []
 
@@ -187,7 +193,7 @@ productSchema.pre('save', function (next) {
 
 // Filter out sizes with no quanity, set sizes dependent feilds
 productSchema.pre('save', function (next) {
-	
+
 	this.sizes = this.sizes.filter((s) => s.quantity > 0 && s.size !== '')
 
 	this.quantity = getQuantityFromSizes(this.sizes)

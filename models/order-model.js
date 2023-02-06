@@ -92,23 +92,24 @@ const orderSchema = new mongoose.Schema(
 )
 
 orderSchema.methods.updateCartItemsSizes = async function () {
-	
-	await Promise.all(
-		this.cartItems.map(async (cartItem) => {
-			const { productId, itemSize, newQuantityForSize } = cartItem
+	const runSavePromises = this.cartItems.map(async (cartItem) => {
+		const { productId, itemSize, newQuantityForSize } = cartItem
 
-			const updatedProductItem = await Product.findOneAndUpdate(
-				{ _id: productId, 'sizes.size': itemSize },
-				{ $set: { 'sizes.$.quantity': newQuantityForSize } },
-				{ new: true }
-			)
+		// Update the quantity for the purchased product
+		const updatedProductItem = await Product.findOneAndUpdate(
+			{ _id: productId, 'sizes.size': itemSize },
+			{ $set: { 'sizes.$.quantity': newQuantityForSize } },
+			{ new: true }
+		)
 
-			return updatedProductItem.save()
-		})
-	)
+		// Triqqer the save middlewares but not schema validation
+		return updatedProductItem.save({ validateBeforeSave: false })
+	})
+
+	await Promise.all(runSavePromises)
 }
 
-orderSchema.virtual('totalProducts').get(function () {
+orderSchema.virtual('totalItemsPurchased').get(function () {
 	return this.cartItems.length
 })
 

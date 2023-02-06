@@ -31,7 +31,21 @@ export const ShoppingItemsContextProvider = (props) => {
 		}
 
 		setIsItems(false)
+		
 	}, [items])
+
+	const isSavedInBag = function (itemId) {
+		return items.some((item) => item._id === itemId)
+	}
+
+	const toggleAddAndRemoveFromBag = function (isInBag, itemSlug, fn) {
+
+		if (isInBag) {
+			return () => deleteItemBySlug(itemSlug)
+		}
+
+		return fn
+	}
 
 	const addItemToBag = function (item) {
 		setItems((prevItems) => {
@@ -50,7 +64,7 @@ export const ShoppingItemsContextProvider = (props) => {
 		showNotification('Added to cart successfully').success()
 	}
 
-	const deleteItemBySlug = function (itemSlug)  {
+	const deleteItemBySlug = function (itemSlug) {
 		setItems((prevItems) => {
 			const itemsArray = [...prevItems]
 
@@ -62,12 +76,16 @@ export const ShoppingItemsContextProvider = (props) => {
 				return itemsArray
 			}
 		})
+
+		showNotification('Removed from cart successfully').success()
 	}
 
 	const contextValue = {
 		items,
 		isItems,
+		isSavedInBag,
 		addToBag: addItemToBag,
+		toggleAddAndRemove: toggleAddAndRemoveFromBag,
 		removeFromBag: deleteItemBySlug,
 	}
 

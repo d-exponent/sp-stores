@@ -35,18 +35,23 @@ export default function SingleProductPage(props) {
 
 	const { data, status } = useSession()
 
-	const { addToBag } = useContext(ShoppingItemsContext)
+	const { isSavedInBag, addToBag, toggleAddAndRemove } = useContext(ShoppingItemsContext)
 	const { showNotification } = useContext(NotificationContext)
 
 	const isAuthenticated = status === 'authenticated'
 
 	//  Update the product after a  successfull review
 	useEffect(() => {
-		withFetch({ url: `/api/products/${product._id}` })
+		const controller = new AbortController()
+
+		withFetch({ url: `/api/products/${product._id}`, signal: controller.signal })
 			.then(({ serverRes: { data } }) => {
 				setProduct((prevData) => ({ ...prevData, ...data }))
 			})
 			.catch((err) => console.log(err.message))
+
+		return controller.abort()
+		
 	}, [product._id, render])
 
 	// Get the amount of the cart item
@@ -64,13 +69,13 @@ export default function SingleProductPage(props) {
 			user: { email },
 		} = data
 
-		const userReview = product.reviews?.some((review) => review.customerEmail === email)
+		const userReview = reviews?.find((review) => review.customerEmail === email)
 
 		if (!userReview) return
 
 		setUserReviewId(userReview._id)
 		setCanUpdateReview(true)
-	}, [isAuthenticated, data, product.reviews, reviews?.length, render])
+	}, [isAuthenticated, data, reviews, reviews?.length, render])
 
 	//  Only allow users who have purchased the current product to write a review
 	useEffect(() => {
@@ -151,7 +156,6 @@ export default function SingleProductPage(props) {
 		setRender((prev) => !prev)
 	}
 
-
 	const handleAfterSubmitReviewForm = function () {
 		setShowReviewForm(false)
 		toggleRender()
@@ -163,11 +167,11 @@ export default function SingleProductPage(props) {
 
 	const carouselImages = getCarouselImages(product)
 
-	
 	const hasSizes = product.sizes?.length > 0
 	const hasPickedSize = hasSizes && cartItem.size !== ''
 
 	const ratingsText = reviews?.length > 0 ? 'reviews and ratings' : 'ratings'
+	const isInBag = isSavedInBag(product._id)
 
 	let showFormBtnText = 'Write a review'
 
@@ -179,11 +183,8 @@ export default function SingleProductPage(props) {
 		showFormBtnText = 'I change my mind'
 	}
 
-
-
 	return (
 		<section className={classes.container}>
-
 			<Carousel images={carouselImages} interval={3000} />
 
 			<h2>{product.name}</h2>
@@ -191,8 +192,7 @@ export default function SingleProductPage(props) {
 			<Price product={product} />
 
 			<div className={classes.details}>
-
-				<p>{`Only ${product.quantity} units left! `}</p>
+				{hasSizes && <p>{`Only ${product.quantity} units left! `}</p>}
 
 				{hasSizes ? (
 					<Sizes
@@ -201,42 +201,48 @@ export default function SingleProductPage(props) {
 						selectedSizeIndexInSizes={selectedSizeIndexInSizes}
 						setSelectedSizeIndexInSizes={setSelectedSizeIndexInSizes}
 					/>
-				) : null}
+				) : (
+					<h1>OUT OF STOCK</h1>
+				)}
 
-				{hasPickedSize ? (
+				{hasSizes && hasPickedSize && (
 					<Quantity
 						increment={increment}
 						decrement={decrement}
 						count={cartItem.quantity}
 					/>
-				) : null}
+				)}
 
-				{hasPickedSize ? (
+				{hasSizes && hasPickedSize && (
 					<div className={classes.orderDetails}>
 						<h3>Order Details</h3>
 						<p>Quantity: {cartItem.quantity}</p>
 						<p>Amount: {cartItem.amount}</p>
 						<p>Size: {cartItem.size}</p>
 					</div>
-				) : null}
-				
+				)}
 			</div>
 
-			<div className={`${classes.cta} grid`}>
-				<>
-					<Button onClick={handleAddtoBag} text='Add to cart' />
-					<Paystack
-						items={[{ ...product, cart: cartItem }]}
-						singleItem={true}
-						amount={price}
-						execute={[resetCart, resetSizeIndex, toggleRender]}
-						hasSize={cartItem.size !== ''}
-					/>
-				</>
-			</div>
+			{hasSizes && (
+				<div className={`${classes.cta} grid`}>
+					<>
+						<Button
+							onClick={toggleAddAndRemove(isInBag, product.slug, handleAddtoBag)}
+							text={isInBag ? 'Remove from Cart' : 'Add to cart'}
+						/>
+
+						<Paystack
+							items={[{ ...product, cart: cartItem }]}
+							singleItem={true}
+							amount={price}
+							execute={[resetCart, resetSizeIndex, toggleRender]}
+							hasSize={cartItem.size !== ''}
+						/>
+					</>
+				</div>
+			)}
 
 			<div className={classes.reviewsContainer}>
-
 				<h3>{ratingsText}</h3>
 
 				<div className={classes.stats}>
@@ -244,31 +250,26 @@ export default function SingleProductPage(props) {
 					<Star goldCount={product.ratingsAverage} />
 				</div>
 
-				{reviews?.length > 0 ? (
-
+				{reviews?.length > 0 && (
 					<div className={classes.reviews}>
 						<Reviews reviews={reviews} />
 					</div>
+				)}
 
-				) : null}
-
-				{isAuthenticated && hasPurchasedProduct ? (
-
+				{isAuthenticated && hasPurchasedProduct && (
 					<div>
-						<Button onClick={toggleShowReviewForm} text={showFormBtnText} />
-
-						{showReviewForm ? (
+						{showReviewForm && (
 							<ReviewForm
 								productId={product.id}
 								afterSubmit={handleAfterSubmitReviewForm}
 								useUpdateAction={canUpdateReview}
 								userReviewId={userReviewId}
 							/>
-						) : null}
+						)}
+
+						<Button onClick={toggleShowReviewForm} text={showFormBtnText} />
 					</div>
-
-				) : null}
-
+				)}
 			</div>
 		</section>
 	)

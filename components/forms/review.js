@@ -18,8 +18,6 @@ export default function Review(props) {
 	const handleSubmit = async function (event) {
 		event.preventDefault()
 
-		//TODO: Make review comments optional for both creating or updating a review
-
 		if (status !== 'authenticated') {
 			return showNotification('Login to write a review').error()
 		}
