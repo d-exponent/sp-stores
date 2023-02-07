@@ -13,11 +13,11 @@ export const getStaticProps = async (context) => {
 	try {
 		await dbConnect()
 
-		const result = await Product.findOne({ slug }).populate('reviews')
+		const product = await Product.findOne({ slug }).populate('reviews')
 
-		if (!result) throw ''
+		if (!product) throw ''
 
-		return { props: { product: purify(result) } }
+		return { props: { product: purify(product) } }
 	} catch (error) {
 		return redirectToPage()
 	}

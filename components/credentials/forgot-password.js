@@ -20,22 +20,26 @@ export default function ForgotPassword() {
 
 		const enteredEmail = emailInputRef.current.value
 
-		try {
-			const { response, serverRes } = await withFetch({
-				method: 'POST',
-				url: `/api/auth/users/forgot-password`,
-				data: { email: enteredEmail },
-			})
+		const [resPromise] = withFetch({
+			method: 'POST',
+			url: `/api/auth/users/forgot-password`,
+			data: { email: enteredEmail },
+		})
 
-			if (!response.ok) {
+		try {
+			const res = await resPromise
+
+			if (!res.success) {
 				const errorMessage = 'Error resetting your password. Please try again!'
-				throw new Error(serverRes.message || errorMessage)
+				throw new Error(res.message || errorMessage)
 			}
 
 			const successMessage = `A password reset link has been sent to your email address. Click on the link to reset your password`
+
 			showNotification(serverRes.message || successMessage).success()
 
 			emailInputRef.current.value = ''
+			
 		} catch (error) {
 			showNotification(error.message).error()
 		}

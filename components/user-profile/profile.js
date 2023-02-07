@@ -32,25 +32,27 @@ export default function UserProfile() {
 		const enteredCurrentPassword = currentPasswordRef.current.value
 		const enteredNewPassword = newPasswordRef.current.value
 
-		try {
-			const { response, serverRes } = await withFetch({
-				url: `/api/auth/users/${data.user.email}`,
-				data: {
-					currentPassword: enteredCurrentPassword,
-					newPassword: enteredNewPassword,
-				},
-				method: 'PATCH',
-			})
+		const [resPromise ] =  withFetch({
+			url: `/api/auth/users/${data.user.email}`,
+			data: {
+				currentPassword: enteredCurrentPassword,
+				newPassword: enteredNewPassword,
+			},
+			method: 'PATCH',
+		})
 
-			if (!response.ok) throw new Error(serverRes.message)
+		try {
+			const res = await resPromise
+
+			if (!res.success) throw new Error(res.message)
 
 			currentPasswordRef.current.value = ''
 			newPasswordRef.current.value = ''
 
 			setUpdatePassword(false)
 			showNotification('Password updated successfully').success()
-		} catch (error) {
-			const errorMessage = error.message || 'Something went wrong. Please try again!'
+		} catch (e) {
+			const errorMessage = e.message || 'Something went wrong. Please try again!'
 			showNotification(errorMessage).error()
 		}
 	}

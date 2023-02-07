@@ -22,47 +22,67 @@ export default function Review(props) {
 			return showNotification('Login to write a review').error()
 		}
 
-		const enteredRating = ratingRef.current?.value * 1
-		const enteredComment = reviewRef.current?.value
+		const enteredReviewRating = ratingRef.current?.value * 1
+		const enteredReviewComment = reviewRef.current?.value
+		const newReview = !Boolean(props.useUpdateAction)
 
-		if (!enteredRating) {
+		if (newReview && !enteredReviewRating) {
 			return showNotification('Please Enter a rating').error()
 		}
 
-		if (!enteredComment) {
-			return showNotification('Please Enter a review').error()
+		if (!newReview && !enteredReviewRating && !enteredReviewComment) {
+			return showNotification('Please Enter a rating or a review').error()
 		}
 
-		showNotification('Adding review').pending()
+		const pendingMessage = newReview ? 'Adding review' : 'Updating your review'
+		showNotification(pendingMessage).pending()
 
 		const review = {
 			customerEmail: session.user.email,
 			customerName: session.user.name,
 			productId: props.productId,
-			review: enteredComment || '',
-			rating: +enteredRating,
+			review: enteredReviewComment || '',
+			rating: +enteredReviewRating || 0,
 		}
 
 		let url = '/api/review'
 		let method = 'POST'
 
-		if (props.useUpdateAction) {
-			//Modify the Url
-			url = `${url}/${props.userReviewId}?`
-			method = 'PATCH'
-
+		if (!newReview) {
 			// Remove redundant properties
 			delete review.customerEmail
 			delete review.customerName
 			delete review.productId
+
+			//configure review and ratings properties on the review object
+			review.review = Boolean(enteredReviewComment)
+				? enteredReviewComment
+				: props.userReviewDetails.review
+
+			review.rating = Boolean(enteredReviewRating)
+				? +enteredReviewRating
+				: props.userReviewDetails.rating
+
+			review.review === '' && delete review.review
+			review.rating < 1 && delete review.rating
+
+			//Modify the Url
+			url = `${url}/${props.userReviewDetails.reviewId}?`
+			method = 'PATCH'
 		}
 
+		review.review = review.review === '' ? undefined : review.review
+		
+		const [resPromise] = withFetch({
+			url,
+			method,
+			data: review,
+		})
+
 		try {
-			await withFetch({
-				url,
-				method,
-				data: review,
-			})
+			const res = await resPromise
+
+			if (!res.success) throw new Error(res.message)
 
 			reviewRef.current.value = ''
 			ratingRef.current.value = ''
@@ -70,21 +90,22 @@ export default function Review(props) {
 			props.afterSubmit()
 			showNotification('Success!! ✔').success()
 		} catch (err) {
-			const isDuplicateMessage =
-				err.message.trim() === 'This product already exits. Please try another!'
+			
+			// const isDuplicateMessage =
+			// 	err.message.trim() === 'This product already exits. Please try another!'
 
-			const errorMessage = isDuplicateMessage
-				? 'You already reviewed this product'
-				: err.message
+			// const errorMessage = isDuplicateMessage
+			// 	? 'You already reviewed this product'
+			// 	: err.message
 
-			showNotification(errorMessage).error()
+			showNotification('Error').error()
 		}
 	}
 
 	return (
 		<form onSubmit={handleSubmit}>
 			<select ref={ratingRef}>
-				<option value='0'>--Rating--</option>
+				<option value=''>--Rating--</option>
 				<option value='1'>1</option>
 				<option value='2'>2</option>
 				<option value='3'>3</option>

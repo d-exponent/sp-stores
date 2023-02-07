@@ -92,6 +92,7 @@ const orderSchema = new mongoose.Schema(
 )
 
 orderSchema.methods.updateCartItemsSizes = async function () {
+	
 	const runSavePromises = this.cartItems.map(async (cartItem) => {
 		const { productId, itemSize, newQuantityForSize } = cartItem
 

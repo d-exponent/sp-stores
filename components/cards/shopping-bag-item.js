@@ -18,7 +18,7 @@ export default function ShoppingBagItem(props) {
 	}
 
 	return (
-		<li className={`${classes.list} grid`}>
+		<li className={`${classes.list} grid`} onClick={pushToProducts}>
 			<h3>{props.name}</h3>
 			<div>
 				<Image

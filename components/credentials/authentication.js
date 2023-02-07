@@ -82,19 +82,20 @@ export default function Authentication() {
 			data: registerForm,
 		}
 
+		const [resPromise] = withFetch(fetchConfig)
+		
 		try {
-			const { response, serverRes } = await withFetch(fetchConfig)
-			if (!response.ok) {
-				throw new Error(serverRes.message)
-			}
+			const res = await resPromise
 
-			const successMessage =
-				serverRes.message || 'Your account is created successfully 👍'
-			showNotification(successMessage).success()
+			if (!res.success) throw new Error(res.message)
+
+			showNotification(res.message + ' 🐱‍🏍').success()
 		} catch (error) {
 			setDisableRegisterBtn(false)
 
-			const errorMessage = error.message || 'Something went wrong!'
+			const errorMessage =
+				'Something went wrong with creating your account. Please try again'
+
 			return showNotification(errorMessage).error()
 		}
 
@@ -110,7 +111,7 @@ export default function Authentication() {
 			}
 
 			showNotification('Logged in successfully').success()
-		}, 1500)
+		}, 700)
 	}
 
 	return (

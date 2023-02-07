@@ -26,6 +26,7 @@ const reviewSchema = new mongoose.Schema(
 			type: Number,
 			min: 1,
 			max: 5,
+			required: [true, 'A review must have at least one rating']
 		},
 		review: String,
 		createdAt: {
@@ -38,6 +39,7 @@ const reviewSchema = new mongoose.Schema(
 )
 
 reviewSchema.statics.calculateRatingsStats = async function (itemId) {
+	
 	const id = typeof itemId === 'string' ? new mongoose.Types.ObjectId(itemId) : itemId
 
 	const ratingStats = await this.aggregate([
@@ -59,10 +61,10 @@ reviewSchema.statics.calculateRatingsStats = async function (itemId) {
 	}
 
 	// Update the product
-	await Product.findByIdAndUpdate(itemId, updatedStats, { new: true })
+	await Product.findByIdAndUpdate(itemId, updatedStats)
 }
 
-reviewSchema.index({ customerEmail: 1, product: 1 }, { unique: true })
+reviewSchema.index({ customerEmail: 1, productId: -1 }, { unique: true })
 
 reviewSchema.post('save', async function () {
 	await this.constructor.calculateRatingsStats(this.productId)

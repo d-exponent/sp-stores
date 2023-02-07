@@ -27,6 +27,7 @@ const setTrueFromStringToBoolean = (query) => {
 	return Object.fromEntries(entries)
 }
 
+
 const getAll = async (req, res, Model, populateOption) => {
 
 	const innerHandler = async (req, res) => {
@@ -85,6 +86,8 @@ const createOne = async (req, res, Model) => {
 }
 
 const updateOne = async (req, res, Model) => {
+
+	console.log('Handler Factory Update One 🧰', req.body)
 
 	const innerHandler = async (req, res) => {
 		const updateConfig = {

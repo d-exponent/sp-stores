@@ -33,9 +33,10 @@ export const createUser = async (req, res) => {
 	const url = `${protocol}://${host}`
 
 	await new Email(newUser, url).sendWelcome()
+
 	sendResponse(res, 201, {
 		success: true,
-		message: 'Your account was created successfully',
+		message: `Welcome to the Sp family ${newUser.name}`,
 	})
 }
 

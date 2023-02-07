@@ -30,7 +30,7 @@ export default function SingleProductPage(props) {
 	const [canUpdateReview, setCanUpdateReview] = useState(false)
 	const [render, setRender] = useState(false)
 
-	const [userReviewId, setUserReviewId] = useState(null)
+	const [userReviewDetails, setUserReviewDetails] = useState(null)
 	const [selectedSizeIndexInSizes, setSelectedSizeIndexInSizes] = useState(null)
 
 	const { data, status } = useSession()
@@ -42,16 +42,20 @@ export default function SingleProductPage(props) {
 
 	//  Update the product after a  successfull review
 	useEffect(() => {
+		const [res, abort] = withFetch({ url: `/api/products/${product._id}` })
 
-		withFetch({ url: `/api/products/${product._id}`})
-			.then(({ serverRes: { data } }) => {
-				setProduct((prevData) => ({ ...prevData, ...data }))
+		res
+			.then((res) => {
+				if (res.success) {
+					return setProduct((prevData) => ({ ...prevData, ...res.data }))
+				}
 			})
 			.catch((err) => console.log(err.message))
 
+		return abort
 	}, [product._id, render])
 
-	// Get the amount of the cart item
+	// Get the amount for the cart item
 	useEffect(() => {
 		if (cartItem.quantity === 0) return
 
@@ -70,7 +74,12 @@ export default function SingleProductPage(props) {
 
 		if (!userReview) return
 
-		setUserReviewId(userReview._id)
+		setUserReviewDetails({
+			reviewId: userReview._id,
+			review: userReview.review,
+			rating: userReview.rating,
+		})
+
 		setCanUpdateReview(true)
 	}, [isAuthenticated, data, reviews, reviews?.length, render])
 
@@ -82,9 +91,14 @@ export default function SingleProductPage(props) {
 		const query = `customerEmail=${data.user.email}`
 		const url = `/api/orders?${query}`
 
-		withFetch({ url })
-			.then(({ serverRes: { data: userOrders } }) => {
-				const ordersLength = userOrders.length
+		const [resPromise, abort] = withFetch({ url })
+
+		resPromise
+			.then((res) => {
+				if (!res.success) throw new Error('')
+
+				const userOrders = res.data
+				const ordersLength = res.results
 				let hasBought = false
 				let index = 0
 
@@ -99,7 +113,9 @@ export default function SingleProductPage(props) {
 				hasBought && setHasPurchasedProduct(true)
 			})
 			.catch((err) => setHasPurchasedProduct(false))
-	}, [isAuthenticated, hasPurchasedProduct, product._id, data?.user.email])
+
+		return abort
+	}, [isAuthenticated, hasPurchasedProduct, product._id, data?.user.email, render])
 
 	//Cart Utils
 	const increment = function () {
@@ -253,14 +269,13 @@ export default function SingleProductPage(props) {
 				)}
 
 				{isAuthenticated && hasPurchasedProduct && (
-
 					<div>
 						{showReviewForm && (
 							<ReviewForm
-								productId={product.id}
+								productId={product._id}
 								afterSubmit={handleAfterSubmitReviewForm}
 								useUpdateAction={canUpdateReview}
-								userReviewId={userReviewId}
+								userReviewDetails={userReviewDetails}
 							/>
 						)}
 

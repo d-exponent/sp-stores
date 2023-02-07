@@ -10,17 +10,23 @@ import Button from '../../ui/button'
 const handlePaymentSuccess = function (notify, callToActions) {
 	return async ({ reference }) => {
 		// Validate the payment status and notify the user
-		const { response, serverRes } = await withFetch({
+		const [resPromise, abort] = withFetch({
 			method: 'POST',
 			data: { reference },
 			url: '/api/checkout/verify-payment',
 		})
 
-		const { message } = serverRes
+		let serverRes
 
-		if (!response.ok) return notify(message).error()
+		try {
+			serverRes = await resPromise
+		} catch (e) {
+			notify('Something went wrong. Contact customer care any complaints').error()
+		}
 
-		notify(message).success()
+		if (!serverRes.success) return notify(serverRes.message).error()
+
+		notify(serverRes.message).success()
 
 		// Execute arguments
 		if (callToActions.length > 0) {
@@ -29,11 +35,7 @@ const handlePaymentSuccess = function (notify, callToActions) {
 	}
 }
 
-const handlePaymentCancel = function (fn, message) {
-	return function () {
-		fn(message).error()
-	}
-}
+const handlePaymentCancel = (fn, message) => () => fn(message).error()
 
 export default function Paystack(props) {
 	const { showNotification } = useContext(NotificationContext)

@@ -7,10 +7,8 @@ import NotificationContext from '../../context/notification'
 import { withFetch } from '../../lib/auth-utils'
 import classes from './reset-password.module.css'
 
-
 const missingAuthMessage =
 	'MISSING AUTHENTICATION. Please check your email and click the link to reset your password'
-
 
 export default function ResetPassword() {
 	const router = useRouter()
@@ -40,23 +38,26 @@ export default function ResetPassword() {
 			resetToken: router.query.token,
 		}
 
-	
-		try {
-			const { response, serverRes } = await withFetch({
-				url: '/api/auth/users/reset-password',
-				method: 'PATCH',
-				data: resetData,
-			})
+		const [resPromise] = withFetch({
+			url: '/api/auth/users/reset-password',
+			method: 'PATCH',
+			data: resetData,
 
-			if (!response.ok) {
-				const errorMessage = serverRes.message || 'error updating your password.'
+		})
+
+		try {
+
+			const res = await resPromise
+
+			if (!res.success) {
+				const errorMessage = res.message || 'error updating your password.'
 				throw new Error(errorMessage)
 			}
 
 			setTimeout(() => {
-				showNotification('Login into your account').success()
 				router.replace('/auth/users')
-			}, 2000)
+				showNotification('Login into your account').success()
+			}, 400)
 
 			const successMessage = serverRes.message || 'Password reset successfully'
 
@@ -64,7 +65,6 @@ export default function ResetPassword() {
 
 			newPasswordRef.current.value = ''
 			passwordConfirmRef.current.value = ''
-
 		} catch (error) {
 			showNotification(error.message).error()
 		}
@@ -72,9 +72,7 @@ export default function ResetPassword() {
 
 	return (
 		<section className={classes.container}>
-
 			<form onSubmit={handleSubmit}>
-
 				<Input
 					type='password'
 					label='Password'
@@ -94,9 +92,7 @@ export default function ResetPassword() {
 				/>
 
 				<Button text='Reset' />
-
 			</form>
-
 		</section>
 	)
 }

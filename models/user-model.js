@@ -71,7 +71,6 @@ userSchema.virtual('fullName').get(function () {
 userSchema.pre('save', function (next) {
 	this.firstName = capitalize(this.firstName)
 	this.lastName = capitalize(this.lastName)
-
 	next()
 })
 
