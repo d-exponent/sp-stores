@@ -3,14 +3,19 @@ import CredentialsProvider from 'next-auth/providers/credentials'
 import GoogleProvider from 'next-auth/providers/google'
 
 import User from '../../../models/user-model'
-import { dbConnect } from '../../../lib/db-utils'
+import dbConnect from '../../../lib/db-utils'
 import { bcryptCompare } from '../../../lib/controller-utils'
+import { isValidEmail } from '../../../lib/utils'
+import AppError from '../../../lib/app-error'
+
+const throwError = (message) => {
+	throw new Error(message)
+}
 
 export const nextAuthConfig = {
-	session: {
-		jwt: true,
+	jwt: {
+		maxAge: 60 * 24 * 60 * 60, //two months
 	},
-	secret: process.env.NEXTAUTH_SECRET,
 	pages: {
 		signIn: '/auth/sign-in',
 	},
@@ -19,32 +24,39 @@ export const nextAuthConfig = {
 			async authorize(credentails) {
 				const { email, password } = credentails
 
-				if (!email) {
-					throw new Error('Please provide your email address')
+				if (!email || !password || !isValidEmail(email)) {
+					throwError('Please provide your valid email address and Password')
 				}
 
-				if (!password) {
-					throw new Error('Please provide your password')
+				try {
+					await dbConnect()
+				} catch (e) {
+					throwError('Please check your internet connection and try again')
+					AppError.saveServerErrorToDatabase(e, (e) => console.log(e ? e.message : ''))
 				}
 
-				await dbConnect()
-				const user = await User.findOne({ email }).select('+password')
-
-				//Verify active
-				if (!user.active) {
-					throw new Error('Account does not exist or has been deleted')
+				let user
+				try {
+					user = await User.findOne({ email }).select('+password')
+				} catch (e) {
+					throwError('Something went wrong. Please try again')
 				}
 
 				//Verify User
 				if (!user) {
-					throw new Error('Incorrect email address. Register a new account?')
+					throwError('User not found. Please create an account.')
+				}
+
+				//Verify active
+				if (!user.active) {
+					throwError('Account does not exist or has been deleted')
 				}
 
 				//Verify password
-				const isVerifiedPassword = await bcryptCompare(password, user.password)
+				const verifiedPassword = await bcryptCompare(password, user.password)
 
-				if (!isVerifiedPassword) {
-					throw new Error('Incorrect password. Forgot password?')
+				if (!verifiedPassword) {
+					throwError('Incorrect password. Forgot password?')
 				}
 
 				return {

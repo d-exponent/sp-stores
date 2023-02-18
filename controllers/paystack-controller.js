@@ -1,8 +1,9 @@
 import axios from 'axios'
 
 import Order from '../models/order-model'
-import throwOperationalError from '../lib/app-error'
+import AppError from '../lib/app-error'
 import { sendResponse } from '../lib/controller-utils'
+
 
 export const verifyPayment = async (req, res) => {
 	const { reference } = req.body
@@ -23,7 +24,7 @@ export const verifyPayment = async (req, res) => {
 
 
 	if (data.status !== 'success') {
-		throwOperationalError('Payment was unsucessful', 400)
+		AppError.throwAppError('Payment was unsucessful', 400)
 	}
 
 	try {
@@ -46,7 +47,7 @@ export const verifyPayment = async (req, res) => {
 
 		sendResponse(res, 200, {
 			success: true,
-			message: 'Your purchase is successfull',
+			message: 'Your purchase is processed and saved successfully',
 		})
 		
 	} catch (e) {

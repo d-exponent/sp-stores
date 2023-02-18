@@ -1,5 +1,5 @@
 import { isProductionEnv, sendResponse } from '../lib/controller-utils'
-import { AppError } from '../lib/app-error'
+import  AppError  from '../lib/app-error'
 import { purify } from '../lib/utils'
 
 function handleMongooseDuplicateError(err) {

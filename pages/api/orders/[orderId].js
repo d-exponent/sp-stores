@@ -1,6 +1,7 @@
 import Order from '../../../models/order-model'
 import factory from '../../../controllers/handler-factory'
 import { sendMethodNotAllowedResponse } from '../../../lib/controller-utils'
+import catchAsync from '../../../middlewares/catch-async'
 
 const handler = async (req, res) => {
 	req = factory.setId(req, 'orderId')
@@ -26,4 +27,4 @@ const handler = async (req, res) => {
 	}
 }
 
-export default handler
+export default catchAsync(handler)

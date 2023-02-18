@@ -1,15 +1,12 @@
-import catchAsync from '../middlewares/catch-async'
 import { sendResponse } from '../lib/controller-utils'
 
-
 const setIdOnQuery = (req, routeQueryId) => {
-
 	req.query.id = req.query[routeQueryId]
+	delete req.query[routeQueryId]
 	return req
 }
 
 const setTrueFromStringToBoolean = (query) => {
-
 	if (!query) return {}
 
 	let entries = Object.entries(query)
@@ -27,97 +24,69 @@ const setTrueFromStringToBoolean = (query) => {
 	return Object.fromEntries(entries)
 }
 
-
 const getAll = async (req, res, Model, populateOption) => {
+	const query = setTrueFromStringToBoolean(req.query)
 
-	const innerHandler = async (req, res) => {
-		const query = setTrueFromStringToBoolean(req.query)
+	let allQueriedDocuments = Model.find(query)
 
-		let allQueriedDocuments = Model.find(query)
-
-		if (populateOption) {
-			allQueriedDocuments = allQueriedDocuments.populate(populateOption)
-		}
-
-		const allDocuments = await allQueriedDocuments
-
-		sendResponse(res, 200, {
-			success: true,
-			results: allDocuments.length,
-			data: allDocuments,
-		})
+	if (populateOption) {
+		allQueriedDocuments = allQueriedDocuments.populate(populateOption)
 	}
 
-	await catchAsync(req, res, innerHandler)
+	const allDocuments = await allQueriedDocuments
+
+	sendResponse(res, 200, {
+		success: true,
+		results: allDocuments.length,
+		data: allDocuments,
+	})
 }
 
 const getOne = async (req, res, Model, populateOption) => {
+	let query = Model.findById(req.query.id)
 
-	const innerHandler = async (req, res) => {
-		let query = Model.findById(req.query.id)
-
-		if (populateOption) {
-			query = query.populate(populateOption)
-		}
-
-		const queriedDocument = await query
-
-		sendResponse(res, 200, {
-			success: true,
-			data: queriedDocument,
-		})
+	if (populateOption) {
+		query = query.populate(populateOption)
 	}
 
-	await catchAsync(req, res, innerHandler)
+	const queriedDocument = await query
+
+	sendResponse(res, 200, {
+		success: true,
+		data: queriedDocument,
+	})
 }
 
 const createOne = async (req, res, Model) => {
+	const newDocument = await Model.create(req.body)
 
-	const innerHandler = async (req, res) => {
-		const newDocument = await Model.create(req.body)
-
-		sendResponse(res, 201, {
-			success: true,
-			data: newDocument,
-		})
-	}
-
-	await catchAsync(req, res, innerHandler)
+	sendResponse(res, 201, {
+		success: true,
+		data: newDocument,
+	})
 }
 
 const updateOne = async (req, res, Model) => {
-
-	console.log('Handler Factory Update One 🧰', req.body)
-
-	const innerHandler = async (req, res) => {
-		const updateConfig = {
-			new: true,
-			runValidators: true
-		}
-
-		const updatedDocument = await Model.findByIdAndUpdate(
-			req.query.id,
-			req.body,
-			updateConfig
-		)
-
-		sendResponse(res, 200, {
-			success: true,
-			data: updatedDocument,
-		})
+	const updateConfig = {
+		new: true,
+		runValidators: true,
 	}
 
-	await catchAsync(req, res, innerHandler)
+	const updatedDocument = await Model.findByIdAndUpdate(
+		req.query.id,
+		req.body,
+		updateConfig
+	)
+
+	sendResponse(res, 200, {
+		success: true,
+		data: updatedDocument,
+	})
 }
 
 const deleteOne = async (req, res, Model) => {
-	
-	const innerHandler = async (req, res) => {
-		await Model.findByIdAndDelete(req.query.id)
-		res.status(204).send('Deleted')
-	}
-	
-	await catchAsync(req, res, innerHandler)
+	await Model.findByIdAndDelete(req.query.id)
+	res.status(204).send('Deleted')
 }
 
 const factory = {

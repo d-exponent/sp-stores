@@ -1,6 +1,7 @@
-import throwOperationalError from '../lib/app-error'
+import AppError from '../lib/app-error'
 import Email from '../lib/email'
 import User from '../models/user-model'
+import { getToken } from 'next-auth/jwt'
 import {
 	sendResponse,
 	bcryptCompare,
@@ -9,21 +10,24 @@ import {
 	bcryptHash,
 	cryptoHash,
 } from '../lib/controller-utils'
-import { logByEnviroment } from '../lib/utils'
+
 
 export const createUser = async (req, res) => {
 	const { password, confirmPassword } = req.body
 
 	if (!password || !confirmPassword) {
-		throwOperationalError('Please peovide you password and confirm password', 400)
+		AppError.throwAppError(
+			'Please peovide you password and confirm password',
+			400
+		)
 	}
 
 	if (password.length < 8) {
-		throwOperationalError('Password must contain at least 8 characters!', 400)
+		AppError.throwAppError('Password must contain at least 8 characters!', 400)
 	}
 
 	if (password !== confirmPassword) {
-		throwOperationalError('Passwords do not match.', 400)
+		AppError.throwAppError('Passwords do not match.', 400)
 	}
 
 	const newUser = await User.create(req.body)
@@ -45,41 +49,41 @@ export const updatePassword = async (req, res) => {
 	const { currentPassword, newPassword } = req.body
 
 	if (!email) {
-		throwOperationalError('Please provide the email address', 422)
+		AppError.throwAppError('Please provide the email address', 422)
 	}
 
 	if (!currentPassword || !newPassword) {
-		throwOperationalError(
+		AppError.throwAppError(
 			'Please provide your current password and the new password',
 			422
 		)
 	}
 
 	if (currentPassword === newPassword) {
-		throwOperationalError('New password is the same as the old password', 400)
+		AppError.throwAppError('New password is the same as the old password', 400)
 	}
 
 	if (newPassword.length < 8) {
-		throwOperationalError('Password must be at least 8 characters', 400)
+		AppError.throwAppError('Password must be at least 8 characters', 400)
 	}
 
 	const user = await User.findOne({ email }).select('+password')
 
 	if (!user) {
-		throwOperationalError('This account is not in our records', 404)
+		AppError.throwAppError('This account is not in our records', 404)
 	}
 
 	const isValidPassword = await bcryptCompare(currentPassword, user.password)
 
 	if (!isValidPassword) {
-		throwOperationalError('Invalid password', 401)
+		AppError.throwAppError('Invalid password', 401)
 	}
 
 	user.password = await bcryptHash(newPassword)
 	user.passwordModifiedAt = Date.now()
 
 	await user.save()
-	
+
 	sendResponse(res, 200, {
 		success: true,
 		message: 'The Password has been updated sucessfully',
@@ -87,17 +91,22 @@ export const updatePassword = async (req, res) => {
 }
 
 export const forgotPassword = async (req, res) => {
-	
 	const { email } = req.body
 
 	if (!email) {
-		throwOperationalError('Please provide the email address of your account', 422)
+		AppError.throwAppError(
+			'Please provide the email address of your account',
+			422
+		)
 	}
 
 	const user = await User.findOne({ email })
 
 	if (!user) {
-		throwOperationalError('Not Found! Confrim your email address and try again', 404)
+		AppError.throwAppError(
+			'Not Found! Confrim your email address and try again',
+			404
+		)
 	}
 
 	const resetToken = user.createResetToken()
@@ -119,9 +128,11 @@ export const forgotPassword = async (req, res) => {
 	} catch (error) {
 		user.passwordResetToken = undefined
 		user.passwordResetTokenExpiresAt = undefined
-		user.save((err) => logByEnviroment('prod', err.message))
+		user.save((err) => AppError.saveServerErrorToDatabase(err))
 
-		return sendResponse(res, 500, {
+		AppError.saveServerErrorToDatabase(error)
+
+		sendResponse(res, 500, {
 			success: false,
 			message: error.message || 'Something went wrong!',
 		})
@@ -132,28 +143,28 @@ export const resetPassword = async (req, res) => {
 	const { newPassword, confirmPassword, resetToken } = req.body
 
 	if (!newPassword || !confirmPassword || !resetToken) {
-		throwOperationalError('Please provide valid credentials', 400)
+		AppError.throwAppError('Please provide valid credentials', 400)
 	}
 
 	if (newPassword !== confirmPassword) {
-		throwOperationalError('Password do not match', 400)
+		AppError.throwAppError('Password do not match', 400)
 	}
 
 	if (newPassword.length < 8) {
-		throwOperationalError('Password must be at least of 8 characters long', 400)
+		AppError.throwAppError('Password must be at least of 8 characters long', 400)
 	}
 
 	const hashedToken = cryptoHash(resetToken)
 	const user = await User.findOne({ passwordResetToken: hashedToken }).select('+password')
 
 	if (!user) {
-		throwOperationalError('Invalid Inputs. Try again !', 400)
+		AppError.throwAppError('Invalid Inputs. Try again !', 400)
 	}
 
 	const currentTime = Date.now()
 
 	if (currentTime > user.passwordResetTokenExpiresAt) {
-		throwOperationalError('The link has expired.', 400)
+		AppError.throwAppError('The link has expired.', 400)
 	}
 
 	user.password = await bcryptHash(newPassword)
@@ -167,4 +178,40 @@ export const resetPassword = async (req, res) => {
 		success: true,
 		message: 'Password has been reset successfully',
 	})
+}
+
+export const protect = async (req) => {
+	const token = await getToken({ req })
+
+	if (!token) {
+		AppError.throwAppError('Your are not logged in', 401)
+	}
+
+	let loggedInUser = null
+
+	//We have guest users and native registered users to consider
+	try {
+		loggedInUser = await User.findOne({ email: token.email })
+	} catch (e) {
+		loggedInUser = null
+		AppError.saveServerErrorToDatabase(e)
+	}
+
+	if (!loggedInUser) {
+		loggedInUser = { email: token.email, role: 'customer' }
+	}
+
+	req.user = loggedInUser
+
+	return req
+}
+
+export const restrictTo = async ({ req, useProtect }, ...args) => {
+	if (useProtect) req = await protect(req)
+
+	if (!args.includes(req.user.role)) {
+		AppError.throwAppError('You are not authorized to this resource', 401)
+	}
+
+	return req
 }

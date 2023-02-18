@@ -2,15 +2,14 @@ import handleErrorResponse from '../controllers/error-controller'
 import { AppError } from '../lib/app-error'
 import { dbConnect } from '../lib/db-utils'
 
-const catchAsync = async (req, res, func) => {
+const catchAsync = (func) => async (req, res) => {
 	
-	await dbConnect()
-
 	try {
+		await dbConnect()
 		await func(req, res)
 	} catch (err) {
 		handleErrorResponse(err, res)
-		await AppError.saveServerErrorToDatabase(err)
+		AppError.saveServerErrorToDatabase(err)
 	}
 
 }
