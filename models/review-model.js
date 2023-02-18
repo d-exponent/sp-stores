@@ -26,7 +26,7 @@ const reviewSchema = new mongoose.Schema(
 			type: Number,
 			min: 1,
 			max: 5,
-			required: [true, 'A review must have at least one rating']
+			required: [true, 'A review must have at least one rating'],
 		},
 		review: String,
 		createdAt: {
@@ -35,7 +35,10 @@ const reviewSchema = new mongoose.Schema(
 		},
 		modifiedAt: Date,
 	},
-	modelVirtualsConfiq
+	{
+		toJSON: { virtuals: true },
+		toObject: { virtuals: true },
+	}
 )
 
 reviewSchema.statics.calculateRatingsStats = async function (itemId) {

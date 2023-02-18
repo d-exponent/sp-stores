@@ -88,7 +88,10 @@ const orderSchema = new mongoose.Schema(
 			required: [true, 'Order must contain a payment reference'],
 		},
 	},
-	modelVirtualsConfiq
+	{
+		toJSON: { virtuals: true },
+		toObject: { virtuals: true },
+	}
 )
 
 orderSchema.methods.updateCartItemsSizes = async function () {

@@ -57,7 +57,10 @@ const userSchema = new mongoose.Schema(
 			default: Date.now,
 		},
 	},
-	modelVirtualsConfiq
+	{
+		toJSON: { virtuals: true },
+		toObject: { virtuals: true },
+	}
 )
 
 userSchema.index({ email: 1, phoneNumber: -1 }, { unique: true })

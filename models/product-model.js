@@ -130,7 +130,10 @@ const productSchema = new mongoose.Schema(
 		},
 		didRUnPreSaveOnUpdate: Boolean,
 	},
-	modelVirtualsConfiq
+	{
+		toJSON: { virtuals: true },
+		toObject: { virtuals: true },
+	}
 )
 
 //   VIRTUALS

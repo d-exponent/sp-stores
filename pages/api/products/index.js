@@ -2,14 +2,18 @@ import nextConnect from 'next-connect'
 
 import Product from '../../../models/product-model'
 import factory from '../../../controllers/handler-factory'
-import handleError from '../../../controllers/error-controller'
 import throwOperationalError from '../../../lib/app-error'
-import { sendMethodNotAllowedResponse, sendResponse } from '../../../lib/controller-utils'
 import { dbConnect } from '../../../lib/db-utils'
 import { removeCommas } from '../../../lib/utils'
+import {
+	isProductionEnv,
+	sendMethodNotAllowedResponse,
+	sendResponse,
+} from '../../../lib/controller-utils'
 
 import imageUploadHandler from '../../../middlewares/multer'
 import imageResizeHandler from '../../../middlewares/sharp'
+import { sendProdError } from '../../../controllers/error-controller'
 
 // UTILITY FUNCTION
 const setFeildsDataType = (upload) => {
@@ -61,23 +65,6 @@ const setFeildsDataType = (upload) => {
 	return filterd
 }
 
-//  MIDDLEWARES
-
-const handleNoMatch = (req, res) => {
-	sendMethodNotAllowedResponse(res, req.method)
-}
-
-const connectDb = async (req, res, next) => {
-	await dbConnect()
-	next()
-}
-
-;(async () => {
-	try {
-		await dbConnect()
-	} catch (e) {}
-})()
-
 const setProductFeilds = (req, res, next) => {
 	if (!req.body) {
 		throwOperationalError('Please provide product information', 400)
@@ -119,13 +106,27 @@ const createProduct = async (req, res) => {
 }
 
 // HANDLER CONFIGURATION
-
 const handler = nextConnect({
-	onNoMatch: handleNoMatch,
-	onError: handleError,
+	onError: (err, _, res, next) => {
+		isProductionEnv()
+			? sendProdError(res, err)
+			: sendResponse(res, err.status || 500, {
+					success: false,
+					message: err.message,
+			  })
+
+		next()
+	},
+	onNoMatch: (req, res) => {
+		sendMethodNotAllowedResponse(res, req.method)
+	},
 })
 
-handler.use(connectDb)
+handler.use(async (req, res, next) => {
+	await dbConnect()
+	next()
+})
+
 handler.get(getProducts)
 
 handler
@@ -134,9 +135,10 @@ handler
 	.use(setProductFeilds)
 	.post(createProduct)
 
+// Disallow body parsing, consume as stream
 export const config = {
 	api: {
-		bodyParser: false, // Disallow body parsing, consume as stream
+		bodyParser: false,
 	},
 }
 
