@@ -2,6 +2,7 @@ import factory from '../../../../controllers/handler-factory'
 import User from '../../../../models/user-model'
 
 import { sendMethodNotAllowedResponse } from '../../../../lib/controller-utils'
+import catchAsync from '../../../../lib/catch-async'
 
 const handler = async (req, res) => {
 	const { method } = req
@@ -21,4 +22,4 @@ const handler = async (req, res) => {
 	}
 }
 
-export default handler
+export default catchAsync(handler)

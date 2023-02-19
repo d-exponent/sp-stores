@@ -1,12 +1,13 @@
+import catchAsync from '../../../../lib/catch-async'
 import { resetPassword } from '../../../../controllers/auth-controller'
 import { sendMethodNotAllowedResponse } from '../../../../lib/controller-utils'
 
 const handler = async (req, res) => {
 	if (req.method === 'PATCH') {
-		await catchAsync(req, res, resetPassword)
+		await resetPassword(req, res)
 	}
 
 	sendMethodNotAllowedResponse(res, req.method)
 }
 
-export default handler
+export default catchAsync(handler)

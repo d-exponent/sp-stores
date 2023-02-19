@@ -1,18 +1,18 @@
-import { getUser } from '../../../../controllers/user-controller'
+import { getMe } from '../../../../controllers/user-controller'
 import { updatePassword } from '../../../../controllers/auth-controller'
 import { sendMethodNotAllowedResponse } from '../../../../lib/controller-utils'
-import catchAsync from '../../../../middlewares/catch-async'
+import catchAsync from '../../../../lib/catch-async'
 
 const handler = async (req, res) => {
 	const { method } = req
 
 	switch (method) {
 		case 'GET':
-			await catchAsync(req, res, getUser)
+			await getMe(req, res)
 			break
 
 		case 'PATCH':
-			await catchAsync(req, res, updatePassword)
+			await updatePassword(req, res)
 			break
 
 		default:
@@ -21,4 +21,4 @@ const handler = async (req, res) => {
 	}
 }
 
-export default handler
+export default catchAsync(handler)

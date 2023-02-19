@@ -1,8 +1,9 @@
+import AppError from '../lib/app-error'
+
 import { isProductionEnv, sendResponse } from '../lib/controller-utils'
-import  AppError  from '../lib/app-error'
 import { purify } from '../lib/utils'
 
-function handleMongooseDuplicateError(err) {
+export function handleMongooseDuplicateError(err) {
 	const keyValueKeys = Object.keys(err.keyValue)
 	const targetKey = keyValueKeys[0]
 
@@ -16,7 +17,7 @@ function handleMongooseDuplicateError(err) {
 	return new AppError(message, 409)
 }
 
-function handleMongooseValidationError(err) {
+export function handleMongooseValidationError(err) {
 	const messages = Object.values(err.errors).map((message) => message.message)
 	const title = messages.length === 1 ? 'Invalid input' : 'Invalid inputs'
 	const message = `${title}: ${messages.join(', ')}!`

@@ -26,19 +26,21 @@ export default function UserProfile() {
 
 	const formSubmitHandler = async function (event) {
 		event.preventDefault()
-		
+
 		showNotification('Updating your password').pending()
 
-		const enteredCurrentPassword = currentPasswordRef.current.value
-		const enteredNewPassword = newPasswordRef.current.value
+		if (!currentPasswordRef.current.value || !newPasswordRef.current.value) {
+			showNotification('Please enter your current and new passwords').error()
+			return
+		}
 
-		const [resPromise ] =  withFetch({
+		const [resPromise] = withFetch({
 			url: `/api/auth/users/${data.user.email}`,
-			data: {
-				currentPassword: enteredCurrentPassword,
-				newPassword: enteredNewPassword,
-			},
 			method: 'PATCH',
+			data: {
+				currentPassword: currentPasswordRef.current.value,
+				newPassword: newPasswordRef.current.value,
+			},
 		})
 
 		try {
@@ -73,13 +75,13 @@ export default function UserProfile() {
 
 				<div className={classes.ctaWrapper}>
 					<Button text={updatePasswordTogglerText} onClick={showUpdatePasswordToggler} />
-					{updatePassword ? (
+					{updatePassword && (
 						<UpdatePasswordForm
 							onSubmit={formSubmitHandler}
 							currentPasswordRef={currentPasswordRef}
 							newPasswordRef={newPasswordRef}
 						/>
-					) : null}
+					)}
 				</div>
 			</section>
 		)

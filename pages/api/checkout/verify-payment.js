@@ -1,13 +1,13 @@
 import { verifyPayment } from '../../../controllers/paystack-controller'
 import { sendMethodNotAllowedResponse } from '../../../lib/controller-utils'
-import catchAsync from '../../../middlewares/catch-async'
+import catchAsync from '../../../lib/catch-async'
 
 const handler = async (req, res) => {
-	if (req.method !== 'POST') {
-		return sendMethodNotAllowedResponse(res, req.method)
+	if (req.method === 'POST') {
+		await verifyPayment(req, res)
 	}
 
-	await catchAsync(req, res, verifyPayment)
+	sendMethodNotAllowedResponse(res, req.method)
 }
 
-export default handler
+export default catchAsync(handler)

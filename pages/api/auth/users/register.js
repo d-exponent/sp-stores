@@ -1,13 +1,13 @@
 import { createUser } from '../../../../controllers/auth-controller'
+import catchAsync from '../../../../lib/catch-async'
 import { sendMethodNotAllowedResponse } from '../../../../lib/controller-utils'
-import catchAsync from '../../../../middlewares/catch-async'
 
 const handler = async (req, res) => {
-	if (req.method !== 'POST') {
-		return sendMethodNotAllowedResponse(res, req.method)
+	if (req.method === 'POST') {
+		await createUser(req, res)
 	}
 
-	await catchAsync(req, res, createUser)
+	sendMethodNotAllowedResponse(res, req.method)
 }
 
-export default handler
+export default catchAsync(handler)

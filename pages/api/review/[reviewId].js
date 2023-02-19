@@ -1,7 +1,7 @@
 import Review from '../../../models/review-model'
 import factory from '../../../controllers/handler-factory'
 import { sendMethodNotAllowedResponse } from '../../../lib/controller-utils'
-import catchAsync from '../../../middlewares/catch-async'
+import catchAsync from '../../../lib/catch-async'
 
 
 const handler = async (req, res) => {

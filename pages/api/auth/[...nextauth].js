@@ -4,9 +4,9 @@ import GoogleProvider from 'next-auth/providers/google'
 
 import User from '../../../models/user-model'
 import dbConnect from '../../../lib/db-utils'
+import AppError from '../../../lib/app-error'
 import { bcryptCompare } from '../../../lib/controller-utils'
 import { isValidEmail } from '../../../lib/utils'
-import AppError from '../../../lib/app-error'
 
 const throwError = (message) => {
 	throw new Error(message)
@@ -32,7 +32,7 @@ export const nextAuthConfig = {
 					await dbConnect()
 				} catch (e) {
 					throwError('Please check your internet connection and try again')
-					AppError.saveServerErrorToDatabase(e, (e) => console.log(e ? e.message : ''))
+					AppError.saveServerErrorToDatabase(e)
 				}
 
 				let user

@@ -21,7 +21,7 @@ export default function ForgotPassword() {
 		const enteredEmail = emailInputRef.current.value
 
 		const [resPromise] = withFetch({
-			method: 'POST',
+			method: 'PATCH',
 			url: `/api/auth/users/forgot-password`,
 			data: { email: enteredEmail },
 		})

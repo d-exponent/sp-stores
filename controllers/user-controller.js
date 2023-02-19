@@ -1,7 +1,20 @@
 import User from '../models/user-model'
 import AppError from '../lib/app-error'
+import catchAsync from '../lib/catch-async'
 import { isValidEmail } from '../lib/utils'
 import { sendResponse } from '../lib/controller-utils'
+
+const filterRequest = (body, ...args) => {
+	const filtered = {}
+
+	Object.keys(body).forEach((key) => {
+		if (args.includes(key)) {
+			filtered[key] = body[key]
+		}
+	})
+
+	return filtered
+}
 
 export const getUsers = async (req, res) => {
 	const allUsers = await User.find({})
@@ -45,3 +58,45 @@ export const updateUser = async (req, res) => {
 		data: updatedUser,
 	})
 }
+
+export const updateMe = catchAsync(async (req, res) => {
+	const { query, body } = req
+
+	if (body.currentPassword || body.newPassword || body.password) {
+		AppError.throwAppError("You can't update password on this route", 400)
+	}
+
+	const searchQuery = { email: query.userEmail }
+	const filteredBody = filterRequest(
+		body,
+		'firstName',
+		'lastName',
+		'email',
+		'phoneNumber'
+	)
+
+	const queryConfiq = {
+		new: true,
+		runValidators: true,
+	}
+
+	const updatedUser = await User.findOneAndUpdate(searchQuery, filteredBody, queryConfiq)
+
+	sendResponse(res, 200, {
+		success: true,
+		data: updatedUser,
+	})
+})
+
+export const deleteMe = catchAsync(async (req, res) => {
+	await User.findOneAndUpdate({ email: req.query.userEmail }, { active: false })
+
+	sendResponse(res, 204, { success: true, data: null })
+})
+
+export const getMe = catchAsync(async (req, res) => {
+	
+	const user = await User.findOne({ email: req.query.userEmail })
+
+	sendResponse(res, 200, { success: true, data: user })
+})

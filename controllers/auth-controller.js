@@ -9,17 +9,14 @@ import {
 	getHost,
 	bcryptHash,
 	cryptoHash,
+	isProductionEnv,
 } from '../lib/controller-utils'
-
 
 export const createUser = async (req, res) => {
 	const { password, confirmPassword } = req.body
 
 	if (!password || !confirmPassword) {
-		AppError.throwAppError(
-			'Please peovide you password and confirm password',
-			400
-		)
+		AppError.throwAppError('Please peovide you password and confirm password', 400)
 	}
 
 	if (password.length < 8) {
@@ -45,7 +42,7 @@ export const createUser = async (req, res) => {
 }
 
 export const updatePassword = async (req, res) => {
-	const { uemail: email } = req.query
+	const { userEmail: email } = req.query
 	const { currentPassword, newPassword } = req.body
 
 	if (!email) {
@@ -94,19 +91,13 @@ export const forgotPassword = async (req, res) => {
 	const { email } = req.body
 
 	if (!email) {
-		AppError.throwAppError(
-			'Please provide the email address of your account',
-			422
-		)
+		AppError.throwAppError('Please provide the email address of your account', 422)
 	}
 
 	const user = await User.findOne({ email })
 
 	if (!user) {
-		AppError.throwAppError(
-			'Not Found! Confrim your email address and try again',
-			404
-		)
+		AppError.throwAppError('Not Found! Confrim your email address and try again', 404)
 	}
 
 	const resetToken = user.createResetToken()
@@ -115,15 +106,15 @@ export const forgotPassword = async (req, res) => {
 	const resetUrl = `${protocol}://${host}/auth/reset-password?token=${resetToken}`
 
 	const resetEmailLink = new Email(user, resetUrl).sendPasswordResetLink()
-	const updatedUserDocument = user.save({ validateBeforeSave: false })
+	const updatedUser = user.save({ validateBeforeSave: false })
 
 	try {
-		await Promise.all([resetEmailLink, updatedUserDocument])
+		await Promise.all([resetEmailLink, updatedUser])
 
 		sendResponse(res, 200, {
 			success: true,
 			message:
-				'A reset link has been sent to your email address. The Link expires in 5 minutes. ',
+				'A reset link has been sent to your email address. The Link expires in 5 minutes.',
 		})
 	} catch (error) {
 		user.passwordResetToken = undefined
@@ -134,7 +125,7 @@ export const forgotPassword = async (req, res) => {
 
 		sendResponse(res, 500, {
 			success: false,
-			message: error.message || 'Something went wrong!',
+			message: isProductionEnv() ? 'Something went wrong!' : error.message,
 		})
 	}
 }
