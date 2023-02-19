@@ -42,11 +42,9 @@ export default function ResetPassword() {
 			url: '/api/auth/users/reset-password',
 			method: 'PATCH',
 			data: resetData,
-
 		})
 
 		try {
-
 			const res = await resPromise
 
 			if (!res.success) {
@@ -55,13 +53,11 @@ export default function ResetPassword() {
 			}
 
 			setTimeout(() => {
-				router.replace('/auth/users')
 				showNotification('Login into your account').success()
-			}, 400)
+				router.replace('/auth/users')
+			}, 1000)
 
-			const successMessage = serverRes.message || 'Password reset successfully'
-
-			showNotification(successMessage).success()
+			showNotification('Password reset successfully').success()
 
 			newPasswordRef.current.value = ''
 			passwordConfirmRef.current.value = ''

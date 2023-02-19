@@ -1,6 +1,7 @@
 import { unstable_getServerSession } from 'next-auth/next'
 
 import ForgotPassword from '../../components/credentials/forgot-password'
+import { redirectToPage } from '../../lib/controller-utils'
 import { nextAuthConfig } from '../api/auth/[...nextauth]'
 
 const ForgotPasswordPage = () => <ForgotPassword />
@@ -12,13 +13,7 @@ export async function getServerSideProps(context) {
 		nextAuthConfig
 	)
 
-	if (session) {
-		return {
-			redirect: {
-				destination: '/auth/users',
-			},
-		}
-	}
+	if (session) return redirectToPage('/auth/users')
 
 	// getServerSideProps must return an object.
 	return {

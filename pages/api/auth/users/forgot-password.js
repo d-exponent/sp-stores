@@ -4,12 +4,16 @@ import catchAsync from '../../../../lib/catch-async'
 
 const handler = async (req, res) => {
 	const { method } = req
-	
-	if (method === 'PATCH') {
-		await forgotPassword(req, res)
-	}
 
-	sendMethodNotAllowedResponse(res, method)
+	switch (method) {
+		case 'PATCH':
+			await forgotPassword(req, res)
+			break
+
+		default:
+			sendMethodNotAllowedResponse(res, method)
+			break
+	}
 }
 
 export default catchAsync(handler)

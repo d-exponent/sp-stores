@@ -3,14 +3,15 @@ import Email from '../lib/email'
 import User from '../models/user-model'
 import { getToken } from 'next-auth/jwt'
 import {
-	sendResponse,
 	bcryptCompare,
 	getProtocol,
 	getHost,
 	bcryptHash,
 	cryptoHash,
 	isProductionEnv,
+	sendResponse,
 } from '../lib/controller-utils'
+
 
 export const createUser = async (req, res) => {
 	const { password, confirmPassword } = req.body
@@ -90,6 +91,7 @@ export const updatePassword = async (req, res) => {
 export const forgotPassword = async (req, res) => {
 	const { email } = req.body
 
+
 	if (!email) {
 		AppError.throwAppError('Please provide the email address of your account', 422)
 	}
@@ -116,6 +118,7 @@ export const forgotPassword = async (req, res) => {
 			message:
 				'A reset link has been sent to your email address. The Link expires in 5 minutes.',
 		})
+
 	} catch (error) {
 		user.passwordResetToken = undefined
 		user.passwordResetTokenExpiresAt = undefined

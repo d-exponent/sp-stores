@@ -1,9 +1,9 @@
 import Product from '../../models/product-model'
 import SingleProduct from '../../components/single-product'
 
-import { dbConnect } from '../../lib/db-utils'
 import { purify } from '../../lib/utils'
 import { redirectToPage } from '../../lib/controller-utils'
+import { dbConnect } from '../../lib/db-utils'
 
 const ProductPage = (props) => <SingleProduct {...props} />
 
@@ -18,15 +18,17 @@ export const getStaticProps = async (context) => {
 		if (!product) throw ''
 
 		return { props: { product: purify(product) } }
+
 	} catch (error) {
 		return redirectToPage()
 	}
 }
 
 export const getStaticPaths = async () => {
+	
 	await dbConnect()
 
-	const allProducts = await Product.find().exec()
+	const allProducts = await Product.find()
 
 	const pathsWithSlug = purify(allProducts).map((product) => ({
 		params: {

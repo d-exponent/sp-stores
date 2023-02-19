@@ -12,6 +12,8 @@ const getErrorMessage = function (error) {
 	return error.message || "It's not you, it's us. Please try again! 😭"
 }
 
+const FALLBACK_MESSAGE = 'Please check your internet connection and try again!'
+
 export default function Authentication() {
 	const [disableLoginBtn, setDisableLoginBtn] = useState(false)
 	const [disableRegisterBtn, setDisableRegisterBtn] = useState(false)
@@ -58,9 +60,7 @@ export default function Authentication() {
 			showNotification('Logging you in... 🐱‍🏍').pending()
 
 			try {
-				const fallbackMsg = 'ERROR! Please check your internet connection and try again!'
-
-				await handleSignIn(signIn, loginForm, fallbackMsg)
+				await handleSignIn(signIn, loginForm, FALLBACK_MESSAGE)
 				showNotification('Login successfull 👌').success()
 
 				router.replace(router.query.callback || '/')
@@ -83,7 +83,7 @@ export default function Authentication() {
 		}
 
 		const [resPromise] = withFetch(fetchConfig)
-		
+
 		try {
 			const res = await resPromise
 

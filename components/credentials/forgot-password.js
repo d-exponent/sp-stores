@@ -8,6 +8,8 @@ import { withFetch } from '../../lib/auth-utils'
 
 import classes from './forgot-passoword.module.css'
 
+const SUCCESS_MESSAGE = `A password reset link has been sent to your email address. Click on the link to reset your password`
+
 export default function ForgotPassword() {
 	const emailInputRef = useRef()
 
@@ -34,12 +36,9 @@ export default function ForgotPassword() {
 				throw new Error(res.message || errorMessage)
 			}
 
-			const successMessage = `A password reset link has been sent to your email address. Click on the link to reset your password`
-
-			showNotification(serverRes.message || successMessage).success()
+			showNotification(SUCCESS_MESSAGE).success()
 
 			emailInputRef.current.value = ''
-			
 		} catch (error) {
 			showNotification(error.message).error()
 		}

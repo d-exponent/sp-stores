@@ -3,10 +3,10 @@ import CredentialsProvider from 'next-auth/providers/credentials'
 import GoogleProvider from 'next-auth/providers/google'
 
 import User from '../../../models/user-model'
-import dbConnect from '../../../lib/db-utils'
 import AppError from '../../../lib/app-error'
 import { bcryptCompare } from '../../../lib/controller-utils'
 import { isValidEmail } from '../../../lib/utils'
+import { dbConnect } from '../../../lib/db-utils'
 
 const throwError = (message) => {
 	throw new Error(message)
@@ -31,14 +31,18 @@ export const nextAuthConfig = {
 				try {
 					await dbConnect()
 				} catch (e) {
-					throwError('Please check your internet connection and try again')
 					AppError.saveServerErrorToDatabase(e)
+					throwError('Could not connect to database')
 				}
 
 				let user
 				try {
-					user = await User.findOne({ email }).select('+password')
+					user = await User.findOne({ email })
+						.select('+password')
+						.select('active')
+						
 				} catch (e) {
+					AppError.saveServerErrorToDatabase(e)
 					throwError('Something went wrong. Please try again')
 				}
 

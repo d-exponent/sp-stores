@@ -6,6 +6,7 @@ import {
 	getAllCollectionDirectoryData,
 } from '../lib/collection-utils'
 import { dbConnect } from '../lib/db-utils'
+import AppError from '../lib/app-error'
 
 const CollectionPage = (props) => <SingleCollection {...props} />
 
@@ -26,7 +27,8 @@ export async function getStaticProps(context) {
 				markdown: purify(markdownData),
 			},
 		}
-	} catch (error) {
+	} catch (e) {
+		AppError.saveServerErrorToDatabase(e)
 		return { notFound: true }
 	}
 }
