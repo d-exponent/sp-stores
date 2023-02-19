@@ -37,10 +37,8 @@ export const nextAuthConfig = {
 
 				let user
 				try {
-					user = await User.findOne({ email })
-						.select('+password')
-						.select('active')
-						
+					user = await User.findOne({ email }).select('+active +password')
+				
 				} catch (e) {
 					AppError.saveServerErrorToDatabase(e)
 					throwError('Something went wrong. Please try again')

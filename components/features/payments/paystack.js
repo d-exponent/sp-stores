@@ -10,7 +10,7 @@ import Button from '../../ui/button'
 const handlePaymentSuccess = function (notify, callToActions) {
 	return async ({ reference }) => {
 		// Validate the payment status and notify the user
-		const [resPromise, abort] = withFetch({
+		const [resPromise] = withFetch({
 			method: 'POST',
 			data: { reference },
 			url: '/api/checkout/verify-payment',
@@ -46,6 +46,8 @@ export default function Paystack(props) {
 
 	const getPaymentOptions = function () {
 		if (!isAuthenticated) return {}
+
+	
 
 		return {
 			publicKey: 'pk_test_9b85118dc69a219c04177eaa758df84da917cdd1',
