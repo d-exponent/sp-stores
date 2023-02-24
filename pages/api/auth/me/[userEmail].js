@@ -1,7 +1,11 @@
 import nextConnect from 'next-connect'
 
-import { getMe, updateMe, deleteMe } from '../../../../controllers/user-controller'
 import getNextConnectConfiq from '../../../../lib/next-connect'
+import {
+  getMe,
+  updateMe,
+  deleteMe,
+} from '../../../../controllers/user-controller'
 
 const handler = nextConnect(getNextConnectConfiq())
 

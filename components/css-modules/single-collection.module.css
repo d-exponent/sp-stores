@@ -1,13 +1,12 @@
 .container * {
-    margin: 0;
+  margin: 0;
 }
 
-
 .summary {
-    background-color: beige;
-    padding: 3em;
-    margin-block: 3em;
-    color: var(--gray-4);
-    font-size: 1.1rem;
-    line-height: 1.4;
+  background-color: beige;
+  padding: 3em;
+  margin-block: 3em;
+  color: var(--gray-4);
+  font-size: 1.1rem;
+  line-height: 1.4;
 }

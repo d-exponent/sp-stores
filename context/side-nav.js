@@ -1,33 +1,33 @@
 import { createContext, useState } from 'react'
 
 const SideNavContext = createContext({
-	isShowSideNav: Boolean,
-	showSideNav: function () {},
-	hideSideNav: function () {},
+  isShowSideNav: Boolean,
+  showSideNav: function () {},
+  hideSideNav: function () {},
 })
 
-export const SideNavContextProvider = (props) => {
-	const [isShowSideNav, setIsShowSIdeNav] = useState(false)
+export const SideNavContextProvider = props => {
+  const [isShowSideNav, setIsShowSIdeNav] = useState(false)
 
-	const showPane = function () {
-		setIsShowSIdeNav(true)
-	}
-	
-	const hidePane = function () {
-		setIsShowSIdeNav(false)
-	}
+  const showPane = function () {
+    setIsShowSIdeNav(true)
+  }
 
-	const contextValue = {
-		isShowSideNav,
-		showSideNav: showPane,
-		hideSideNav: hidePane,
-	}
+  const hidePane = function () {
+    setIsShowSIdeNav(false)
+  }
 
-	return (
-		<SideNavContext.Provider value={contextValue}>
-			{props.children}
-		</SideNavContext.Provider>
-	)
+  const contextValue = {
+    isShowSideNav,
+    showSideNav: showPane,
+    hideSideNav: hidePane,
+  }
+
+  return (
+    <SideNavContext.Provider value={contextValue}>
+      {props.children}
+    </SideNavContext.Provider>
+  )
 }
 
 export default SideNavContext

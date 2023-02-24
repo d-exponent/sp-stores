@@ -1,93 +1,91 @@
 .container {
-    padding-top: var(--header-height);
+  padding-top: var(--header-height);
 }
 
 .content {
-    padding: 3%;
+  padding: 3%;
 }
 
-.content>div {
-    margin: 4em 0 2em;
-    padding-bottom: 2em;
+.content > div {
+  margin: 4em 0 2em;
+  padding-bottom: 2em;
 }
 
-.content>div>h1 {
-    margin-bottom: 1rem;
-    font-size: 1.33rem;
+.content > div > h1 {
+  margin-bottom: 1rem;
+  font-size: 1.33rem;
 }
 
-.content>div>h1+div {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(120px, 1fr));
-    gap: 1em;
+.content > div > h1 + div {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(120px, 1fr));
+  gap: 1em;
 }
 
-.content>div>div>div {
-    position: relative;
+.content > div > div > div {
+  position: relative;
 }
 
-.content>div p {
-    position: absolute;
-    font-size: 13px;
-    top: 10px;
-    right: 10px;
-    color: white;
-    font-weight: 400;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+.content > div p {
+  position: absolute;
+  font-size: 13px;
+  top: 10px;
+  right: 10px;
+  color: white;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 @media (min-width: 500px) {
-    .content>div p {
-        font-size: 17px;
-    }
+  .content > div p {
+    font-size: 17px;
+  }
 }
-
 
 /* **************
     Category Items
 *************** */
-.content>ul {
-    list-style-type: none;
-    padding: 0
+.content > ul {
+  list-style-type: none;
+  padding: 0;
 }
 
 .content h2 {
-    font-family: var(--roboto-condensed);
-    font-weight: 400;
-    text-transform: capitalize;
+  font-family: var(--roboto-condensed);
+  font-weight: 400;
+  text-transform: capitalize;
 }
 
 .content li {
-    padding: 0;
-    margin-bottom: 2em;
+  padding: 0;
+  margin-bottom: 2em;
 }
 
-.content li>div:first-child {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--gray);
-    margin-bottom: 1.2em;
+.content li > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--gray);
+  margin-bottom: 1.2em;
 }
 
-.content li>div:first-child h2 {
-    color: var(--gray-4);
+.content li > div:first-child h2 {
+  color: var(--gray-4);
 }
 
-.content li>div:first-child button {
-    color: #fff;
-    background-color: var(--blue-2);
-    font-weight: 100;
-    letter-spacing: 2px;
+.content li > div:first-child button {
+  color: #fff;
+  background-color: var(--blue-2);
+  font-weight: 100;
+  letter-spacing: 2px;
 }
 
-.content li>div:nth-child(2) h3 {
-    color: var(--gray-4);
-
+.content li > div:nth-child(2) h3 {
+  color: var(--gray-4);
 }
 
 .content li figure button {
-    display: none;
+  display: none;
 }

@@ -5,24 +5,24 @@ import { nextAuthConfig } from '../api/auth/[...nextauth]'
 const AuthPage = () => <Authentication />
 
 export async function getServerSideProps(context) {
-	const session = await unstable_getServerSession(
-		context.req,
-		context.res,
-		nextAuthConfig
-	)
+  const session = await unstable_getServerSession(
+    context.req,
+    context.res,
+    nextAuthConfig
+  )
 
-	//Redirect to home page on active session
-	if (session) {
-		return {
-			redirect: {
-				destination: '/',
-			},
-		}
-	}
+  //Redirect to home page on active session
+  if (session) {
+    return {
+      redirect: {
+        destination: '/',
+      },
+    }
+  }
 
-	return {
-		props: { session },
-	}
+  return {
+    props: { session },
+  }
 }
 
 export default AuthPage

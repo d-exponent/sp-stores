@@ -1,41 +1,40 @@
 .list {
-    gap: 1em;
+  gap: 1em;
 }
 
 .list h3 {
-    font-weight: 400;
-    text-align: center;
-    font-size: 1rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-family: var(--roboto-condensed);
+  font-weight: 400;
+  text-align: center;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: var(--roboto-condensed);
 }
 
 @media screen and (min-width: 435px) {
-    .list h3 {
-        font-size: .8rem;
-    }
+  .list h3 {
+    font-size: 0.8rem;
+  }
 }
 
 .list button {
-    color: var(--gray-3);
-    text-transform: capitalize;
-    font-size: 1rem;
+  color: var(--gray-3);
+  text-transform: capitalize;
+  font-size: 1rem;
 }
 
-
 .cta {
-    /* display: flex; */
-    justify-content: space-between;
-    margin-top: 5em;
+  /* display: flex; */
+  justify-content: space-between;
+  margin-top: 5em;
 }
 
 .alignCenter {
-    /* display: flex; */
-    align-items: center;
+  /* display: flex; */
+  align-items: center;
 }
 
 .ctaBtnWrapper {
-    /* display: grid; */
-    place-content: center;
+  /* display: grid; */
+  place-content: center;
 }

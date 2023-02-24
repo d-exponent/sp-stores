@@ -1,104 +1,99 @@
 .hero {
-    
-    height: 40vh;
-    background: 
-        linear-gradient(var(--gray-4), black), 
-        url(/images/products/bg-img.jpg);
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
-    background-blend-mode: multiply;
+  height: 40vh;
+  background: linear-gradient(var(--gray-4), black),
+    url(/images/products/bg-img.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-blend-mode: multiply;
 
-    font-family: var(--poppins);
-    margin-top: 1em;
-    padding-inline: 1.3em;
-    place-content: center;
-    color: white;
+  font-family: var(--poppins);
+  margin-top: 1em;
+  padding-inline: 1.3em;
+  place-content: center;
+  color: white;
 }
 
 .title {
-    font-size: 2rem;
-    letter-spacing: 6px;
-    animation: moveinLeft 4s ease-in-out;
+  font-size: 2rem;
+  letter-spacing: 6px;
+  animation: moveinLeft 4s ease-in-out;
 }
 
 .subTitle {
-    font-size: 1rem;
-    letter-spacing: 4px;
-    animation: moveinRight 4s ease-in-out;
+  font-size: 1rem;
+  letter-spacing: 4px;
+  animation: moveinRight 4s ease-in-out;
 }
 
-
 @media (min-width: 568px) {
+  .hero {
+    height: 65vh;
+  }
 
-    .hero{
-        height: 65vh;
-    }
-    
-    .title {
-        font-size: 2.8rem;
-        letter-spacing: 8px;
-    }
+  .title {
+    font-size: 2.8rem;
+    letter-spacing: 8px;
+  }
 
-    .subTitle {
-        font-size: 1.3rem;
-        letter-spacing: 7px;
-    }
+  .subTitle {
+    font-size: 1.3rem;
+    letter-spacing: 7px;
+  }
 }
 
 @media (min-width: 768px) {
-    .title {
-        font-size: 3.6rem;
-        letter-spacing: 11px;
-    }
+  .title {
+    font-size: 3.6rem;
+    letter-spacing: 11px;
+  }
 
-    .subTitle {
-        font-size: 1.8rem;
-        letter-spacing: 7px;
-
-    }
+  .subTitle {
+    font-size: 1.8rem;
+    letter-spacing: 7px;
+  }
 }
 
 @media (min-width: 1200px) {
-    .title {
-        font-size: 5rem;
-        letter-spacing: 12px;
-    }
+  .title {
+    font-size: 5rem;
+    letter-spacing: 12px;
+  }
 
-    .subTitle {
-        font-size: 2rem;
-        letter-spacing: 10px;
-    }
+  .subTitle {
+    font-size: 2rem;
+    letter-spacing: 10px;
+  }
 }
 
 @keyframes moveinLeft {
-    0% {
-        opacity: 0;
-        transform: translateX(-100%);
-    }
+  0% {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
 
-    80% {
-        transform: translateX(10px);
-    }
+  80% {
+    transform: translateX(10px);
+  }
 
-    100% {
-        opacity: 1;
-        transform: translateX(0);
-    }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes moveinRight {
-    0% {
-        opacity: 0;
-        transform: translateX(100%);
-    }
+  0% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
 
-    80% {
-        transform: translateX(-10px);
-    }
+  80% {
+    transform: translateX(-10px);
+  }
 
-    100% {
-        opacity: 1;
-        transform: translateX(0);
-    }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }

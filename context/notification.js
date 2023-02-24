@@ -2,35 +2,35 @@ import { createContext, useState, useEffect } from 'react'
 import Notification from '../lib/notification-client'
 
 const NotificationContext = createContext({
-	notificationContent: Object,
-	showNotification: function (content) {},
+  notificationContent: Object,
+  showNotification: function (content) {},
 })
 
-export const NotificationContextProvider = (props) => {
-	const [content, setContent] = useState()
+export const NotificationContextProvider = props => {
+  const [content, setContent] = useState()
 
-	useEffect(() => {
-		const timer = setTimeout(() => {
-			setContent(null)
-		}, 5000)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setContent(null)
+    }, 5000)
 
-		return () => clearTimeout(timer)
-	}, [content])
+    return () => clearTimeout(timer)
+  }, [content])
 
-	const showNotifcationHandler = function (message) {
-		return new Notification(message, setContent)
-	}
+  const showNotifcationHandler = function (message) {
+    return new Notification(message, setContent)
+  }
 
-	const context = {
-		notificationContent: content,
-		showNotification: showNotifcationHandler,
-	}
+  const context = {
+    notificationContent: content,
+    showNotification: showNotifcationHandler,
+  }
 
-	return (
-		<NotificationContext.Provider value={context}>
-			{props.children}
-		</NotificationContext.Provider>
-	)
+  return (
+    <NotificationContext.Provider value={context}>
+      {props.children}
+    </NotificationContext.Provider>
+  )
 }
 
 export default NotificationContext

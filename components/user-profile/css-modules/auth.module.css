@@ -1,16 +1,15 @@
 .link {
-    width: fit-content;
-    display: flex;
-    gap: .4em;
-    background-color: var(--blue-2);
-    padding: .5em;
-    margin: 0 auto;
-    color: var(--blue);
-    letter-spacing: 1px;
-    font-size: 17px;
-
+  width: fit-content;
+  display: flex;
+  gap: 0.4em;
+  background-color: var(--blue-2);
+  padding: 0.5em;
+  margin: 0 auto;
+  color: var(--blue);
+  letter-spacing: 1px;
+  font-size: 17px;
 }
 
 .link span {
-    color: var(--orange);
+  color: var(--orange);
 }

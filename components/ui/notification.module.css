@@ -1,24 +1,22 @@
 .container {
-    height: 10vh;
-    display: flex;
-    place-content: center;
-    align-items: center;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    color: #fff;
+  height: 10vh;
+  display: flex;
+  place-content: center;
+  align-items: center;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  color: #fff;
 }
 
-
 .success {
-    background-color: teal;
+  background-color: teal;
 }
 
 .error {
-    background-color: firebrick;
+  background-color: firebrick;
 }
 
 .pending {
-    background-color: blueviolet;
+  background-color: blueviolet;
 }
-

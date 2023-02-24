@@ -8,40 +8,40 @@ import Button from '../ui/button'
 import classes from './shopping-bag-item.module.css'
 
 export default function ShoppingBagItem(props) {
-	const router = useRouter()
+  const router = useRouter()
 
-	const { discountPrice, price, cart, slug } = props
-	const productPrices = { discountPrice, price }
+  const { discountPrice, price, cart, slug } = props
+  const productPrices = { discountPrice, price }
 
-	const pushToProducts = function () {
-		router.push(`/products/${slug}`)
-	}
+  const pushToProducts = function () {
+    router.push(`/products/${slug}`)
+  }
 
-	return (
-		<li className={`${classes.list} grid`} onClick={pushToProducts}>
-			<h3>{props.name}</h3>
-			<div>
-				<Image
-					src={props.imagePath}
-					alt={props.name}
-					width={400}
-					height={400}
-					layout='responsive'
-				/>
-			</div>
-			<div>
-				<p>Qantity: {cart.quantity}</p>
-				<p>SIze: {cart.size}</p>
-				<p>Total Amount: {cart.amount}</p>
-			</div>
-			<div className={`${classes.cta} flex`}>
-				<div className={`${classes.alignCenter} flex`}>
-					Single Price: <Price product={productPrices} />
-				</div>
-				<div className={`${classes.ctaBtnWrapper} grid`}>
-					<Button onClick={props.handleCta} text='Remove' />
-				</div>
-			</div>
-		</li>
-	)
+  return (
+    <li className={`${classes.list} grid`} onClick={pushToProducts}>
+      <h3>{props.name}</h3>
+      <div>
+        <Image
+          src={props.imagePath}
+          alt={props.name}
+          width={400}
+          height={400}
+          layout="responsive"
+        />
+      </div>
+      <div>
+        <p>Qantity: {cart.quantity}</p>
+        <p>SIze: {cart.size}</p>
+        <p>Total Amount: {cart.amount}</p>
+      </div>
+      <div className={`${classes.cta} flex`}>
+        <div className={`${classes.alignCenter} flex`}>
+          Single Price: <Price product={productPrices} />
+        </div>
+        <div className={`${classes.ctaBtnWrapper} grid`}>
+          <Button onClick={props.handleCta} text="Remove" />
+        </div>
+      </div>
+    </li>
+  )
 }

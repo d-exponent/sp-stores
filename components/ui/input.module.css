@@ -1,38 +1,38 @@
 .formGroup * {
-    margin: 0;
+  margin: 0;
 }
 
 .formGroup {
-    display: grid;
-    gap: .4em;
+  display: grid;
+  gap: 0.4em;
 }
 
 .formGroup input {
-    padding: 10px 12px;
-    font-size: .9rem;
-    background-color: transparent;
-    border: none;
-    border: 1px solid var(--gray-2);
-    border-radius: 3px;
-    font-weight: 400;
-    font-style: normal;
-    color: #666;
-    line-height: 1.6;
-    font-family: var(--font-roboto);
-    max-width: 450px;
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  background-color: transparent;
+  border: none;
+  border: 1px solid var(--gray-2);
+  border-radius: 3px;
+  font-weight: 400;
+  font-style: normal;
+  color: #666;
+  line-height: 1.6;
+  font-family: var(--font-roboto);
+  max-width: 450px;
 }
 
 .formLabel {
-    display: flex;
-    align-items: flex-end;
-    gap: .1em;
-    margin-bottom: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.1em;
+  margin-bottom: 0;
 }
 
-.formLabel>span {
-    color: firebrick;
-    font-size: .8rem;
-    position: relative;
-    bottom: 4px;
-    left: 1px;
+.formLabel > span {
+  color: firebrick;
+  font-size: 0.8rem;
+  position: relative;
+  bottom: 4px;
+  left: 1px;
 }

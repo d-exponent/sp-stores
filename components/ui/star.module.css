@@ -1,9 +1,7 @@
-
-.plainStar>svg{
-    color: var(--gray);
+.plainStar > svg {
+  color: var(--gray);
 }
 
-.goldStar >svg{
-    color: gold;
+.goldStar > svg {
+  color: gold;
 }
-

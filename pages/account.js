@@ -7,23 +7,23 @@ import { purify } from '../lib/utils'
 const AccountPage = () => <UserProfile />
 
 export async function getServerSideProps(context) {
-	const session = await unstable_getServerSession(
-		context.req,
-		context.res,
-		nextAuthConfig
-	)
+  const session = await unstable_getServerSession(
+    context.req,
+    context.res,
+    nextAuthConfig
+  )
 
-	if (!session) {
-		return {
-			redirect: {
-				destination: '/auth/users',
-			},
-		}
-	}
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/auth/users',
+      },
+    }
+  }
 
-	return {
-		props: { session: purify(session) },
-	}
+  return {
+    props: { session: purify(session) },
+  }
 }
 
 export default AccountPage

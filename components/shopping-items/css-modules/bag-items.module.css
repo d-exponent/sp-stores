@@ -1,52 +1,48 @@
 .itemsList {
-    gap: .7em;
-    list-style-type: none;
-    padding: 0;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.7em;
+  list-style-type: none;
+  padding: 0;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 
 .itemsList li {
-    box-sizing: border-box;
-    border-radius: 14px;
-    padding: 1em;
-    box-shadow:
-        0 .25rem .5rem 0 rgba(0, 0, 0, .1),
-        0 .125rem .25rem 0 rgba(0, 0, 0, .02);
-
+  box-sizing: border-box;
+  border-radius: 14px;
+  padding: 1em;
+  box-shadow: 0 0.25rem 0.5rem 0 rgba(0, 0, 0, 0.1),
+    0 0.125rem 0.25rem 0 rgba(0, 0, 0, 0.02);
 }
 
 @media screen and (min-width: 435px) {
-    .itemsList li {
-        border-radius: 6px;
-    }
+  .itemsList li {
+    border-radius: 6px;
+  }
 }
 
 .itemsList li button {
-    padding: .4em .9em;
-    font-size: .9rem;
-    text-transform: capitalize;
-    color: var(--gray-3);
+  padding: 0.4em 0.9em;
+  font-size: 0.9rem;
+  text-transform: capitalize;
+  color: var(--gray-3);
 }
 
-
 .itemsList span {
-    font-size: 1rem;
-    color: var(--gray-5);
-    font-weight: 700;
+  font-size: 1rem;
+  color: var(--gray-5);
+  font-weight: 700;
 }
 
 @media screen and (min-width: 438px) {
-    .itemsList span {
-        font-size: .85rem;
-
-    }
+  .itemsList span {
+    font-size: 0.85rem;
+  }
 }
 
 .itemsList h3,
-.itemsList li>div:last-child>div {
-    color: var(--gray-2);
+.itemsList li > div:last-child > div {
+  color: var(--gray-2);
 }
 
 .itemsList li * {
-    margin: 0;
+  margin: 0;
 }

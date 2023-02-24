@@ -1,14 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&family=Poppins:ital,wght@0,300;0,400;0,500;0,700;1,100;1,600&family=Roboto+Condensed:wght@300;400;700&display=swap');
 
 :root {
-
   /* Color Schemes */
   --off-white: #f5f5f5;
 
-  --gray: #DCDCDC;
+  --gray: #dcdcdc;
   --gray-1: #808080;
   --gray-2: #696969;
-  --gray-3: #36454F;
+  --gray-3: #36454f;
   --gray-4: #313131;
   --gray-5: #1f1e1e;
 
@@ -18,15 +17,11 @@
 
   --orange: #f7b500;
 
-
   /* FONTS */
-  --roboto-condensed: 'Roboto Condensed',
-    sans-serif;
-  --poppins: 'Poppins',
-    sans-serif;
-  
-    --open-sans: 'Open Sans',
-      sans-serif;
+  --roboto-condensed: 'Roboto Condensed', sans-serif;
+  --poppins: 'Poppins', sans-serif;
+
+  --open-sans: 'Open Sans', sans-serif;
 
   /* Header  */
   --header-height: 60px;
@@ -37,20 +32,18 @@
   /* Paddings */
   --padding-primary: 3%;
 
-  --shadow-light: 
-    0 .25rem .5rem 0 rgba(0, 0, 0, .1),
-    0 .125rem .25rem 0 rgba(0, 0, 0, .02);
-
+  --shadow-light: 0 0.25rem 0.5rem 0 rgba(0, 0, 0, 0.1),
+    0 0.125rem 0.25rem 0 rgba(0, 0, 0, 0.02);
 }
 
 html,
 body {
   padding: 0;
   margin: 0;
-  font-family: 'Roboto Condensed', 'Inter Tight', -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: 'Roboto Condensed', 'Inter Tight', -apple-system,
+    BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell,
+    Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
-
 
 .pd-top-30 {
   padding-top: calc(30px + var(--header-height));
@@ -67,7 +60,6 @@ a {
   text-decoration: none;
   cursor: pointer;
 }
-
 
 section {
   padding: var(--header-height) 3% 2px;
@@ -108,9 +100,7 @@ button {
   place-content: center;
 }
 
-
 .box-shadow-light {
-  box-shadow:
-    0 .25rem .5rem 0 rgba(0, 0, 0, .1),
-    0 .125rem .25rem 0 rgba(0, 0, 0, .02);
+  box-shadow: 0 0.25rem 0.5rem 0 rgba(0, 0, 0, 0.1),
+    0 0.125rem 0.25rem 0 rgba(0, 0, 0, 0.02);
 }

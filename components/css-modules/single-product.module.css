@@ -1,149 +1,147 @@
 .container {
-    padding-top: calc(var(--header-height) + 20px);
+  padding-top: calc(var(--header-height) + 20px);
 }
 
-.container>h2,
-.container>h3 {
-    font-weight: 400;
-    color: var(--gray-4);
+.container > h2,
+.container > h3 {
+  font-weight: 400;
+  color: var(--gray-4);
 }
 
-.container>h2 {
-    font-size: 1rem;
-    margin: .5em 0;
-    text-transform: uppercase;
+.container > h2 {
+  font-size: 1rem;
+  margin: 0.5em 0;
+  text-transform: uppercase;
 }
 
-
-.container>span {
-    margin-bottom: 2em;
-    font-weight: 700;
+.container > span {
+  margin-bottom: 2em;
+  font-weight: 700;
 }
 
 .cta {
-    gap: 1em;
-    margin-bottom: 2.3em;
+  gap: 1em;
+  margin-bottom: 2.3em;
 }
 
 .cta button {
-    padding: 1.2em 0;
-    font-size: .8rem;
-    border-radius: 5px;
-    letter-spacing: 2px;
-    font-weight: 700;
+  padding: 1.2em 0;
+  font-size: 0.8rem;
+  border-radius: 5px;
+  letter-spacing: 2px;
+  font-weight: 700;
 }
 
 .cta button:first-child {
-    border: 2px solid var(--gray-5);
-    color: var(--gray-5);
+  border: 2px solid var(--gray-5);
+  color: var(--gray-5);
 }
 
 .cta button:last-child {
-    padding-block: calc(1.2em + 2px);
-    color: var(--off-white);
-    background-color: var(--gray-5);
+  padding-block: calc(1.2em + 2px);
+  color: var(--off-white);
+  background-color: var(--gray-5);
 }
 
 .stats {
-    display: flex;
-    justify-content: space-around;
+  display: flex;
+  justify-content: space-around;
 }
 
-.details{
-    margin-bottom: 2em;
+.details {
+  margin-bottom: 2em;
 }
 
-.orderDetails p{
-    margin: .6em 0;
+.orderDetails p {
+  margin: 0.6em 0;
 }
 
-.details > p:nth-child(1){
-    margin-bottom: 1em;
-    color: var(--gray-2);
-    font-size: 1.4em;
+.details > p:nth-child(1) {
+  margin-bottom: 1em;
+  color: var(--gray-2);
+  font-size: 1.4em;
 }
 
 .reviews {
-    padding: 1.5em;
-    box-shadow: var(--shadow-light);
-    font-family: var(--poppins);
-    margin-block: 2em;
+  padding: 1.5em;
+  box-shadow: var(--shadow-light);
+  font-family: var(--poppins);
+  margin-block: 2em;
 }
 
 .reviews ul {
-    display: grid;
-    gap: .9em;
-    padding: 0;
-    margin: 0;
-    list-style-type: none;
-    margin-bottom: 1em;
+  display: grid;
+  gap: 0.9em;
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+  margin-bottom: 1em;
 }
 
 .reviews li {
-    border-bottom: 1px solid var(--gray);
+  border-bottom: 1px solid var(--gray);
 }
 
 .reviews li:last-child {
-    border-bottom: none;
+  border-bottom: none;
 }
 
-.reviews li>p {
-    font-size: 12px;
-    color: var(--gray-2);
+.reviews li > p {
+  font-size: 12px;
+  color: var(--gray-2);
 }
 
-.reviews li>h4 {
-    text-transform: capitalize;
-    color: var(--gray-4);
+.reviews li > h4 {
+  text-transform: capitalize;
+  color: var(--gray-4);
 }
 
-.reviews li>span {
-    font-size: 11px;
+.reviews li > span {
+  font-size: 11px;
 }
 
-.reviewsContainer>h3 {
-    font-weight: 700;
-    text-transform: capitalize;
-    text-align: center;
-    margin-bottom: .7em;
-    font-family: var(--open-sans);
+.reviewsContainer > h3 {
+  font-weight: 700;
+  text-transform: capitalize;
+  text-align: center;
+  margin-bottom: 0.7em;
+  font-family: var(--open-sans);
 }
 
 .reviewsContainer {
-    padding: .8em;
-    margin-bottom: 1.6em;
+  padding: 0.8em;
+  margin-bottom: 1.6em;
 }
 
 .reviewsContainer form {
-    display: grid;
-    gap: .7em;
+  display: grid;
+  gap: 0.7em;
 }
 
-.reviewsContainer form > button{
-    background-color: var(--blue-2);
-    color: var(--off-white);
+.reviewsContainer form > button {
+  background-color: var(--blue-2);
+  color: var(--off-white);
 }
 
 .reviewsContainer select {
-    padding: .5em;
-    margin-bottom: 1em;
+  padding: 0.5em;
+  margin-bottom: 1em;
 }
 
 .reviewsContainer textarea {
-    padding: .5em;
-    font-size: .9rem;
-    font-family: var(--open-sans);
-    line-height: 1.4;
+  padding: 0.5em;
+  font-size: 0.9rem;
+  font-family: var(--open-sans);
+  line-height: 1.4;
 }
 
-.reviewsContainer>div:last-child > button {
-    padding: 0;
-    background-color: transparent;
-    color: var(--blue-1);
-    border-bottom: 1px solid var(--blue-1);
-    font-family: var(--open-sans);
-    font-weight: 700;
-    margin: 2em 0;
-    text-transform: capitalize;
+.reviewsContainer > div:last-child > button {
+  padding: 0;
+  background-color: transparent;
+  color: var(--blue-1);
+  border-bottom: 1px solid var(--blue-1);
+  font-family: var(--open-sans);
+  font-weight: 700;
+  margin: 2em 0;
+  text-transform: capitalize;
 }
-

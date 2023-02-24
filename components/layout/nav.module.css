@@ -1,70 +1,69 @@
 .nav {
-    gap: 1.5em;
+  gap: 1.5em;
 }
 
 .navLink,
 .navLogo {
-    place-content: center;
-    align-items: flex-end;
+  place-content: center;
+  align-items: flex-end;
 }
 
 .navLogo {
-    font-size: var(--nav-logo-font-size);
-    color: var(--gray-4);
+  font-size: var(--nav-logo-font-size);
+  color: var(--gray-4);
 }
 
 .bagIcon {
-    position: relative;
+  position: relative;
 }
-
 
 /* TODO: Improve */
 .bagIcon::before {
-    content: attr(data-items-count);
-    font-size: calc(var(--nav-logo-font-size) / 2);
-    font-weight: 400;
-    background-color: var(--blue-1);
-    color: var(--off-white);
-    padding: 2px 6px;
-    position: absolute;
-    top: calc(-1 * var(--nav-logo-font-size) / 3.7);
-    right: calc(-1 * var(--nav-logo-font-size) / 2.3);
-    display: grid;
-    place-content: center;
-    border-radius: 60%;
+  content: attr(data-items-count);
+  font-size: calc(var(--nav-logo-font-size) / 2);
+  font-weight: 400;
+  background-color: var(--blue-1);
+  color: var(--off-white);
+  padding: 2px 6px;
+  position: absolute;
+  top: calc(-1 * var(--nav-logo-font-size) / 3.7);
+  right: calc(-1 * var(--nav-logo-font-size) / 2.3);
+  display: grid;
+  place-content: center;
+  border-radius: 60%;
 }
 
 .bagIcon:hover::before,
 .bagIcon:focus::before {
-    animation: bounce .2s ease-in;
+  animation: bounce 0.2s ease-in;
 }
 
 .profile {
-    font-size: .9rem;
-    color: var(--gray-3);
+  font-size: 0.9rem;
+  color: var(--gray-3);
 }
 
 .logoutBtn > button {
-    padding: .4em 1.3em;
-    color: var(--gray-4);
-    text-transform: capitalize;
+  padding: 0.4em 1.3em;
+  color: var(--gray-4);
+  text-transform: capitalize;
 }
 
 .loginBtn button {
-    text-transform: capitalize;
-    padding: .5em .6em;
-    letter-spacing: .1px;
-    color: var(--gray-4);
-    font-weight: 400;
-    margin-left: 1em;
+  text-transform: capitalize;
+  padding: 0.5em 0.6em;
+  letter-spacing: 0.1px;
+  color: var(--gray-4);
+  font-weight: 400;
+  margin-left: 1em;
 }
 
 @keyframes bounce {
-    0% {
-        transform: translateY(-4px);
-    }
+  0% {
+    transform: translateY(-4px);
+  }
 
-    100% {
-        transform: translate(0)
-    }
+  100% {
+    transform: translate(0);
+  }
 }

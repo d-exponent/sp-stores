@@ -5,98 +5,107 @@ import { isValidEmail } from '../lib/utils'
 import { sendResponse } from '../lib/controller-utils'
 
 const filterRequest = (body, ...args) => {
-	const filtered = {}
+  const filtered = {}
 
-	Object.keys(body).forEach((key) => {
-		if (args.includes(key)) {
-			filtered[key] = body[key]
-		}
-	})
+  Object.keys(body).forEach(key => {
+    if (args.includes(key)) {
+      filtered[key] = body[key]
+    }
+  })
 
-	return filtered
+  return filtered
 }
 
 export const getUsers = async (req, res) => {
-	const allUsers = await User.find({})
+  const allUsers = await User.find({})
 
-	if (!allUsers) {
-		AppError.throwAppError('There are no users available', 404)
-	}
+  if (!allUsers) {
+    AppError.throwAppError('There are no users available', 404)
+  }
 
-	sendResponse(res, 200, { success: true, data: allUsers })
+  sendResponse(res, 200, { success: true, data: allUsers })
 }
 
 export const getUser = async (req, res) => {
-	const { uemail: email } = req.query
+  const { uemail: email } = req.query
 
-	//Validate the email address
-	if (!isValidEmail(email)) {
-		AppError.throwAppError('Please double check your email address and try again', 400)
-	}
+  //Validate the email address
+  if (!isValidEmail(email)) {
+    AppError.throwAppError(
+      'Please double check your email address and try again',
+      400
+    )
+  }
 
-	const user = await User.findOne({ email })
+  const user = await User.findOne({ email })
 
-	if (!user) {
-		AppError.throwAppError('User not found', 404)
-	}
+  if (!user) {
+    AppError.throwAppError('User not found', 404)
+  }
 
-	sendResponse(res, 200, { success: true, data: user })
+  sendResponse(res, 200, { success: true, data: user })
 }
 
 export const updateUser = async (req, res) => {
-	const updatedUser = await User.findOneAndUpdate(req.query, req.body, {
-		new: true,
-		runValidators: true,
-	})
+  const updatedUser = await User.findOneAndUpdate(req.query, req.body, {
+    new: true,
+    runValidators: true,
+  })
 
-	if (!updatedUser) {
-		AppError.throwAppError('User update failed', 404)
-	}
+  if (!updatedUser) {
+    AppError.throwAppError('User update failed', 404)
+  }
 
-	sendResponse(res, 200, {
-		success: true,
-		data: updatedUser,
-	})
+  sendResponse(res, 200, {
+    success: true,
+    data: updatedUser,
+  })
 }
 
 export const updateMe = catchAsync(async (req, res) => {
-	const { query, body } = req
+  const { query, body } = req
 
-	if (body.currentPassword || body.newPassword || body.password) {
-		AppError.throwAppError("You can't update password on this route", 400)
-	}
+  if (body.currentPassword || body.newPassword || body.password) {
+    AppError.throwAppError("You can't update password on this route", 400)
+  }
 
-	const searchQuery = { email: query.userEmail }
-	const filteredBody = filterRequest(
-		body,
-		'firstName',
-		'lastName',
-		'email',
-		'phoneNumber'
-	)
+  const searchQuery = { email: query.userEmail }
+  const filteredBody = filterRequest(
+    body,
+    'firstName',
+    'lastName',
+    'email',
+    'phoneNumber'
+  )
 
-	const queryConfiq = {
-		new: true,
-		runValidators: true,
-	}
+  const queryConfiq = {
+    new: true,
+    runValidators: true,
+  }
 
-	const updatedUser = await User.findOneAndUpdate(searchQuery, filteredBody, queryConfiq)
+  const updatedUser = await User.findOneAndUpdate(
+    searchQuery,
+    filteredBody,
+    queryConfiq
+  )
 
-	sendResponse(res, 200, {
-		success: true,
-		data: updatedUser,
-	})
+  sendResponse(res, 200, {
+    success: true,
+    data: updatedUser,
+  })
 })
 
 export const deleteMe = catchAsync(async (req, res) => {
-	await User.findOneAndUpdate({ email: req.query.userEmail }, { active: false })
+  await User.findOneAndUpdate(
+    { email: req.query.userEmail },
+    { active: false }
+  )
 
-	sendResponse(res, 204, { success: true, data: null })
+  sendResponse(res, 204, { success: true, data: null })
 })
 
 export const getMe = catchAsync(async (req, res) => {
-	
-	const user = await User.findOne({ email: req.query.userEmail })
+  const user = await User.findOne({ email: req.query.userEmail })
 
-	sendResponse(res, 200, { success: true, data: user })
+  sendResponse(res, 200, { success: true, data: user })
 })

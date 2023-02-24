@@ -1,76 +1,73 @@
 .container * {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
 .container {
-    padding-top: calc(var(--header-height) + 20px);
+  padding-top: calc(var(--header-height) + 20px);
 }
 
 .infoWrapper {
-    margin-bottom: 1em;
-    color: var(--gray-3);
-    font-size: .9rem;
-    line-height: 1.7;
+  margin-bottom: 1em;
+  color: var(--gray-3);
+  font-size: 0.9rem;
+  line-height: 1.7;
 }
 
-
-.userInfo:nth-child(1)>span:last-child {
-    text-transform: capitalize;
+.userInfo:nth-child(1) > span:last-child {
+  text-transform: capitalize;
 }
 
-
-.ctaWrapper>button {
-    border-radius: 0;
-    border-bottom: 1px solid var(--blue);
-    background-color: transparent;
-    text-transform: capitalize;
-    color: var(--blue);
-    padding-bottom: 3px;
-    margin-bottom: 2em;
+.ctaWrapper > button {
+  border-radius: 0;
+  border-bottom: 1px solid var(--blue);
+  background-color: transparent;
+  text-transform: capitalize;
+  color: var(--blue);
+  padding-bottom: 3px;
+  margin-bottom: 2em;
 }
 
 .ctaWrapper form {
-    padding: 20px;
-    border-radius: 10px;
+  padding: 20px;
+  border-radius: 10px;
 }
 
-.ctaWrapper form>button {
-    padding: .8em;
-    background-color: var(--gray-4);
-    color: white;
+.ctaWrapper form > button {
+  padding: 0.8em;
+  background-color: var(--gray-4);
+  color: white;
 }
 
-.ctaWrapper form>div {
-    margin-bottom: 1em;
+.ctaWrapper form > div {
+  margin-bottom: 1em;
 }
 
-.ctaWrapper form label>p {
-    text-transform: capitalize;
-    font-size: 14px;
-    color: var(--gray-4);
+.ctaWrapper form label > p {
+  text-transform: capitalize;
+  font-size: 14px;
+  color: var(--gray-4);
 }
 
 .verify {
-    margin: 0 auto;
-    text-align: center;
-    height: 70vh;
-    display: grid;
-    place-content: center;
+  margin: 0 auto;
+  text-align: center;
+  height: 70vh;
+  display: grid;
+  place-content: center;
 }
 
-.verify>div {
-    display: grid;
-    gap: .3em;
+.verify > div {
+  display: grid;
+  gap: 0.3em;
 }
 
 .verify h2 {
-    font-size: 2em;
-    color: var(--gray-4);
-    margin-bottom: 1em;
+  font-size: 2em;
+  color: var(--gray-4);
+  margin-bottom: 1em;
 }
 
-.verify>div>p {
-    color: var(--gray-2);
+.verify > div > p {
+  color: var(--gray-2);
 }
-

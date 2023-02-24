@@ -5,41 +5,39 @@ import { purify } from '../../lib/utils'
 import { redirectToPage } from '../../lib/controller-utils'
 import { dbConnect } from '../../lib/db-utils'
 
-const ProductPage = (props) => <SingleProduct {...props} />
+const ProductPage = props => <SingleProduct {...props} />
 
-export const getStaticProps = async (context) => {
-	const { slug } = context.params
+export const getStaticProps = async context => {
+  const { slug } = context.params
 
-	try {
-		await dbConnect()
+  try {
+    await dbConnect()
 
-		const product = await Product.findOne({ slug }).populate('reviews')
+    const product = await Product.findOne({ slug }).populate('reviews')
 
-		if (!product) throw ''
+    if (!product) throw ''
 
-		return { props: { product: purify(product) } }
-
-	} catch (error) {
-		return redirectToPage()
-	}
+    return { props: { product: purify(product) } }
+  } catch (error) {
+    return redirectToPage()
+  }
 }
 
 export const getStaticPaths = async () => {
-	
-	await dbConnect()
+  await dbConnect()
 
-	const allProducts = await Product.find()
+  const allProducts = await Product.find()
 
-	const pathsWithSlug = purify(allProducts).map((product) => ({
-		params: {
-			slug: product.slug,
-		},
-	}))
+  const pathsWithSlug = purify(allProducts).map(product => ({
+    params: {
+      slug: product.slug,
+    },
+  }))
 
-	return {
-		paths: pathsWithSlug,
-		fallback: 'blocking',
-	}
+  return {
+    paths: pathsWithSlug,
+    fallback: 'blocking',
+  }
 }
 
 export default ProductPage

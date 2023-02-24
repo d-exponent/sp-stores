@@ -7,38 +7,35 @@ import Button from '../ui/button'
 import classes from './sigin.module.css'
 
 export default function AuthenticationPage(props) {
-	
-	const googleSignInHandler = function () {
-		signIn('google')
-	}
+  const googleSignInHandler = function () {
+    signIn('google')
+  }
 
-	return (
-		<div>
+  return (
+    <div>
+      <div>
+        <>
+          <Login {...props} />
+          <Link href="/auth/forgot-password">Forgot password?</Link>
+        </>
+      </div>
 
-			<div>
-				<>
-					<Login {...props} />
-					<Link href='/auth/forgot-password'>Forgot password?</Link>
-				</>
-			</div>
+      <div className={`${classes.divider} flex`}>
+        <div></div>
+        <span className={`${classes.dividerText} grid`}>or</span>
+        <div></div>
+      </div>
 
-			<div className={`${classes.divider} flex`}>
-				<div></div>
-				<span className={`${classes.dividerText} grid`}>or</span>
-				<div></div>
-			</div>
-
-			<div className={classes.ctaWrapper}>
-				<Button onClick={googleSignInHandler} renderChildren>
-					<div className={`${classes.googleSignin} flex`}>
-						<span className={`${classes.googleLogo} grid`}>
-							<FcGoogle />
-						</span>
-						<span className={classes.googleText}>Sign in with google</span>
-					</div>
-				</Button>
-			</div>
-
-		</div>
-	)
+      <div className={classes.ctaWrapper}>
+        <Button onClick={googleSignInHandler} renderChildren>
+          <div className={`${classes.googleSignin} flex`}>
+            <span className={`${classes.googleLogo} grid`}>
+              <FcGoogle />
+            </span>
+            <span className={classes.googleText}>Sign in with google</span>
+          </div>
+        </Button>
+      </div>
+    </div>
+  )
 }

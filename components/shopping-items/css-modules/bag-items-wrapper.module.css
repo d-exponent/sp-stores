@@ -1,23 +1,22 @@
-
 .cta {
-    margin-bottom: 3.5em;
+  margin-bottom: 3.5em;
 }
 
 .cta button {
-    background-color: var(--gray-5);
-    padding-block: 1.2em;
-    color: white;
-    border-radius: 4px;
-    letter-spacing: 2px;
-    font-size: 1rem;
+  background-color: var(--gray-5);
+  padding-block: 1.2em;
+  color: white;
+  border-radius: 4px;
+  letter-spacing: 2px;
+  font-size: 1rem;
 }
 
 .priceTotal {
-    margin: 3.3em 0 1em;
-    font-weight: 700;
+  margin: 3.3em 0 1em;
+  font-weight: 700;
 }
 
 .naira {
-    margin-left: 15px;
-    font-size: 1.2rem;
+  margin-left: 15px;
+  font-size: 1.2rem;
 }

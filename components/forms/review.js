@@ -8,113 +8,119 @@ import Input from '../ui/input'
 import Button from '../ui/button'
 
 export default function Review(props) {
-	const { showNotification } = useContext(NotificationContext)
+  const { showNotification } = useContext(NotificationContext)
 
-	const { data: session, status } = useSession()
+  const { data: session, status } = useSession()
 
-	const reviewRef = useRef(null)
-	const ratingRef = useRef(null)
+  const reviewRef = useRef(null)
+  const ratingRef = useRef(null)
 
-	const handleSubmit = async function (event) {
-		event.preventDefault()
+  const handleSubmit = async function (event) {
+    event.preventDefault()
 
-		if (status !== 'authenticated') {
-			return showNotification('Login to write a review').error()
-		}
+    if (status !== 'authenticated') {
+      return showNotification('Login to write a review').error()
+    }
 
-		const enteredReviewRating = ratingRef.current?.value * 1
-		const enteredReviewComment = reviewRef.current?.value
-		const newReview = !Boolean(props.useUpdateAction)
+    const enteredReviewRating = ratingRef.current?.value * 1
+    const enteredReviewComment = reviewRef.current?.value
+    const newReview = !Boolean(props.useUpdateAction)
 
-		if (newReview && !enteredReviewRating) {
-			return showNotification('Please Enter a rating').error()
-		}
+    if (newReview && !enteredReviewRating) {
+      return showNotification('Please Enter a rating').error()
+    }
 
-		if (!newReview && !enteredReviewRating && !enteredReviewComment) {
-			return showNotification('Please Enter a rating or a review').error()
-		}
+    if (!newReview && !enteredReviewRating && !enteredReviewComment) {
+      return showNotification('Please Enter a rating or a review').error()
+    }
 
-		const pendingMessage = newReview ? 'Adding review' : 'Updating your review'
-		showNotification(pendingMessage).pending()
+    const pendingMessage = newReview
+      ? 'Adding review'
+      : 'Updating your review'
+    showNotification(pendingMessage).pending()
 
-		const review = {
-			customerEmail: session.user.email,
-			customerName: session.user.name,
-			productId: props.productId,
-			review: enteredReviewComment || '',
-			rating: +enteredReviewRating || 0,
-		}
+    const review = {
+      customerEmail: session.user.email,
+      customerName: session.user.name,
+      productId: props.productId,
+      review: enteredReviewComment || '',
+      rating: +enteredReviewRating || 0,
+    }
 
-		let url = '/api/review'
-		let method = 'POST'
+    let url = '/api/review'
+    let method = 'POST'
 
-		if (!newReview) {
-			// Remove redundant properties
-			delete review.customerEmail
-			delete review.customerName
-			delete review.productId
+    if (!newReview) {
+      // Remove redundant properties
+      delete review.customerEmail
+      delete review.customerName
+      delete review.productId
 
-			//configure review and ratings properties on the review object
-			review.review = Boolean(enteredReviewComment)
-				? enteredReviewComment
-				: props.userReviewDetails.review
+      //configure review and ratings properties on the review object
+      review.review = Boolean(enteredReviewComment)
+        ? enteredReviewComment
+        : props.userReviewDetails.review
 
-			review.rating = Boolean(enteredReviewRating)
-				? +enteredReviewRating
-				: props.userReviewDetails.rating
+      review.rating = Boolean(enteredReviewRating)
+        ? +enteredReviewRating
+        : props.userReviewDetails.rating
 
-			review.review === '' && delete review.review
-			review.rating < 1 && delete review.rating
+      review.review === '' && delete review.review
+      review.rating < 1 && delete review.rating
 
-			//Modify the Url
-			url = `${url}/${props.userReviewDetails.reviewId}?`
-			method = 'PATCH'
-		}
+      //Modify the Url
+      url = `${url}/${props.userReviewDetails.reviewId}?`
+      method = 'PATCH'
+    }
 
-		review.review = review.review === '' ? undefined : review.review
-		
-		const [resPromise] = withFetch({
-			url,
-			method,
-			data: review,
-		})
+    review.review = review.review === '' ? undefined : review.review
 
-		try {
-			const res = await resPromise
+    const [resPromise] = withFetch({
+      url,
+      method,
+      data: review,
+    })
 
-			if (!res.success) throw new Error(res.message)
+    try {
+      const res = await resPromise
 
-			reviewRef.current.value = ''
-			ratingRef.current.value = ''
+      if (!res.success) throw new Error(res.message)
 
-			props.afterSubmit()
-			showNotification('Success!! ✔').success()
-		} catch (err) {
-			
-			// const isDuplicateMessage =
-			// 	err.message.trim() === 'This product already exits. Please try another!'
+      reviewRef.current.value = ''
+      ratingRef.current.value = ''
 
-			// const errorMessage = isDuplicateMessage
-			// 	? 'You already reviewed this product'
-			// 	: err.message
+      props.afterSubmit()
+      showNotification('Success!! ✔').success()
+    } catch (err) {
+      // const isDuplicateMessage =
+      // 	err.message.trim() === 'This product already exits. Please try another!'
 
-			showNotification('Error').error()
-		}
-	}
+      // const errorMessage = isDuplicateMessage
+      // 	? 'You already reviewed this product'
+      // 	: err.message
 
-	return (
-		<form onSubmit={handleSubmit}>
-			<select ref={ratingRef}>
-				<option value=''>--Rating--</option>
-				<option value='1'>1</option>
-				<option value='2'>2</option>
-				<option value='3'>3</option>
-				<option value='4'>4</option>
-				<option value='5'>5</option>
-			</select>
+      showNotification('Error').error()
+    }
+  }
 
-			<Input type='textarea' label='Review Note:' reference={reviewRef} name='review' />
-			<Button text='Submit review' />
-		</form>
-	)
+  return (
+    <form onSubmit={handleSubmit}>
+      <select ref={ratingRef}>
+        <option value="">--Rating--</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+
+      <Input
+        type="textarea"
+        label="Review Note:"
+        reference={reviewRef}
+        name="review"
+      />
+      <Button text="Submit review" />
+    </form>
+  )
 }

@@ -6,44 +6,44 @@ import { Carousel as Slider } from 'react-responsive-carousel'
 import classes from './carousel.module.css'
 
 export default function Carousel(props) {
-	// TODO: Uptimimize Carousel Component
-	return (
-		<Slider
-			autoPlay
-			useKeyboardArrows={true}
-			interval={props.interval}
-			emulateTouch={true}
-			infiniteLoop={true}
-			renderThumbs={() => {
-				if (!props.showThumbs) {
-					return
-				}
-				return props.images.map((image, index) => (
-					<div key={index}>
-						<Image
-							src={image.src}
-							alt={image.alt}
-							width={900}
-							height={600}
-							layout='responsive'
-							priority={index === 0}
-						/>
-					</div>
-				))
-			}}
-		>
-			{props.images.map((image, index) => (
-				<div key={image.alt}>
-					<Image
-						src={image.src}
-						alt={image.alt}
-						width={900}
-						height={600}
-						layout='responsive'
-						priority={index === 0}
-					/>
-				</div>
-			))}
-		</Slider>
-	)
+  // TODO: Uptimimize Carousel Component
+  return (
+    <Slider
+      autoPlay
+      useKeyboardArrows={true}
+      interval={props.interval}
+      emulateTouch={true}
+      infiniteLoop={true}
+      renderThumbs={() => {
+        if (!props.showThumbs) {
+          return
+        }
+        return props.images.map((image, index) => (
+          <div key={index}>
+            <Image
+              src={image.src}
+              alt={image.alt}
+              width={900}
+              height={600}
+              layout="responsive"
+              priority={index === 0}
+            />
+          </div>
+        ))
+      }}
+    >
+      {props.images.map((image, index) => (
+        <div key={image.alt}>
+          <Image
+            src={image.src}
+            alt={image.alt}
+            width={900}
+            height={600}
+            layout="responsive"
+            priority={index === 0}
+          />
+        </div>
+      ))}
+    </Slider>
+  )
 }

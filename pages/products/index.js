@@ -8,24 +8,24 @@ import _ from 'lodash'
 
 import AllProducts from '../../components/all-products'
 
-const Products = (props) => <AllProducts {...props} />
+const Products = props => <AllProducts {...props} />
 
 export const getStaticProps = async () => {
-	try {
-		await dbConnect()
-		const products = await Product.find({ inStock: true })
+  try {
+    await dbConnect()
+    const products = await Product.find({ inStock: true })
 
-		if (!products) throw ''
+    if (!products) throw ''
 
-		const shuffledProducts = _.shuffle(purify(products))
+    const shuffledProducts = _.shuffle(purify(products))
 
-		return {
-			props: { products: shuffledProducts },
-			revalidate: revalidateTimer,
-		}
-	} catch (e) {
-		return redirectToPage()
-	}
+    return {
+      props: { products: shuffledProducts },
+      revalidate: revalidateTimer,
+    }
+  } catch (e) {
+    return redirectToPage()
+  }
 }
 
 export default Products

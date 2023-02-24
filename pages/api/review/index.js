@@ -4,20 +4,20 @@ import { sendMethodNotAllowedResponse } from '../../../lib/controller-utils'
 import catchAsync from '../../../lib/catch-async'
 
 const handler = async (req, res) => {
-	const { method } = req
+  const { method } = req
 
-	switch (method) {
-		case 'GET':
-			await factory.getAll(req, res, Review)
-			break
-		case 'POST':
-			await factory.createOne(req, res, Review)
-			break
+  switch (method) {
+    case 'GET':
+      await factory.getAll(req, res, Review)
+      break
+    case 'POST':
+      await factory.createOne(req, res, Review)
+      break
 
-		default:
-			sendMethodNotAllowedResponse(res, method)
-			break
-	}
+    default:
+      sendMethodNotAllowedResponse(res, method)
+      break
+  }
 }
 
 export default catchAsync(handler)

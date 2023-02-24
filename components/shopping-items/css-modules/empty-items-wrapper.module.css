@@ -1,11 +1,11 @@
 .empty {
-    height: 80vh;
-    font-size: 1.5rem;
-    color: var(--gray-3);
+  height: 80vh;
+  font-size: 1.5rem;
+  color: var(--gray-3);
 }
 
 .empty a {
-    font-size: 1rem;
-    text-align: center;
-    color: var(--blue-1);
+  font-size: 1rem;
+  text-align: center;
+  color: var(--blue-1);
 }

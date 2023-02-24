@@ -8,15 +8,15 @@ import Hamburger from './hamburger-menu'
 import classes from './header.module.css'
 
 export default function Header() {
-	const { isShowSideNav } = useContext(SideNavContext)
-	return (
-		<header className={`${classes.header} flex`}>
-			<>
-				<Hamburger />
-				<Logo />
-				<Nav />
-				{isShowSideNav && <SideNavigationPanel />}
-			</>
-		</header>
-	)
+  const { isShowSideNav } = useContext(SideNavContext)
+  return (
+    <header className={`${classes.header} flex`}>
+      <>
+        <Hamburger />
+        <Logo />
+        <Nav />
+        {isShowSideNav && <SideNavigationPanel />}
+      </>
+    </header>
+  )
 }
