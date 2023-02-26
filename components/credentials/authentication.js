@@ -46,14 +46,19 @@ export default function Authentication() {
   const handleChange = function (event) {
     const { name, value } = event.target
 
-    let formDataValue = value.toLowerCase().trim()
-    if ([name] !== 'password' && [name] !== 'confirmPassword') {
-      formDataValue = value.trim()
+    let formDataValue = value
+
+    if (name !== 'password' && name !== 'confirmPassword') {
+      formDataValue = formDataValue.trim()
     }
 
-    if (isLogin) setLoginForm({ ...loginForm, [name]: formDataValue })
-    if (!isLogin)
-      setRegisterForm({ ...registerForm, [name]: formDataValue })
+    if (name === 'email') {
+      formDataValue = formDataValue.toLowerCase()
+    }
+
+    isLogin && setLoginForm({ ...loginForm, [name]: formDataValue })
+
+    !isLogin && setRegisterForm({ ...registerForm, [name]: formDataValue })
   }
 
   const handleSubmit = async function (event) {
@@ -94,6 +99,22 @@ export default function Authentication() {
 
       if (!res.success) throw new Error(res.message)
 
+      setTimeout(async () => {
+        showNotification('Logging you in').pending()
+
+    
+
+        try {
+          await handleSignIn(signIn, registerForm, 'Something went wrong!')
+          router.replace(router.query.callback || '/')
+        } catch (error) {
+          setDisableRegisterBtn(false)
+          showNotification(getErrorMessage(error)).error()
+        }
+
+        showNotification('Logged in successfully').success()
+      }, 700)
+
       showNotification(res.message + ' 🐱‍🏍').success()
     } catch (error) {
       setDisableRegisterBtn(false)
@@ -103,20 +124,6 @@ export default function Authentication() {
 
       return showNotification(errorMessage).error()
     }
-
-    setTimeout(async () => {
-      showNotification('Logging you in').pending()
-
-      try {
-        await handleSignIn(signIn, registerForm, 'Something went wrong!')
-        router.replace(router.query.callback || '/')
-      } catch (error) {
-        setDisableRegisterBtn(false)
-        showNotification(getErrorMessage(error)).error()
-      }
-
-      showNotification('Logged in successfully').success()
-    }, 700)
   }
 
   return (

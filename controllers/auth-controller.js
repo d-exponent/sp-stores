@@ -35,15 +35,17 @@ export const createUser = async (req, res) => {
 
   const newUser = await User.create(req.body)
 
-  const protocol = getProtocol()
-  const host = getHost(req)
-  const url = `${protocol}://${host}`
+  const url = `${getProtocol()}://${getHost(req)}`
 
-  await new Email(newUser, url).sendWelcome()
+  //Let's take this behind the scenes shall we
+  new Email(newUser, url)
+    .sendWelcome()
+    .catch(e => AppError.saveServerErrorToDatabase(e))
 
   sendResponse(res, 201, {
     success: true,
-    message: `Welcome to the Sp family ${newUser.name}`,
+    data: newUser,
+    message: `Welcome to the Sp family ${newUser.firstName} ${newUser.lastName}`,
   })
 }
 
